@@ -1,6 +1,4 @@
-about-me/
-experiences/
-hobby/
-projects/
-styles/
-/index.html
+.venv/
+*__pycache__
+*.env
+.local/
