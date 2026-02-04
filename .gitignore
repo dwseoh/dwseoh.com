@@ -5,3 +5,6 @@ projects/
 styles/
 /index.html
 save.txt
+dwseoh-frontend/next-env.d.ts
+*node_modules
+*.next
