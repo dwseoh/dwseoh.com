@@ -1,10 +1,7 @@
-about-me/
-experiences/
-hobby/
-projects/
-styles/
-/index.html
+
+.venv/
 save.txt
 dwseoh-frontend/next-env.d.ts
 *node_modules
 *.next
+*.DS_Store
