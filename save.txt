@@ -6,6 +6,8 @@ introduce urself with embedded code (oop) embedded
 
 korean/eng support
 
+spotify integration
+
 dot bg
 
 inspo
@@ -32,3 +34,6 @@ add webring for se30 + se
 
 https://github.com/dwseoh/se30-webring readme
 
+underlined text --> hover msg
+
+dependabot
