@@ -1,7 +1,7 @@
 # dwseoh.com
 
 > [!WARNING]
-> **v2 is currently in progress!** The site is undergoing a redesign.
+> **v2 is currently in progress!** The site is undergoing a redesign + better architectural structure. v2 will be in Next.js frontend + FastAPI backend.
 
 Personal portfolio website for Jamie Seoh.
 
