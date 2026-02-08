@@ -43,12 +43,68 @@
             text-decoration: underline;
         }
 
-        /* Language Dropdown Container */
-        .lang-dropdown-container {
+        /* Top Navigation Container */
+        .top-nav-container {
             position: absolute;
-            top: 0rem;
+            top: 1rem;
             right: 1rem;
             z-index: 1000;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Blog Button */
+        .blog-btn {
+            padding: 8px 16px;
+            background: #000;
+            color: #fff;
+            border: 1px solid #000;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .blog-btn:hover {
+            background: #333;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Resume Button */
+        .resume-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 10px 20px;
+            background: #fff;
+            color: #333;
+            border: 2px solid #333;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-top: 1.5rem;
+        }
+
+        .resume-btn:hover {
+            background: #333;
+            color: #fff;
+        }
+
+        .resume-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Language Dropdown Container */
+        .lang-dropdown-container {
+            position: relative;
         }
 
         /* Dropdown button */
@@ -164,24 +220,32 @@
             .content-wrapper {
                 padding: 1rem;
                 padding-bottom: 3rem;
+                padding-top: 3.5rem;
             }
 
-            .lang-dropdown-container {
-                top: 0.5rem;
-                right: 0.5rem;
+            .top-nav-container {
+                top: 0.75rem;
+                right: 0.75rem;
+                gap: 0.4rem;
             }
 
-            .content-wrapper {
-                padding-top: 0rem;
+            .blog-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+
+            /* Hide language text on mobile, show only flag */
+            #current-lang {
+                display: none;
             }
 
             .lang-dropdown-btn {
-                padding: 6px 10px;
+                padding: 6px 8px;
                 font-size: 13px;
             }
 
             .lang-dropdown-btn img {
-                width: 18px;
+                width: 20px;
             }
 
             .lang-option {
@@ -204,20 +268,23 @@
 
 <body>
 
-    <!-- Language Dropdown -->
-    <div class="lang-dropdown-container">
-        <div class="lang-dropdown-btn" id="lang-btn" onclick="toggleDropdown()">
-            <img id="current-flag" src="assets/images/england.png" alt="English">
-            <span id="current-lang">English</span>
-        </div>
-        <div class="lang-dropdown-menu" id="lang-menu">
-            <div class="lang-option active" data-lang="en" onclick="switchLanguage('en')">
-                <img src="assets/images/england.png" alt="English">
-                <span>English</span>
+    <!-- Top Navigation -->
+    <div class="top-nav-container">
+        <a href="blog.html" class="blog-btn">Blog</a>
+        <div class="lang-dropdown-container">
+            <div class="lang-dropdown-btn" id="lang-btn" onclick="toggleDropdown()">
+                <img id="current-flag" src="assets/images/england.png" alt="English">
+                <span id="current-lang">English</span>
             </div>
-            <div class="lang-option" data-lang="ko" onclick="switchLanguage('ko')">
-                <img src="assets/images/korea.png" alt="한국어">
-                <span>한국어</span>
+            <div class="lang-dropdown-menu" id="lang-menu">
+                <div class="lang-option active" data-lang="en" onclick="switchLanguage('en')">
+                    <img src="assets/images/england.png" alt="English">
+                    <span>English</span>
+                </div>
+                <div class="lang-option" data-lang="ko" onclick="switchLanguage('ko')">
+                    <img src="assets/images/korea.png" alt="한국어">
+                    <span>한국어</span>
+                </div>
             </div>
         </div>
     </div>
@@ -228,11 +295,14 @@
         <!-- ENGLISH VERSION -->
         <div data-lang="en">
             <h1 class="header">Welcome to Jamie's Portfolio!</h1>
-            <p>A bit out about me: I am a full stack developer studying <strong>software engineering @University of
-                    Waterloo</strong>. I'm a native Korean speaker and I moved to Canada during fall of 2019.<br><br> I
-                have
-                a
-                <strong>great passion in Music</strong> during my spare time. I have been involved as a principal
+            <p>Hi, my name is Jamie Seoh (서동완) and I am a full stack developer studying <strong>software engineering
+                    @University of
+                    Waterloo <img src="assets/images/se_webstring.svg" alt="SE"
+                        style="height: 1.2em; vertical-align: middle; margin-left: 0.3em;"></strong>. I love studying
+                new technologies and building tech projects that enhance human abilities and productivity.
+                I'm a native Korean speaker and I moved to Canada during fall of 2019.<br><br>
+                I have a <strong>great passion in Music</strong> during my spare time. I have been involved as a
+                principal
                 clarinetist,
                 conductor, music producer, and ensemble director. Additionally, I like to contribute to the community.
                 Currently, I'm involved at <strong>Ignition Hacks, UW Korean Student Association</strong>, and more. You
@@ -240,64 +310,76 @@
                 stalk me more on LinkedIn :)
             </p>
 
-            <h3>Maintained Links:</h3>
+            <a href="https://dwseoh.com/assets/static/resume.pdf" class="resume-btn" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Resume/CV
+            </a>
+
+            <h3 style="margin-top: 2rem;">Other Links:</h3>
             <ul>
-                <li><a href="https://www.linkedin.com/in/jamie-seoh">LinkedIn</a> - connect with me!</li>
-                <li><a href="https://github.com/dwseoh">GitHub</a> - check out my projects!</li>
-                <li><a href="https://dwseoh.com/assets/static/resume.pdf">Resume</a> - view my resume</li>
                 <li><a href="https://instagram.com/dwclarinet">@dwclarinet</a> - listen my music projects</li>
                 <li><a href="https://instagram.com/jam_flicks">@jam_flicks</a> - follow my photography journey</li>
+                <li><a href="https://projects.dwseoh.com">Music Projects</a> (not maintained anymore)</li>
             </ul>
-
-            <h3>Legacy Links:</h3>
-            <ul>
-                <li>
-                    <p><a href="https://projects.dwseoh.com">Music Projects</a> (not maintained anymore)</p>
-                </li>
-            </ul>
-
-            <div style="display: flex; align-items: center; gap: 0.5em; margin-bottom:1.3em;">
-                <h3 style="margin: 0;">Socials:</h3>
-                <p style="margin: 0;">
-                    <a href="https://discord.com/users/891434702509060106">Discord</a> |
-                    <a href="https://www.instagram.com/dongwan_seoh/">Instagram</a> |
-                    <a href="mailto:contact@dwseoh.com">Email</a>
-                </p>
-            </div>
-
-            <hr>
-
-            <a href="https://se-webring.xyz/" style="
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: left;
-            min-height: 3em;
-        ">
-                <div style="
-                display: flex;
-                align-items: center;
-                gap: 0.5em;
-            ">
-                    <img src="assets/images/se_webstring.svg" alt="SE Webstring" style="height: 1.5em; display: block;">
-                    <span style="line-height: 1.5em;">
-                        Software Engineering Student at University of Waterloo
-                    </span>
-                </div>
-            </a>
 
             <hr>
             <p>BTW: A new look is coming soon. Until then, you are going to have to suffer with this
                 <strong><em>excessive
                         minimalism</em></strong>.
             </p>
+
+            <!-- Footer -->
+            <footer style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e0e0e0;">
+                <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; text-align: center;">
+                    <div
+                        style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; align-items: center;">
+                        <a href="https://www.linkedin.com/in/jamie-seoh"
+                            style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;"
+                            title="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                            </svg>
+                        </a>
+                        <a href="https://github.com/dwseoh"
+                            style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;"
+                            title="GitHub">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                            </svg>
+                        </a>
+                        <a href="https://www.instagram.com/dongwan_seoh/"
+                            style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;"
+                            title="Instagram">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg>
+                        </a>
+                        <a href="mailto:contact@dwseoh.com"
+                            style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;"
+                            title="Email">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <p style="margin: 0; color: #666; font-size: 0.9em;">© 2025 Jamie Seoh. All rights reserved.</p>
+                </div>
+            </footer>
         </div>
 
         <!-- KOREAN VERSION -->
         <div data-lang="ko" class="hidden">
             <h1 class="header">서동완의 홈페이지 </h1>
-            <p> 안녕하세요! 삶에 편리함을 제공하고 싶은 풀스택 개발자 서동완입니다. 현재 캐나다 워털루 대학교에서 소프트웨어 공학을 전공하고 있고, 2019년 가을에 캐나다로 이주했습니다. 
+            <p> 안녕하세요! 삶에 편리함을 제공하고 싶은 풀스택 개발자 서동완입니다. 현재 캐나다 워털루 대학교에서 소프트웨어 공학을 전공하고 있고 <img
+                    src="assets/images/se_webstring.svg" alt="SE"
+                    style="height: 1.2em; vertical-align: middle; margin-left: 0.3em;">, 2019년 가을에 캐나다로 이주했습니다.
                 <br><br>프로그래밍을 안 할때는 음악에 대한 열정이 큽니다; 수석 클라리넷 연주자, 지휘자, 음악 프로듀서, 앙상블 디렉터로 활동해왔습니다.
                 <br>또한 커뮤니티 활동에도 관심이 많아서, 현재 Ignition Hacks Sponsorship Director (해커톤 주최측), 워털루 한국 한인회 이벤트 코디네이터 등으로
                 활동하고
@@ -305,57 +387,67 @@
                 <br><br>저에 대한 더 자세한 내용은 LinkedIn 또는 제 이력서에서 확인이 가능합니다!
             </p>
 
-            <h3 class="underline">유지 관리 중인 링크:</h3>
+            <a href="https://dwseoh.com/assets/static/resume.pdf" class="resume-btn" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Resume/CV
+            </a>
+
+            <h3 style="margin-top: 2rem;">기타 링크:</h3>
             <ul>
-                <li><a href="https://www.linkedin.com/in/jamie-seoh">LinkedIn</a> - 커뮤니티 활동 더보기</li>
-                <li><a href="https://github.com/dwseoh">GitHub</a> - 프로젝트 관람</li>
-                <li><a href="https://dwseoh.com/assets/static/resume.pdf">Resume/CV</a> - 이력서 (영문)</li>
                 <li><a href="https://instagram.com/dwclarinet">@dwclarinet</a> - 음악 프로젝트 (인스타그램)</li>
                 <li><a href="https://instagram.com/jam_flicks">@jam_flicks</a> - 사진 취미 (인스타그램)</li>
+                <li><a href="https://projects.dwseoh.com">음악 프로젝트</a> (더이상 관리되지 않음)</li>
             </ul>
-
-
-            <h3 class="underline">레거시 링크:</h3>
-            <ul>
-                <li>
-                    <p><a href="https://projects.dwseoh.com">음악 프로젝트</a> (더이상 관리되지 않음)</p>
-                </li>
-            </ul>
-
-            <div style="display: flex; align-items: center; gap: 0.5em; margin-bottom:1.3em;">
-                <h3 style="margin: 0;">소셜 미디어:</h3>
-                <p style="margin: 0;">
-                    <a href="https://discord.com/users/891434702509060106">Discord</a> |
-                    <a href="https://www.instagram.com/dongwan_seoh/">Instagram</a> |
-                    <a href="mailto:contact@dwseoh.com">Email</a>
-                </p>
-            </div>
-
-            <hr>
-            <a href="https://se-webring.xyz/" style="
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: left;
-            min-height: 3em;
-        ">
-                <div style="
-                display: flex;
-                align-items: center;
-                gap: 0.5em;
-            ">
-                    <img src="assets/images/se_webstring.svg" alt="SE Webstring" style="height: 1.5em; display: block;">
-                    <span style="line-height: 1.5em;">
-                        워털루 대학교 소프트웨어 공학과 학생
-                    </span>
-                </div>
-            </a>
 
             <hr>
             <p>참고: 곧 새로운 왭사이트 디자인이 공개될 예정입니다.
                 그때까지는 이 <strong><em>과도한 미니멀리즘</em></strong>을 감수해 주세요.
             </p>
+
+            <!-- Footer -->
+            <footer style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e0e0e0;">
+                <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; text-align: center;">
+                    <div
+                        style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; align-items: center;">
+                        <a href="https://www.linkedin.com/in/jamie-seoh"
+                            style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;"
+                            title="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                            </svg>
+                        </a>
+                        <a href="https://github.com/dwseoh"
+                            style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;"
+                            title="GitHub">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                            </svg>
+                        </a>
+                        <a href="https://www.instagram.com/dongwan_seoh/"
+                            style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;"
+                            title="Instagram">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg>
+                        </a>
+                        <a href="mailto:contact@dwseoh.com"
+                            style="color: #333; text-decoration: none; display: flex; align-items: center; gap: 0.3rem;"
+                            title="Email">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <p style="margin: 0; color: #666; font-size: 0.9em;">© 2025 서동완. All rights reserved.</p>
+                </div>
+            </footer>
 
         </div>
     </div>
