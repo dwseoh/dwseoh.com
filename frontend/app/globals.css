@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/* ================================================
+   NOTION THEME — edit these to customize colors
+   ================================================ */
+:root {
+  --n-bg:        #ffffff;
+  --n-text:      #37352f;
+  --n-secondary: #787774;
+  --n-light:     #9b9a97;
+  --n-accent:    #2383e2;
+  --n-border:    #e9e9e7;
+  --n-hover:     rgba(55, 53, 47, 0.04);
+  --n-hover-strong: rgba(55, 53, 47, 0.08);
+  --n-callout-bg: rgba(35, 131, 226, 0.05);
+  --n-width:     700px;
+
+  /* glitch accent colors */
+  --n-glitch-1:  #2383e2;
+  --n-glitch-2:  #ff4d6d;
+}
+
+body {
+  background: var(--n-bg);
+  color: var(--n-text);
+  overflow-x: hidden;
+}
+
+/* ---- Preview fade-in ---- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---- Screenshot loading shimmer ---- */
+.shimmer {
+  background: linear-gradient(
+    100deg,
+    rgba(55, 53, 47, 0.04) 30%,
+    rgba(55, 53, 47, 0.09) 50%,
+    rgba(55, 53, 47, 0.04) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* ---- Glitch text effect (pure CSS) ---- */
+.glitch {
+  position: relative;
+  display: inline-block;
+  color: var(--n-text);
+}
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.glitch::before {
+  color: var(--n-glitch-1);
+  z-index: -1;
+  animation: glitch-a 3.5s infinite steps(1);
+}
+.glitch::after {
+  color: var(--n-glitch-2);
+  z-index: -2;
+  animation: glitch-b 3.5s infinite steps(1);
+}
+/* Mostly identity, with brief offset "bursts" so it glitches periodically */
+@keyframes glitch-a {
+  0%, 92%, 100% { transform: translate(0); clip-path: inset(0 0 0 0); }
+  93% { transform: translate(-2px, -1px); clip-path: inset(10% 0 60% 0); }
+  95% { transform: translate(2px, 1px);   clip-path: inset(50% 0 20% 0); }
+  97% { transform: translate(-1px, 1px);  clip-path: inset(20% 0 50% 0); }
+}
+@keyframes glitch-b {
+  0%, 92%, 100% { transform: translate(0); clip-path: inset(0 0 0 0); }
+  94% { transform: translate(2px, 1px);    clip-path: inset(70% 0 10% 0); }
+  96% { transform: translate(-2px, -1px);  clip-path: inset(30% 0 40% 0); }
+  98% { transform: translate(1px, -1px);   clip-path: inset(60% 0 20% 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch::before,
+  .glitch::after { animation: none; }
+}
