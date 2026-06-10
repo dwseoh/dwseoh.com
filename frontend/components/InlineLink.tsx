@@ -29,6 +29,7 @@ export default function InlineLink({
 
   return (
     <a
+      className="inline-link"
       href={href}
       target={isExternal ? '_blank' : undefined}
       rel={isExternal ? 'noopener noreferrer' : undefined}
@@ -41,6 +42,7 @@ export default function InlineLink({
         borderBottom: '1px solid var(--n-light)',
         paddingBottom: '1px',
         margin: '0 1px',
+        padding: '0 2px',
         whiteSpace: 'nowrap',
       }}
     >

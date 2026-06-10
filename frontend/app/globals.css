@@ -14,81 +14,52 @@
   --n-hover-strong: rgba(55, 53, 47, 0.08);
   --n-callout-bg: rgba(35, 131, 226, 0.05);
   --n-width:     700px;
+}
 
-  /* glitch accent colors */
-  --n-glitch-1:  #2383e2;
-  --n-glitch-2:  #ff4d6d;
+/* Root font-size drives all rem-based sizing. Shrinking it on phones
+   scales every heading, paragraph, and component down together. */
+html {
+  font-size: 16px;
+}
+@media (max-width: 640px) {
+  html {
+    font-size: 13.5px;
+  }
 }
 
 body {
   background: var(--n-bg);
   color: var(--n-text);
+  font-size: 1rem;
   overflow-x: hidden;
 }
 
-/* ---- Preview fade-in ---- */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+/* ---- Link hover states ---- */
+.link-row {
+  transition: background 0.12s ease;
+}
+.link-row:hover {
+  background: var(--n-hover-strong);
+}
+.link-row:hover .link-row-label {
+  color: var(--n-accent);
 }
 
-/* ---- Screenshot loading shimmer ---- */
-.shimmer {
-  background: linear-gradient(
-    100deg,
-    rgba(55, 53, 47, 0.04) 30%,
-    rgba(55, 53, 47, 0.09) 50%,
-    rgba(55, 53, 47, 0.04) 70%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
+.inline-link {
+  border-radius: 3px;
+  transition: background 0.12s ease, border-color 0.12s ease;
 }
-@keyframes shimmer {
-  from { background-position: 200% 0; }
-  to   { background-position: -200% 0; }
+.inline-link:hover {
+  background: var(--n-callout-bg);
+  border-bottom-color: var(--n-text);
 }
 
-/* ---- Glitch text effect (pure CSS) ---- */
-.glitch {
-  position: relative;
-  display: inline-block;
-  color: var(--n-text);
+/* ---- Rotating text: out slides down, in drops from above ---- */
+@keyframes roleIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  overflow: hidden;
-  pointer-events: none;
-}
-.glitch::before {
-  color: var(--n-glitch-1);
-  z-index: -1;
-  animation: glitch-a 3.5s infinite steps(1);
-}
-.glitch::after {
-  color: var(--n-glitch-2);
-  z-index: -2;
-  animation: glitch-b 3.5s infinite steps(1);
-}
-/* Mostly identity, with brief offset "bursts" so it glitches periodically */
-@keyframes glitch-a {
-  0%, 92%, 100% { transform: translate(0); clip-path: inset(0 0 0 0); }
-  93% { transform: translate(-2px, -1px); clip-path: inset(10% 0 60% 0); }
-  95% { transform: translate(2px, 1px);   clip-path: inset(50% 0 20% 0); }
-  97% { transform: translate(-1px, 1px);  clip-path: inset(20% 0 50% 0); }
-}
-@keyframes glitch-b {
-  0%, 92%, 100% { transform: translate(0); clip-path: inset(0 0 0 0); }
-  94% { transform: translate(2px, 1px);    clip-path: inset(70% 0 10% 0); }
-  96% { transform: translate(-2px, -1px);  clip-path: inset(30% 0 40% 0); }
-  98% { transform: translate(1px, -1px);   clip-path: inset(60% 0 20% 0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .glitch::before,
-  .glitch::after { animation: none; }
+@keyframes roleOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(10px); }
 }
