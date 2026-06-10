@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import BrandIcon, { BRAND_COLORS } from './BrandIcon'
 
 export interface CarouselLink {
@@ -8,14 +8,7 @@ export interface CarouselLink {
   href: string
   desc?: string
   icon: string
-}
-
-function canScreenshot(href: string) {
-  return href.startsWith('http') && !href.toLowerCase().endsWith('.pdf')
-}
-
-function shotUrl(href: string) {
-  return `https://api.microlink.io/?url=${encodeURIComponent(href)}&screenshot=true&embed=screenshot.url`
+  thumb?: string
 }
 
 function prettyUrl(href: string) {
@@ -36,8 +29,6 @@ export default function LinkCarousel({
 }) {
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
-  const [errored, setErrored] = useState<Record<number, boolean>>({})
-  const [loaded, setLoaded] = useState<Record<number, boolean>>({})
   const tabCount = links.length
 
   // auto-advance
@@ -49,7 +40,6 @@ export default function LinkCarousel({
 
   const link = links[active]
   const brand = BRAND_COLORS[link.icon] ?? '#787774'
-  const showShot = canScreenshot(link.href) && !errored[active]
 
   return (
     <div
@@ -75,19 +65,19 @@ export default function LinkCarousel({
               alignItems: 'center',
               justifyContent: 'center',
               gap: '7px',
-              padding: '11px 8px',
+              padding: '10px 8px',
               border: 'none',
               background: i === active ? 'var(--n-hover)' : 'transparent',
               color: i === active ? 'var(--n-text)' : 'var(--n-secondary)',
-              fontSize: '0.875rem',
+              fontSize: '0.8125rem',
               fontWeight: i === active ? 600 : 500,
               fontFamily: 'inherit',
               cursor: 'pointer',
-              transition: 'background 0.15s ease, color 0.15s ease',
+              transition: 'background 0.2s ease, color 0.2s ease',
               minWidth: 0,
             }}
           >
-            <BrandIcon name={l.icon} size={16} />
+            <BrandIcon name={l.icon} size={15} />
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {l.label}
             </span>
@@ -103,126 +93,102 @@ export default function LinkCarousel({
             width: `${100 / tabCount}%`,
             background: brand,
             transform: `translateX(${active * 100}%)`,
-            transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease',
+            transition: 'transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), background 0.35s ease',
           }}
         />
       </div>
 
-      {/* ---- Preview area ---- */}
-      <div style={{ position: 'relative' }}>
-        <div
-          key={active}
-          style={{
-            aspectRatio: '16 / 9',
-            width: '100%',
-            background: `linear-gradient(135deg, ${brand}14, ${brand}07)`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            overflow: 'hidden',
-            animation: 'fadeIn 0.4s ease',
-          }}
-        >
-          {showShot ? (
-            <>
-              {!loaded[active] && <div className="shimmer" style={{ position: 'absolute', inset: 0 }} />}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={shotUrl(link.href)}
-                alt={`Preview of ${link.label}`}
-                onLoad={() => setLoaded((s) => ({ ...s, [active]: true }))}
-                onError={() => setErrored((s) => ({ ...s, [active]: true }))}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'top',
-                  opacity: loaded[active] ? 1 : 0,
-                  transition: 'opacity 0.4s ease',
-                }}
-              />
-            </>
-          ) : (
-            // Branded fallback card (PDF / mailto / blocked sites)
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-              <div
-                style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  background: brand,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: `0 8px 24px ${brand}40`,
-                }}
-              >
-                <div style={{ filter: 'brightness(0) invert(1)' }}>
-                  <BrandIcon name={link.icon} size={30} />
-                </div>
-              </div>
-              <span style={{ fontSize: '0.875rem', color: 'var(--n-secondary)', fontWeight: 500 }}>
-                {link.label}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* ---- Footer: title / desc / url / open ---- */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '12px',
-            padding: '12px 16px',
-            borderTop: '1px solid var(--n-border)',
-          }}
-        >
-          <div style={{ minWidth: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-              <BrandIcon name={link.icon} size={16} />
-              <span style={{ fontWeight: 600, fontSize: '0.9375rem' }}>{link.label}</span>
-            </div>
-            {link.desc && (
-              <div style={{ fontSize: '0.8125rem', color: 'var(--n-light)', marginTop: '2px' }}>
-                {link.desc}
-              </div>
-            )}
-            <div
-              style={{
-                fontSize: '0.75rem',
-                color: 'var(--n-secondary)',
-                marginTop: '3px',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {prettyUrl(link.href)}
-            </div>
-          </div>
-          <a
-            href={link.href}
-            target={link.href.startsWith('http') ? '_blank' : undefined}
-            rel="noopener noreferrer"
+      {/* ---- Thumbnail preview (shorter, crossfaded) ---- */}
+      <div
+        style={{
+          position: 'relative',
+          height: '150px',
+          background: `linear-gradient(135deg, ${brand}14, ${brand}07)`,
+        }}
+      >
+        {links.map((l, i) => (
+          <div
+            key={l.label}
+            aria-hidden={i !== active}
             style={{
-              flexShrink: 0,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '5px',
-              padding: '7px 14px',
-              borderRadius: '7px',
-              background: 'var(--n-text)',
-              color: 'var(--n-bg)',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              textDecoration: 'none',
+              position: 'absolute',
+              inset: 0,
+              opacity: i === active ? 1 : 0,
+              transform: i === active ? 'scale(1)' : 'scale(1.03)',
+              transition: 'opacity 0.6s ease, transform 0.6s ease',
+              pointerEvents: 'none',
             }}
           >
-            Open ↗
-          </a>
+            {l.thumb ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={l.thumb}
+                alt={`${l.label} thumbnail`}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
+              />
+            ) : (
+              <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                <BrandIcon name={l.icon} size={34} />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* ---- Footer: title / desc / url / open ---- */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+          padding: '11px 14px',
+          borderTop: '1px solid var(--n-border)',
+        }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+            <BrandIcon name={link.icon} size={15} />
+            <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>{link.label}</span>
+          </div>
+          {link.desc && (
+            <div style={{ fontSize: '0.75rem', color: 'var(--n-light)', marginTop: '2px' }}>
+              {link.desc}
+            </div>
+          )}
+          <div
+            style={{
+              fontSize: '0.6875rem',
+              color: 'var(--n-secondary)',
+              marginTop: '3px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {prettyUrl(link.href)}
+          </div>
         </div>
+        <a
+          href={link.href}
+          target={link.href.startsWith('http') ? '_blank' : undefined}
+          rel="noopener noreferrer"
+          style={{
+            flexShrink: 0,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '7px 13px',
+            borderRadius: '7px',
+            background: 'var(--n-text)',
+            color: 'var(--n-bg)',
+            fontSize: '0.75rem',
+            fontWeight: 600,
+            textDecoration: 'none',
+          }}
+        >
+          Open ↗
+        </a>
       </div>
     </div>
   )

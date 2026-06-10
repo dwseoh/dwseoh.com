@@ -28,7 +28,7 @@ export default function WebringCarousel({ webrings }: { webrings: Webring[] }) {
           gap: '10px',
           border: '1px solid var(--n-border)',
           borderRadius: '8px',
-          padding: '10px 12px',
+          padding: '6px 8px',
           background: 'var(--n-hover)',
         }}
       >
@@ -49,13 +49,20 @@ export default function WebringCarousel({ webrings }: { webrings: Webring[] }) {
             gap: '8px',
             textDecoration: 'none',
             color: 'var(--n-secondary)',
-            fontSize: '0.875rem',
+            fontSize: '0.75rem',
             minWidth: 0,
           }}
         >
           {ring.img && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={ring.img} alt="" style={{ height: '1.25em', flexShrink: 0 }} />
+            <img
+              src={ring.img}
+              alt=""
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+              style={{ height: '1.1em', flexShrink: 0 }}
+            />
           )}
           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {ring.label}
