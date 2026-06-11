@@ -4,6 +4,7 @@ import RotatingText from '@/components/RotatingText'
 import ScrambleText from '@/components/ScrambleText'
 import LinkRow from '@/components/LinkRow'
 import HoverPreview from '@/components/HoverPreview'
+import Callout from '@/components/Callout'
 import LinkCarousel, { type CarouselLink } from '@/components/LinkCarousel'
 import WebringCarousel, { type Webring } from '@/components/WebringCarousel'
 import SocialPill from '@/components/SocialPill'
@@ -97,6 +98,9 @@ export default async function HomePage() {
             </HoverPreview>
           ))}
         </div>
+
+        {sectionHeading(t('sections.projects'))}
+        <Callout emoji="🚧">{t('construction')}</Callout>
 
         {sectionHeading(t('sections.hobbies'))}
         <LinkCarousel links={hobbyLinks} />

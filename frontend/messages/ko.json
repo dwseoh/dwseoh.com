@@ -8,13 +8,15 @@
   "roles": ["clarinetist.", "conductor.", "composer.", "music producer.", "pianist.", "ensemble director."],
   "sections": {
     "portfolio": "Portfolio Links",
+    "projects": "Projects",
     "hobbies": "Hobbies",
     "contact": "Contact"
   },
+  "construction": "Under construction — projects coming soon.",
   "previews": {
-    "uw": "[ placeholder — add a short description for University of Waterloo ]",
-    "cerebras": "[ placeholder — add a short description for Cerebras Systems ]",
-    "htn": "[ placeholder — add a short description for Hack the North ]"
+    "uw": "Canadian university known for its world-class co-op program and top-ranked engineering and computer science schools",
+    "cerebras": "AI compute company behind the world's largest and fastest AI chip, powering some of the fastest inference on the planet",
+    "htn": "Canada's biggest and most prestigious hackathon, bringing 1,000+ hackers from around the world to the University of Waterloo every year."
   },
   "footer": "",
   "copyright": "© 2026 Jamie Seoh. Redesign coming Summer 2026.",
