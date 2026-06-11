@@ -90,7 +90,7 @@ export default async function HomePage() {
         </p>
 
         {sectionHeading(t('sections.portfolio'))}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px' }}>
           {portfolioLinks.map((link) => (
             <HoverPreview key={link.label} block label={link.label} href={link.href} desc={link.desc} icon={link.icon}>
               <LinkRow label={link.label} href={link.href} icon={link.icon} />
