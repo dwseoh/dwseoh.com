@@ -64,3 +64,12 @@ body {
   from { opacity: 1; transform: translateY(0); }
   to   { opacity: 0; transform: translateY(10px); }
 }
+
+/* ---- Music-note particles drifting out of the word switcher ---- */
+@keyframes musicFloat {
+  0%   { opacity: 0; transform: translate(0, 0) rotate(0) scale(0.4); }
+  15%  { opacity: 0.9; }
+  50%  { transform: translate(calc(var(--dx, 0) * 0.45), -26px) rotate(calc(var(--rot, 20deg) * 0.5)) scale(1); }
+  80%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translate(var(--dx, 0), -54px) rotate(var(--rot, 20deg)) scale(0.95); }
+}
