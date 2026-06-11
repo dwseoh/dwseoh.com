@@ -3,10 +3,19 @@ import InlineLink from '@/components/InlineLink'
 import RotatingText from '@/components/RotatingText'
 import ScrambleText from '@/components/ScrambleText'
 import LinkRow from '@/components/LinkRow'
+import HoverPreview from '@/components/HoverPreview'
 import LinkCarousel, { type CarouselLink } from '@/components/LinkCarousel'
 import WebringCarousel, { type Webring } from '@/components/WebringCarousel'
 import SocialPill from '@/components/SocialPill'
 import LangSwitcher from '@/components/LangSwitcher'
+
+const favicon = (url: string) => {
+  try {
+    return `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=64`
+  } catch {
+    return undefined
+  }
+}
 
 const sectionHeading = (text: string) => (
   <h2
@@ -51,8 +60,16 @@ export default async function HomePage() {
 
         <p style={{ lineHeight: 1.9, marginBottom: '1.5rem' }}>
           {t.rich('bio1', {
-            uw: (chunks) => <InlineLink href="https://uwaterloo.ca">{chunks}</InlineLink>,
-            cerebras: (chunks) => <InlineLink href="https://cerebras.ai">{chunks}</InlineLink>,
+            uw: (chunks) => (
+              <HoverPreview label="University of Waterloo" href="https://uwaterloo.ca" desc={t('previews.uw')} iconUrl={favicon('https://uwaterloo.ca')}>
+                <InlineLink href="https://uwaterloo.ca">{chunks}</InlineLink>
+              </HoverPreview>
+            ),
+            cerebras: (chunks) => (
+              <HoverPreview label="Cerebras Systems" href="https://cerebras.ai" desc={t('previews.cerebras')} iconUrl={favicon('https://cerebras.ai')}>
+                <InlineLink href="https://cerebras.ai">{chunks}</InlineLink>
+              </HoverPreview>
+            ),
           })}
         </p>
 
@@ -64,14 +81,20 @@ export default async function HomePage() {
 
         <p style={{ lineHeight: 1.9, marginBottom: '0.5rem' }}>
           {t.rich('bioCommunity', {
-            htn: (chunks) => <InlineLink href="https://hackthenorth.com">{chunks}</InlineLink>,
+            htn: (chunks) => (
+              <HoverPreview label="Hack the North" href="https://hackthenorth.com" desc={t('previews.htn')} iconUrl={favicon('https://hackthenorth.com')}>
+                <InlineLink href="https://hackthenorth.com">{chunks}</InlineLink>
+              </HoverPreview>
+            ),
           })}
         </p>
 
         {sectionHeading(t('sections.portfolio'))}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px' }}>
           {portfolioLinks.map((link) => (
-            <LinkRow key={link.label} label={link.label} href={link.href} desc={link.desc} icon={link.icon} />
+            <HoverPreview key={link.label} block label={link.label} href={link.href} desc={link.desc} icon={link.icon}>
+              <LinkRow label={link.label} href={link.href} icon={link.icon} />
+            </HoverPreview>
           ))}
         </div>
 
@@ -81,7 +104,9 @@ export default async function HomePage() {
         {sectionHeading(t('sections.contact'))}
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
           {contactLinks.map((link) => (
-            <SocialPill key={link.label} label={link.label} href={link.href} icon={link.icon} />
+            <HoverPreview key={link.label} label={link.label} href={link.href} desc={link.desc} icon={link.icon}>
+              <SocialPill label={link.label} href={link.href} icon={link.icon} />
+            </HoverPreview>
           ))}
         </div>
 
@@ -92,16 +117,14 @@ export default async function HomePage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '1rem',
+            gap: '0.75rem 1.25rem',
             flexWrap: 'wrap',
           }}
         >
           <p style={{ color: 'var(--n-light)', fontSize: '0.75rem', margin: 0 }}>
             {t('copyright')}
           </p>
-          <div style={{ width: '260px', maxWidth: '100%' }}>
-            <WebringCarousel webrings={webrings} />
-          </div>
+          <WebringCarousel webrings={webrings} />
         </div>
       </main>
     </>

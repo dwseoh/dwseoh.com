@@ -13,6 +13,8 @@
   --n-hover:     rgba(55, 53, 47, 0.04);
   --n-hover-strong: rgba(55, 53, 47, 0.08);
   --n-callout-bg: rgba(35, 131, 226, 0.05);
+  --n-scramble:  #9a86c4; /* muted violet shown while the name is scrambled */
+  --n-dot:       rgba(55, 53, 47, 0.10); /* Figma-style background dot grid */
   --n-width:     700px;
 }
 
@@ -28,7 +30,11 @@ html {
 }
 
 body {
-  background: var(--n-bg);
+  background-color: var(--n-bg);
+  background-image: radial-gradient(var(--n-dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: -1px -1px;
+  background-attachment: fixed;
   color: var(--n-text);
   font-size: 1rem;
   overflow-x: hidden;
