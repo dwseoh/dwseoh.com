@@ -40,8 +40,9 @@
     { "label": "Email",     "href": "mailto:contact@dwseoh.com",                    "icon": "email"     }
   ],
   "webrings": [
-    { "label": "SE @UWaterloo", "href": "https://se-webring.xyz/", "img": "/images/se_webstring.svg" },
-    { "label": "SE '30 Cohort", "href": "https://www.se30webring.com/", "img": "/images/se30webring.svg" }
-
+    { "label": "UWaterloo SE", "href": "https://se-webring.xyz/", "img": "/images/se_webstring.svg" },
+    { "label": "UWaterloo Network", "href": "https://www.uwaterloo.network/", "img": "/images/uwaterloonetwork.svg" },
+    { "label": "SE '30 Cohort", "href": "https://www.se30webring.com/", "img": "/images/se30webring.svg" },
+    { "label": "webring.ca", "widget": { "attrs": { "data-webring": "ca", "data-member": "your-slug" }, "script": "https://webring.ca/embed.js" } }
   ]
 }
