@@ -3,44 +3,44 @@
 import { useEffect, useState } from 'react'
 import BrandIcon, { BRAND_COLORS } from './BrandIcon'
 
-export interface CarouselLink {
+export interface CategoryLink {
   label: string
-  title: string // optional display name shown instead of `label` (e.g. "Music Content")
   href: string
-  desc?: string
-  icon: string
+  icon?: string
+}
+
+export interface CarouselItem {
+  title: string
+  icon: string // general category icon (e.g. "music", "camera")
   thumb?: string
+  desc?: string
+  links: CategoryLink[]
 }
 
-function prettyUrl(href: string) {
-  try {
-    const u = new URL(href)
-    return (u.hostname + u.pathname).replace(/\/$/, '').replace(/^www\./, '')
-  } catch {
-    return href
-  }
-}
-
+/**
+ * Category carousel: tabs of categories (general icon + title) over a shared
+ * thumbnail preview, with a description and multiple links per category in the
+ * footer. Auto-advances; hovering pauses.
+ */
 export default function LinkCarousel({
-  links,
-  autoAdvanceMs = 4500,
+  items,
+  autoAdvanceMs = 5000,
 }: {
-  links: CarouselLink[]
+  items: CarouselItem[]
   autoAdvanceMs?: number
 }) {
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
-  const tabCount = links.length
+  const tabCount = items.length
 
-  // auto-advance
   useEffect(() => {
     if (paused || tabCount <= 1) return
     const id = setInterval(() => setActive((i) => (i + 1) % tabCount), autoAdvanceMs)
     return () => clearInterval(id)
   }, [paused, tabCount, autoAdvanceMs])
 
-  const link = links[active]
-  const brand = BRAND_COLORS[link.icon] ?? '#787774'
+  const item = items[active]
+  const brand = BRAND_COLORS[item.icon] ?? '#787774'
 
   return (
     <div
@@ -56,9 +56,9 @@ export default function LinkCarousel({
     >
       {/* ---- Tab strip ---- */}
       <div style={{ position: 'relative', display: 'flex', borderBottom: '1px solid var(--n-border)' }}>
-        {links.map((l, i) => (
+        {items.map((it, i) => (
           <button
-            key={l.label}
+            key={it.title}
             onClick={() => setActive(i)}
             style={{
               flex: 1,
@@ -78,9 +78,9 @@ export default function LinkCarousel({
               minWidth: 0,
             }}
           >
-            <BrandIcon name={l.icon} size={15} />
+            <BrandIcon name={it.icon} size={15} />
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {l.title ?? l.label}
+              {it.title}
             </span>
           </button>
         ))}
@@ -99,17 +99,11 @@ export default function LinkCarousel({
         />
       </div>
 
-      {/* ---- Thumbnail preview (shorter, crossfaded) ---- */}
-      <div
-        style={{
-          position: 'relative',
-          height: '150px',
-          background: `linear-gradient(135deg, ${brand}14, ${brand}07)`,
-        }}
-      >
-        {links.map((l, i) => (
+      {/* ---- Thumbnail preview (crossfaded) ---- */}
+      <div style={{ position: 'relative', height: '150px', background: `linear-gradient(135deg, ${brand}14, ${brand}07)` }}>
+        {items.map((it, i) => (
           <div
-            key={l.label}
+            key={it.title}
             aria-hidden={i !== active}
             style={{
               position: 'absolute',
@@ -120,76 +114,50 @@ export default function LinkCarousel({
               pointerEvents: 'none',
             }}
           >
-            {l.thumb ? (
+            {it.thumb ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={l.thumb}
-                alt={`${l.label} thumbnail`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
-              />
+              <img src={it.thumb} alt={`${it.title} thumbnail`} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
             ) : (
               <div style={{ display: 'flex', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                <BrandIcon name={l.icon} size={34} />
+                <BrandIcon name={it.icon} size={34} />
               </div>
             )}
           </div>
         ))}
       </div>
 
-      {/* ---- Footer: title / desc / url / open ---- */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '12px',
-          padding: '11px 14px',
-          borderTop: '1px solid var(--n-border)',
-        }}
-      >
-        <div style={{ minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-            <BrandIcon name={link.icon} size={15} />
-            <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>{link.label}</span>
-          </div>
-          {link.desc && (
-            <div style={{ fontSize: '0.75rem', color: 'var(--n-light)', marginTop: '2px' }}>
-              {link.desc}
-            </div>
-          )}
-          <div
-            style={{
-              fontSize: '0.6875rem',
-              color: 'var(--n-secondary)',
-              marginTop: '3px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {prettyUrl(link.href)}
-          </div>
+      {/* ---- Footer: description + multiple links ---- */}
+      <div style={{ padding: '12px 14px', borderTop: '1px solid var(--n-border)' }}>
+        {item.desc && (
+          <p style={{ fontSize: '0.8125rem', color: 'var(--n-secondary)', lineHeight: 1.5, margin: '0 0 10px' }}>
+            {item.desc}
+          </p>
+        )}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+          {item.links.map((l) => (
+            <a
+              key={l.label}
+              className="chip"
+              href={l.href}
+              target={l.href.startsWith('http') ? '_blank' : undefined}
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '4px 10px',
+                borderRadius: '16px',
+                border: '1px solid var(--n-border)',
+                color: 'var(--n-text)',
+                fontSize: '0.8125rem',
+                textDecoration: 'none',
+              }}
+            >
+              {l.icon && <BrandIcon name={l.icon} size={13} />}
+              {l.label}
+            </a>
+          ))}
         </div>
-        <a
-          href={link.href}
-          target={link.href.startsWith('http') ? '_blank' : undefined}
-          rel="noopener noreferrer"
-          style={{
-            flexShrink: 0,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '5px',
-            padding: '7px 13px',
-            borderRadius: '7px',
-            background: 'var(--n-text)',
-            color: 'var(--n-bg)',
-            fontSize: '0.75rem',
-            fontWeight: 600,
-            textDecoration: 'none',
-          }}
-        >
-          Open ↗
-        </a>
       </div>
     </div>
   )

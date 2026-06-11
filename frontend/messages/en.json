@@ -10,6 +10,7 @@
     "portfolio": "Portfolio Links",
     "projects": "Projects",
     "hobbies": "Hobbies",
+    "photos": "Photos",
     "contact": "Contact"
   },
   "construction": "under construction; coming soon.",
@@ -30,10 +31,35 @@
     { "label": "Resume",   "href": "/static/resume.pdf",                      "desc": "view my resume",         "icon": "file"     },
     { "label": "Substack", "href": "https://substack.com/@dwseoh",            "desc": "read my blog",           "icon": "substack" }
   ],
-  "hobbyLinks": [
-    { "label": "@dwclarinet",    "title": "Music Content", "href": "https://instagram.com/dwclarinet", "desc": "listen to my music projects",   "icon": "instagram", "thumb": "/images/thumbnails/dwclarinet.png" },
-    { "label": "@jam_flicks",    "title": "Photography",   "href": "https://instagram.com/jam_flicks", "desc": "follow my photography journey", "icon": "instagram", "thumb": "/images/thumbnails/jam_flicks.png" },
-    { "label": "Music Projects", "href": "https://projects.dwseoh.com",      "desc": "not maintained anymore",        "icon": "music",     "thumb": "/images/thumbnails/music_projects.png" }
+  "hobbyCategories": [
+    {
+      "title": "Music Content",
+      "icon": "music",
+      "thumb": "/images/thumbnails/dwclarinet.png",
+      "desc": "Clarinet performance, composition, and production — here's where I share it all.",
+      "links": [
+        { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
+        { "label": "Compositions", "href": "#", "icon": "music" },
+        { "label": "Music Projects", "href": "https://projects.dwseoh.com", "icon": "music" }
+      ]
+    },
+    {
+      "title": "Photography",
+      "icon": "camera",
+      "thumb": "/images/thumbnails/jam_flicks.png",
+      "desc": "Capturing moments around campus and beyond.",
+      "links": [
+        { "label": "@jam_flicks", "href": "https://instagram.com/jam_flicks", "icon": "instagram" }
+      ]
+    }
+  ],
+  "photos": [
+    { "src": "/images/photos/p1.png", "alt": "Photo 1", "caption": "Add a caption here" },
+    { "src": "/images/photos/p2.png", "alt": "Photo 2", "caption": "Add a caption here" },
+    { "src": "/images/photos/p3.png", "alt": "Photo 3", "caption": "Add a caption here" },
+    { "src": "/images/photos/p4.png", "alt": "Photo 4", "caption": "Add a caption here" },
+    { "src": "/images/photos/p5.png", "alt": "Photo 5", "caption": "Add a caption here" },
+    { "src": "/images/photos/p6.png", "alt": "Photo 6", "caption": "Add a caption here" }
   ],
   "contactLinks": [
     { "label": "Discord",   "href": "https://discord.com/users/891434702509060106", "icon": "discord"   },
