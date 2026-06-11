@@ -11,6 +11,11 @@
     "hobbies": "Hobbies",
     "contact": "Contact"
   },
+  "previews": {
+    "uw": "[ placeholder — add a short description for University of Waterloo ]",
+    "cerebras": "[ placeholder — add a short description for Cerebras Systems ]",
+    "htn": "[ placeholder — add a short description for Hack the North ]"
+  },
   "footer": "",
   "copyright": "© 2026 Jamie Seoh. Redesign coming Summer 2026.",
   "lang": {
@@ -20,16 +25,18 @@
   "portfolioLinks": [
     { "label": "LinkedIn", "href": "https://www.linkedin.com/in/jamie-seoh", "desc": "connect with me!",       "icon": "linkedin" },
     { "label": "GitHub",   "href": "https://github.com/dwseoh",               "desc": "check out my projects!", "icon": "github"   },
-    { "label": "Resume",   "href": "/static/resume.pdf",                      "desc": "view my resume",         "icon": "file"     }
+    { "label": "Resume",   "href": "/static/resume.pdf",                      "desc": "view my resume",         "icon": "file"     },
+    { "label": "Substack", "href": "https://substack.com/@dwseoh",            "desc": "read my blog",           "icon": "substack" }
   ],
   "hobbyLinks": [
-    { "label": "@dwclarinet",    "href": "https://instagram.com/dwclarinet", "desc": "listen to my music projects",   "icon": "instagram", "thumb": "/images/thumbnails/dwclarinet.png" },
-    { "label": "@jam_flicks",    "href": "https://instagram.com/jam_flicks", "desc": "follow my photography journey", "icon": "instagram", "thumb": "/images/thumbnails/jam_flicks.png" },
+    { "label": "@dwclarinet",    "title": "Music Content", "href": "https://instagram.com/dwclarinet", "desc": "listen to my music projects",   "icon": "instagram", "thumb": "/images/thumbnails/dwclarinet.png" },
+    { "label": "@jam_flicks",    "title": "Photography",   "href": "https://instagram.com/jam_flicks", "desc": "follow my photography journey", "icon": "instagram", "thumb": "/images/thumbnails/jam_flicks.png" },
     { "label": "Music Projects", "href": "https://projects.dwseoh.com",      "desc": "not maintained anymore",        "icon": "music",     "thumb": "/images/thumbnails/music_projects.png" }
   ],
   "contactLinks": [
     { "label": "Discord",   "href": "https://discord.com/users/891434702509060106", "icon": "discord"   },
     { "label": "Instagram", "href": "https://www.instagram.com/dongwan_seoh/",      "icon": "instagram" },
+    { "label": "X (Twitter)",         "href": "https://x.com/sdw1_",                          "icon": "x"         },
     { "label": "Email",     "href": "mailto:contact@dwseoh.com",                    "icon": "email"     }
   ],
   "webrings": [

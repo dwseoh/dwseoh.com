@@ -4,6 +4,8 @@ export const BRAND_COLORS: Record<string, string> = {
   github:    '#181717',
   instagram: '#E4405F',
   discord:   '#5865F2',
+  substack:  '#FF6719',
+  x:         '#000000',
   file:      '#E8743B',
   music:     '#8B5CF6',
   email:     '#6B7280',
@@ -26,6 +28,8 @@ const CDN_ICONS: Record<string, string> = {
   github:    'github/181717',
   instagram: 'instagram/E4405F',
   discord:   'discord/5865F2',
+  substack:  'substack/FF6719',
+  x:         'x/000000',
 }
 
 export default function BrandIcon({ name, size = 18 }: { name: string; size?: number }) {

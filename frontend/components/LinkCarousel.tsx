@@ -5,6 +5,7 @@ import BrandIcon, { BRAND_COLORS } from './BrandIcon'
 
 export interface CarouselLink {
   label: string
+  title: string // optional display name shown instead of `label` (e.g. "Music Content")
   href: string
   desc?: string
   icon: string
@@ -79,7 +80,7 @@ export default function LinkCarousel({
           >
             <BrandIcon name={l.icon} size={15} />
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {l.label}
+              {l.title ?? l.label}
             </span>
           </button>
         ))}
