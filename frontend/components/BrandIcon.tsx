@@ -8,6 +8,7 @@ export const BRAND_COLORS: Record<string, string> = {
   x:         '#000000',
   file:      '#E8743B',
   music:     '#8B5CF6',
+  camera:    '#0EA5E9',
   email:     '#6B7280',
 }
 
@@ -21,6 +22,7 @@ const INLINE_SVG: Record<string, string> = {
   file: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2 5 5h-5V4zM6 4h5v6h7v10H6V4z',
   music: 'M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z',
   email: 'M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z',
+  camera: 'M9 2 7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3.17L15 2H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
 }
 
 // Icons fetched from the Simple Icons CDN (these all resolve correctly).
