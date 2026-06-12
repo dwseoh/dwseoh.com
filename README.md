@@ -1,27 +1,34 @@
 # dwseoh.com
 
-> [!WARNING]
-> **v2 is currently in progress!** The site is undergoing a redesign.
+Personal portfolio website (Notion-style single page) with a bilingual (English/Korean) layout, an auto-scrolling photo strip, hobby cards, and a webring switcher.
 
-Personal portfolio website for Jamie Seoh.
+> [!NOTE]
+> This is a placeholder build ahead of a full redesign (Summer 2026). It's a
+> Next.js migration of the old static HTML site.
 
-## Features
+## Run it locally
 
-- Bilingual support (English/Korean)
-- Responsive design for mobile and desktop
-- Language dropdown with flag icons
+```bash
+cd frontend
+npm install
+npm run dev        # http://localhost:3000
+```
 
-## Structure
+`npm run build` for a production build.
 
-- `index.html` - Main page
-- `assets/images/` - Flag icons and images
-- `assets/static/` - Resume and static files
+## Editing content
 
-## Local Development
+All text, links, and media references live in **`frontend/messages/en.json`**
+(`ko.json` is a duplicate for the Korean translation). No code changes needed
+to update copy, portfolio links, hobby channels, photos, or webrings.
 
-Simply open `index.html` in a browser. No build process required.
+## Theming
+
+Colors and the content width are CSS variables at the top of
+`frontend/app/globals.css` (`--n-bg`, `--n-text`, `--n-accent`, `--n-width`, …).
+Change them in one place to restyle the whole site.
 
 ## Fonts
 
-- **Inter** - English content
-- **Gowun Dodum** - Korean content
+- **Inter** — English content
+- **Gowun Dodum** — Korean content
