@@ -5,7 +5,7 @@ import ScrambleText from '@/components/ScrambleText'
 import LinkRow from '@/components/LinkRow'
 import HoverPreview from '@/components/HoverPreview'
 import Callout from '@/components/Callout'
-import LinkCarousel, { type CarouselItem } from '@/components/LinkCarousel'
+import HobbyCards, { type CarouselItem } from '@/components/HobbyCards'
 import PhotoStrip, { type Photo } from '@/components/PhotoStrip'
 import WebringCarousel, { type Webring } from '@/components/WebringCarousel'
 import SocialPill from '@/components/SocialPill'
@@ -114,7 +114,7 @@ export default async function HomePage() {
         <Callout emoji="🚧">{t('construction')}</Callout>
 
         {sectionHeading(t('sections.hobbies'))}
-        <LinkCarousel items={hobbyCategories} />
+        <HobbyCards items={hobbyCategories} />
 
         {sectionHeading(t('sections.contact'))}
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
