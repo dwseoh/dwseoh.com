@@ -32,7 +32,28 @@ body {
   background-color: var(--n-bg);
   color: var(--n-text);
   font-size: 1rem;
-  overflow-x: hidden;
+  /* `clip` hides horizontal overflow WITHOUT making <body> a scroll container
+     (which `hidden` does, and which traps vertical scrolling on mobile). */
+  overflow-x: clip;
+}
+
+/* ---- Footer: copyright + webring ---- */
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+  /* stack and center on phones so the webring reads as part of the footer
+     instead of an awkward left-aligned control next to the copyright */
+  .site-footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.9rem;
+  }
 }
 
 /* ---- Link hover states ---- */
