@@ -1,13 +1,15 @@
 // A clean alphanumeric set (no jagged symbols) keeps the scramble smooth.
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
-function rand(): string {
+// How many Latin letters a "wide" (Hangul/CJK) character is worth. 1.5 means a
+// 4-character Korean name churns through ~6 letters while it resolves, keeping
+// the width close without looking sparse.
+export const WIDE_RATIO = 1.5
+
+export function randomGlyph(): string {
   return GLYPHS[Math.floor(Math.random() * GLYPHS.length)]
 }
 
-// "Wide" scripts (Hangul/CJK) are about twice the width of a Latin letter, so
-// each wide character scrambles into 2 letters — e.g. a 4-character Korean name
-// churns through ~8 letters, keeping the width close while it resolves.
 function isWide(ch: string): boolean {
   const c = ch.codePointAt(0) ?? 0
   return (
@@ -18,13 +20,33 @@ function isWide(ch: string): boolean {
   )
 }
 
-export function randomGlyph(target?: string): string {
-  return target && isWide(target) ? rand() + rand() : rand()
+/** Number of scramble letters to show per character (wide chars get more). */
+export function scrambleCounts(text: string): number[] {
+  const counts: number[] = []
+  let cum = 0
+  let prev = 0
+  for (const ch of text) {
+    if (ch === ' ') {
+      counts.push(1)
+      continue
+    }
+    cum += isWide(ch) ? WIDE_RATIO : 1
+    const f = Math.round(cum)
+    counts.push(Math.max(1, f - prev))
+    prev = f
+  }
+  return counts
 }
 
 /** Fully scrambled version of `text` (spaces preserved). */
 export function scrambleAll(text: string): string {
   let out = ''
-  for (const ch of text) out += ch === ' ' ? ' ' : randomGlyph(ch)
+  const counts = scrambleCounts(text)
+  let i = 0
+  for (const ch of text) {
+    if (ch === ' ') out += ' '
+    else for (let k = 0; k < counts[i]; k++) out += randomGlyph()
+    i++
+  }
   return out
 }

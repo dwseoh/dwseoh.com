@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { randomGlyph } from './scramble'
+import { randomGlyph, scrambleCounts } from './scramble'
 
 // Re-randomize each scrambled glyph only ~30% of frames so it reads as a calm
 // settle rather than a frantic flicker (especially important for Hangul).
@@ -41,6 +41,7 @@ export default function ScrambleText({
 
     const target = hovered ? 0 : 1
     const step = 1000 / 30 / duration
+    const counts = scrambleCounts(text)
     let raf = 0
 
     const tick = () => {
@@ -56,7 +57,11 @@ export default function ScrambleText({
         if (ch === ' ') out += ' '
         else if (i < revealed) out += ch
         else {
-          if (!glyphs.current[i] || Math.random() < CHURN) glyphs.current[i] = randomGlyph(ch)
+          if (!glyphs.current[i] || Math.random() < CHURN) {
+            let g = ''
+            for (let k = 0; k < counts[i]; k++) g += randomGlyph()
+            glyphs.current[i] = g
+          }
           out += glyphs.current[i]
         }
       }
