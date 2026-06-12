@@ -139,8 +139,8 @@ export default function HobbyCards({ items }: { items: CarouselItem[] }) {
                       key={l.label}
                       className="chip chip-featured"
                       href={l.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      target={l.href.startsWith('http') ? '_blank' : undefined}
+                      rel={l.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                       style={{
                         ...chipBase,
                         padding: '4px 11px',
@@ -151,7 +151,7 @@ export default function HobbyCards({ items }: { items: CarouselItem[] }) {
                       }}
                     >
                       {l.label}
-                      <ExternalIcon />
+                      {l.href.startsWith('http') && <ExternalIcon />}
                     </a>
                   ) : (
                     <a

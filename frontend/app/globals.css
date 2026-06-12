@@ -187,6 +187,115 @@ body {
   to   { opacity: 0; transform: translateY(10px); }
 }
 
+/* ================================================
+   COMPOSITIONS — index grid, detail header, synced score
+   ================================================ */
+.back-link {
+  text-decoration: none;
+  transition: color 0.12s ease;
+}
+.back-link:hover {
+  color: var(--n-text);
+}
+
+/* index: responsive card grid */
+.composition-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+.composition-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--n-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--n-bg);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.composition-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+.composition-card-cover {
+  aspect-ratio: 1 / 1;
+  background: var(--n-hover);
+}
+.composition-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.composition-card-body {
+  padding: 12px 14px 14px;
+}
+
+/* detail: cover + metadata, two columns on desktop, stacked on phones */
+.composition-header {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+.composition-header-cover {
+  flex: 0 0 160px;
+  width: 160px;
+  height: 160px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--n-hover);
+}
+.composition-header-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.composition-header-meta {
+  min-width: 0;
+}
+@media (max-width: 640px) {
+  .composition-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+/* responsive 16:9 video frame for performance embeds */
+.composition-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.composition-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* synced score: full-width SVG; sounding notes turn accent blue */
+.score {
+  overflow-x: auto;
+  margin: 0.5rem 0 1rem;
+}
+.score svg {
+  width: 100%;
+  height: auto;
+}
+.score .note {
+  cursor: pointer;
+}
+.score .playing {
+  fill: var(--n-accent);
+}
+
 /* ---- Music-note particles drifting out of the word switcher ---- */
 @keyframes musicFloat {
   0%   { opacity: 0; transform: translate(0, 0) rotate(0) scale(0.4); }

@@ -38,7 +38,7 @@
       "thumb": "/images/thumbnails/music.png",
       "desc": "Explore my clarinet performances, compositions, and more!",
       "links": [
-        { "label": "Compositions", "href": "#", "locked": true },
+        { "label": "Compositions", "href": "/compositions", "featured": true },
         { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
         { "label": "[Deprciated] Music Projects", "href": "https://projects.dwseoh.com", "icon": "music" }
       ]
