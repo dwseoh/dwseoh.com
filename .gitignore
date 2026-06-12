@@ -1,7 +1,14 @@
+# dependencies
+**/node_modules
 
-.venv/
-save.txt
-dwseoh-frontend/next-env.d.ts
-*node_modules
-*.next
+# Next.js
+frontend/.next
+frontend/next-env.d.ts
+
+# misc
 *.DS_Store
+.venv
+save.txt
+AGENTS.md
+CLAUDE.md
+placehoder-v1/

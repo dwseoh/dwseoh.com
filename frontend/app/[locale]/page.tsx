@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import InlineLink from '@/components/InlineLink'
 import RotatingText from '@/components/RotatingText'
 import ScrambleText from '@/components/ScrambleText'
@@ -43,6 +43,7 @@ const sectionHeading = (text: string) => (
 
 export default async function HomePage() {
   const t = await getTranslations()
+  const locale = await getLocale()
 
   const roles            = t.raw('roles') as string[]
   const portfolioLinks   = t.raw('portfolioLinks') as SimpleLink[]
@@ -65,7 +66,15 @@ export default async function HomePage() {
             lineHeight: 1.2,
           }}
         >
-          {t('greeting')} <ScrambleText text={t('name')} /> {t('wave')}
+          {locale === 'ko' ? (
+            <>
+              <ScrambleText key="name" text={t('name')} /> <span key="greeting">{t('greeting')}</span> {t('wave')}
+            </>
+          ) : (
+            <>
+              <span key="greeting">{t('greeting')}</span> <ScrambleText key="name" text={t('name')} /> {t('wave')}
+            </>
+          )}
         </h1>
 
         <p style={{ lineHeight: 1.9, marginBottom: '1.5rem' }}>

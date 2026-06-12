@@ -1,10 +1,7 @@
 import type { Metadata } from 'next'
-import { Inter, Gowun_Dodum } from 'next/font/google'
 import { getLocale } from 'next-intl/server'
+import { inter } from './fonts'
 import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
-const gowunDodum = Gowun_Dodum({ weight: '400', subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: "Jamie's Website",
@@ -21,9 +18,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const locale = await getLocale()
   return (
     <html lang={locale}>
-      <body className={locale === 'ko' ? gowunDodum.className : inter.className}>
-        {children}
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }
