@@ -136,15 +136,7 @@ export default async function HomePage() {
 
         <hr style={{ border: 'none', borderTop: '1px solid var(--n-border)', margin: '0.5rem 0 1.25rem' }} />
 
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '0.75rem 1.25rem',
-            flexWrap: 'wrap',
-          }}
-        >
+        <div className="site-footer">
           <p style={{ color: 'var(--n-light)', fontSize: '0.75rem', margin: 0 }}>
             {t('copyright')}
           </p>
