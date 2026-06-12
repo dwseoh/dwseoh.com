@@ -112,12 +112,27 @@ export default function PhotoStrip({
                     >
                       unavailable
                     </span>
+                  ) : video ? (
+                    // Video plays ASAP: poster shows the first frame instantly while
+                    // preload="auto" buffers, then it autoplays muted + loops.
+                    <video
+                      src={photo.src}
+                      poster={photo.poster}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      preload="auto"
+                      onLoadedData={() => markLoaded(i)}
+                      onCanPlay={() => markLoaded(i)}
+                      onError={() => markError(i)}
+                      style={mediaStyle}
+                    />
                   ) : (
-                    // Tiles always render a lightweight image: video poster, or the
-                    // photo thumbnail (falling back to the full image if missing).
+                    // Images use a lightweight thumbnail (falls back to full if missing).
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={video ? photo.poster : fallback[i] ? photo.src : thumbOf(photo.src)}
+                      src={fallback[i] ? photo.src : thumbOf(photo.src)}
                       alt={photo.alt}
                       decoding="async"
                       ref={(el) => {
@@ -125,7 +140,7 @@ export default function PhotoStrip({
                       }}
                       onLoad={() => markLoaded(i)}
                       onError={() => {
-                        if (!video && !fallback[i]) setFallback((s) => ({ ...s, [i]: true }))
+                        if (!fallback[i]) setFallback((s) => ({ ...s, [i]: true }))
                         else markError(i)
                       }}
                       style={mediaStyle}
@@ -158,7 +173,24 @@ export default function PhotoStrip({
                   )}
 
                   {photo.caption && !isError && (
-                    <figcaption className="photo-cap">{photo.caption}</figcaption>
+                    <figcaption
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 3,
+                        padding: '16px 8px 6px',
+                        fontSize: '0.6875rem',
+                        color: '#fff',
+                        background: 'linear-gradient(transparent, rgba(0,0,0,0.78))',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {photo.caption}
+                    </figcaption>
                   )}
                 </figure>
               )
