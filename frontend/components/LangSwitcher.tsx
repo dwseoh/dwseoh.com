@@ -25,7 +25,7 @@ export default function LangSwitcher() {
   }
 
   return (
-    <div style={{ position: 'fixed', top: '1rem', right: '1.25rem', zIndex: 1000 }}>
+    <div style={{ position: 'absolute', top: '1rem', right: '1.25rem', zIndex: 1000 }}>
       <button
         onClick={() => setOpen((v) => !v)}
         style={{

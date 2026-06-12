@@ -21,6 +21,8 @@
    scales every heading, paragraph, and component down together. */
 html {
   font-size: 16px;
+  /* never allow the viewport itself to scroll sideways */
+  overflow-x: clip;
 }
 @media (max-width: 640px) {
   html {
@@ -32,7 +34,43 @@ body {
   background-color: var(--n-bg);
   color: var(--n-text);
   font-size: 1rem;
-  overflow-x: hidden;
+  /* `clip` hides horizontal overflow WITHOUT making <body> a scroll container
+     (which `hidden` does, and which traps vertical scrolling on mobile). */
+  overflow-x: clip;
+}
+
+/* ---- Portfolio links grid: 4 across, 2 on phones (4 overflow narrow screens) ---- */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.portfolio-grid > * {
+  min-width: 0; /* let cells shrink instead of forcing overflow */
+}
+@media (max-width: 640px) {
+  .portfolio-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- Footer: copyright + webring ---- */
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+  /* stack and center on phones so the webring reads as part of the footer
+     instead of an awkward left-aligned control next to the copyright */
+  .site-footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.9rem;
+  }
 }
 
 /* ---- Link hover states ---- */
