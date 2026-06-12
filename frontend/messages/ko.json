@@ -1,0 +1,82 @@
+{
+  "greeting": "홈페이지",
+  "name": "서동완의",
+  "wave": "👋",
+  "bio1": "저는 캐나다 <uw>워털루 대학교</uw>에서 소프트웨어 공학을 전공하고 있고, 2019년 가을에 캐나다로 이주했습니다. 이번 여름에는 <cerebras>Cerebras Systems</cerebras>이라는 반도체 회사에서 AI 소프트웨어 엔지니어링 인턴으로 일하며, 추론(inference)을 위한 low-level C++ 인프라와 디버깅 도구를 개발하고 있습니다.",
+  "bioMusic": "여가 시간에는 음악에 큰 열정을 쏟고 있습니다. 저는 다양한 역할들을 맡아왔습니다; 나는 <roles></roles>",
+  "bioCommunity": "또한 커뮤니티 활동에도 적극적으로 참여하고 있습니다. 현재 <htn>Hack the North</htn>에서 Logistics Organizer (해커톤 주최측)으로 활동 중이며, 이전에는 Ignition Hacks 스폰서십 디렉터, 워털루 한인 학생회(행사 담당), Hack the Ridge 회장 등을 역임했습니다.",
+  "roles": ["클라리넷 연주자.", "지휘자.", "작곡가.", "음악 프로듀서.", "피아니스트.", "앙상블 디렉터."],
+  "sections": {
+    "portfolio": "포트폴리오 링크",
+    "projects": "프로젝트",
+    "hobbies": "취미",
+    "photos": "사진",
+    "contact": "연락처"
+  },
+  "construction": "준비 중입니다.",
+  "previews": {
+    "uw": "세계적인 코업(co-op) 프로그램과 최상위권 공학·컴퓨터과학 학부로 유명한 캐나다 대학교",
+    "cerebras": "세계에서 가장 크고 빠른 AI 칩을 개발하며, 세계 최고 속도의 추론을 지원하는 AI 컴퓨팅 기업",
+    "htn": "매년 전 세계에서 1,000명 이상의 해커들이 워털루 대학교에 모이는, 캐나다 최대 규모이자 가장 유명한 해커톤."
+  },
+  "footer": "",
+  "copyright": "© 2026 Jamie Seoh. Redesign coming Summer 2026.",
+  "lang": {
+    "en": "English",
+    "ko": "한국어"
+  },
+  "portfolioLinks": [
+    { "label": "LinkedIn", "href": "https://www.linkedin.com/in/jamie-seoh", "desc": "저와 연결해요!",        "icon": "linkedin" },
+    { "label": "GitHub",   "href": "https://github.com/dwseoh",               "desc": "제 프로젝트 구경하기!", "icon": "github"   },
+    { "label": "이력서",    "href": "/static/resume.pdf",                      "desc": "이력서 보기",           "icon": "file"     },
+    { "label": "Substack", "href": "https://substack.com/@dwseoh",            "desc": "블로그 읽기",           "icon": "substack" }
+  ],
+  "hobbyCategories": [
+    {
+      "title": "음악 콘텐츠",
+      "icon": "music",
+      "thumb": "/images/thumbnails/music.png",
+      "desc": "클라리넷 연주, 작곡 작품 등을 만나보세요!",
+      "links": [
+        { "label": "작곡 모음", "href": "#", "locked": true },
+        { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
+        { "label": "[구버전] 음악 프로젝트", "href": "https://projects.dwseoh.com", "icon": "music" }
+      ]
+    },
+    {
+      "title": "사진",
+      "icon": "camera",
+      "thumb": "/images/thumbnails/photography.png",
+      "desc": "자연, 도시, 그리고 그 너머의 순간들을 담습니다. Canon EOS R10 사용자.",
+      "links": [
+        { "label": "사진 갤러리", "href": "#", "locked": true },
+        { "label": "@jam_flicks", "href": "https://instagram.com/jam_flicks", "icon": "instagram" }
+      ]
+    }
+  ],
+  "photos": [
+    { "src": "/images/photos/presenting-microsoft.jpg", "alt": "Microsoft에서 발표", "caption": "마이크로소프트에서 발표" },
+    { "src": "/images/photos/img-4093.jpg", "alt": "하프 마라톤 완주", "caption": "하프 마라톤 완주", "position": "50% 25%"},
+    { "src": "/images/photos/delta-hacks.jpg", "alt": "DeltaHacks 12 우승", "caption": "DeltaHacks 12 우승"},
+    { "src": "/videos/orchestra-conducting.mp4", "poster": "/videos/orchestra-conducting-poster.jpg", "alt": "오케스트라 지휘", "caption": "라이브 공연에서 오케스트라 지휘" },
+    { "src": "/images/photos/img-6411.jpg", "alt": "고등학교 졸업!", "caption": "고등학교 졸업!", "position": "50% 100%"},
+    { "src": "/images/photos/stem-fellowship.jpg", "alt": "STEM Fellowship", "caption": "STEM Fellowship" },
+    { "src": "/images/photos/photography.jpg", "alt": "사진 촬영", "caption": "사진 촬영"},
+    { "src": "/images/photos/woowoo-ensemble.jpg", "alt": "WooWoo Ensemble 공연", "caption": "WooWoo Ensemble 공연", "position": "50% 65%" },
+    { "src": "/images/photos/conducting-concert-band.jpg", "alt": "콘서트 밴드 지휘", "caption": "콘서트 밴드 지휘", "position": "50% 27%"},
+    { "src": "/images/photos/shad-dalhousie-24.jpg", "alt": "SHAD Dalhousie 2024", "caption": "SHAD Dalhousie '24" },
+    { "src": "/images/photos/world-sudoku-and-puzzle-championships.jpg", "alt": "World Sudoku and Puzzle Championships", "caption": "World Sudoku & Puzzle Championships" }
+  ],
+  "contactLinks": [
+    { "label": "Discord",   "href": "https://discord.com/users/891434702509060106", "icon": "discord"   },
+    { "label": "Instagram", "href": "https://www.instagram.com/dongwan_seoh/",      "icon": "instagram" },
+    { "label": "X (트위터)", "href": "https://x.com/sdw1_",                          "icon": "x"         },
+    { "label": "이메일",     "href": "mailto:contact@dwseoh.com",                    "icon": "email"     }
+  ],
+  "webrings": [
+    { "label": "UWaterloo SE", "href": "https://se-webring.xyz/", "img": "/images/se_webstring.svg" },
+    { "label": "UWaterloo Network", "href": "https://www.uwaterloo.network/", "img": "/images/uwaterloonetwork.svg" },
+    { "label": "SE '30 Cohort", "href": "https://www.se30webring.com/", "img": "/images/se30webring.svg" },
+    { "label": "webring.ca", "widget": { "attrs": { "data-webring": "ca", "data-member": "your-slug" }, "script": "https://webring.ca/embed.js" } }
+  ]
+}
