@@ -99,7 +99,6 @@ export default async function HomePage() {
           })}
         </p>
 
-        {sectionHeading(t('sections.photos'))}
         <PhotoStrip photos={photos} />
 
         {sectionHeading(t('sections.portfolio'))}
