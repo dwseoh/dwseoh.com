@@ -63,6 +63,24 @@ body {
   border-color: var(--n-light);
 }
 
+/* featured "opens a page" chip — emphasized with a soft pulsing ring */
+.chip-featured {
+  animation: chipPulse 2.2s ease-in-out infinite;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.chip-featured:hover {
+  transform: translateY(-1px);
+  animation: none;
+  box-shadow: 0 4px 14px rgba(35, 131, 226, 0.45);
+}
+@keyframes chipPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(35, 131, 226, 0.45); }
+  50%      { box-shadow: 0 0 0 5px rgba(35, 131, 226, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chip-featured { animation: none; }
+}
+
 /* ---- Photo strip marquee (pauses on hover) ---- */
 @keyframes marquee {
   from { transform: translateX(0); }

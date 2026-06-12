@@ -34,7 +34,15 @@ const CDN_ICONS: Record<string, string> = {
   x:         'x/000000',
 }
 
-export default function BrandIcon({ name, size = 18 }: { name: string; size?: number }) {
+export default function BrandIcon({
+  name,
+  size = 18,
+  color,
+}: {
+  name: string
+  size?: number
+  color?: string
+}) {
   if (INLINE_SVG[name]) {
     return (
       <svg
@@ -42,7 +50,7 @@ export default function BrandIcon({ name, size = 18 }: { name: string; size?: nu
         viewBox="0 0 24 24"
         width={size}
         height={size}
-        style={{ display: 'block', flexShrink: 0, fill: BRAND_COLORS[name] ?? 'var(--n-secondary)' }}
+        style={{ display: 'block', flexShrink: 0, fill: color ?? BRAND_COLORS[name] ?? 'var(--n-secondary)' }}
         dangerouslySetInnerHTML={{ __html: `<path d="${INLINE_SVG[name]}"/>` }}
       />
     )
