@@ -4,6 +4,11 @@ export interface Photo {
   caption?: string
   /** Optional override; otherwise inferred from the file extension. */
   type?: 'image' | 'video'
+  /** Poster image shown for videos before they load. */
+  poster?: string
+  /** CSS object-position for the cropped strip tile, e.g. "center", "top",
+   *  "50% 20%". Handy for vertical images so the subject isn't cut off. */
+  position?: string
 }
 
 /** GIF/PNG/JPG/WebP render as <img>; MP4/WebM/MOV/OGG render as <video>. */
