@@ -36,33 +36,34 @@
       "title": "Music Content",
       "icon": "music",
       "thumb": "/images/thumbnails/dwclarinet.png",
-      "desc": "Clarinet performance, composition, and production — here's where I share it all.",
+      "desc": "Explore my clarinet performances, compositions, and more!",
       "links": [
+        { "label": "Compositions", "href": "#", "locked": true },
         { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
-        { "label": "Compositions", "href": "#", "icon": "music" },
-        { "label": "Music Projects", "href": "https://projects.dwseoh.com", "icon": "music" }
+        { "label": "[Deprciated] Music Projects", "href": "https://projects.dwseoh.com", "icon": "music" }
       ]
     },
     {
       "title": "Photography",
       "icon": "camera",
       "thumb": "/images/thumbnails/jam_flicks.png",
-      "desc": "Capturing moments around campus and beyond.",
+      "desc": "Capturing moments in nature, cities, and beyond. Canon EOS R10 User.",
       "links": [
+        { "label": "Photo Gallery", "href": "#", "locked": true },
         { "label": "@jam_flicks", "href": "https://instagram.com/jam_flicks", "icon": "instagram" }
       ]
     }
   ],
   "photos": [
-    { "src": "/videos/orchestra-conducting.mp4", "poster": "/videos/orchestra-conducting-poster.jpg", "alt": "Conducting an Orchestra", "caption": "Conducting My Orchestra @Live Concert" },
-    { "src": "/images/photos/conducting-concert-band.jpg", "alt": "Conducting concert band", "caption": "Conducting concert band" },
-    { "src": "/images/photos/photography.jpg", "alt": "Photography", "caption": "Photography"},
     { "src": "/images/photos/presenting-microsoft.jpg", "alt": "Presenting at Microsoft", "caption": "Presenting at Microsoft" },
-    { "src": "/images/photos/stem-fellowship.jpg", "alt": "STEM Fellowship", "caption": "STEM Fellowship" },
+    { "src": "/images/photos/img-4093.jpg", "alt": "Running a Half Marathon", "caption": "Running a Half Marathon", "position": "50% 25%"},
     { "src": "/images/photos/delta-hacks.jpg", "alt": "Winning DeltaHacks", "caption": "Winning DeltaHacks 12"},
-    { "src": "/images/photos/woowoo-ensemble.jpg", "alt": "WooWoo Ensemble Performance", "caption": "WooWoo Ensemble Performance" },
-    { "src": "/images/photos/img-4093.jpg", "alt": "Running a Half Marathon", "caption": "Running a Half Marathon" },
-    { "src": "/images/photos/img-6411.jpg", "alt": "High School Graduation!", "caption": "High School Grad!" }
+    { "src": "/videos/orchestra-conducting.mp4", "poster": "/videos/orchestra-conducting-poster.jpg", "alt": "Conducting an Orchestra", "caption": "Conducting My Orchestra @Live Concert" },
+    { "src": "/images/photos/img-6411.jpg", "alt": "High School Graduation!", "caption": "High School Grad!", "position": "50% 100%"},
+    { "src": "/images/photos/stem-fellowship.jpg", "alt": "STEM Fellowship", "caption": "STEM Fellowship" },
+    { "src": "/images/photos/photography.jpg", "alt": "Photography", "caption": "Photography"},
+    { "src": "/images/photos/woowoo-ensemble.jpg", "alt": "WooWoo Ensemble Performance", "caption": "WooWoo Ensemble Performance", "position": "50% 65%" },
+    { "src": "/images/photos/conducting-concert-band.jpg", "alt": "Conducting concert band", "caption": "Conducting Concert Band", "position": "50% 27%"}
   ],
   "contactLinks": [
     { "label": "Discord",   "href": "https://discord.com/users/891434702509060106", "icon": "discord"   },

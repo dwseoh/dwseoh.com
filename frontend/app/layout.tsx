@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 const gowunDodum = Gowun_Dodum({ weight: '400', subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'dwseoh.com',
+  title: "Jamie's Website",
   description: "Jamie Seoh's personal website",
   openGraph: {
     siteName: 'dwseoh.com',

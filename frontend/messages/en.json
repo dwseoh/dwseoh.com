@@ -35,20 +35,21 @@
     {
       "title": "Music Content",
       "icon": "music",
-      "thumb": "/images/thumbnails/dwclarinet.png",
-      "desc": "Clarinet performance, composition, and production — here's where I share it all.",
+      "thumb": "/images/thumbnails/music.png",
+      "desc": "Explore my clarinet performances, compositions, and more!",
       "links": [
+        { "label": "Compositions", "href": "#", "locked": true },
         { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
-        { "label": "Compositions", "href": "#", "icon": "music" },
-        { "label": "Music Projects", "href": "https://projects.dwseoh.com", "icon": "music" }
+        { "label": "[Deprciated] Music Projects", "href": "https://projects.dwseoh.com", "icon": "music" }
       ]
     },
     {
       "title": "Photography",
       "icon": "camera",
-      "thumb": "/images/thumbnails/jam_flicks.png",
-      "desc": "Capturing moments around campus and beyond.",
+      "thumb": "/images/thumbnails/photography.png",
+      "desc": "Capturing moments in nature, cities, and beyond. Canon EOS R10 User.",
       "links": [
+        { "label": "Photo Gallery", "href": "#", "locked": true },
         { "label": "@jam_flicks", "href": "https://instagram.com/jam_flicks", "icon": "instagram" }
       ]
     }
