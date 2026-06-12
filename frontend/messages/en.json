@@ -54,6 +54,7 @@
     }
   ],
   "photos": [
+    { "src": "/videos/orchestra-conducting.mp4", "alt": "Conducting an Orchestra", "caption": "Conducting My Orchestra @Live Concert" },
     { "src": "/images/photos/p1.png", "alt": "Photo 1", "caption": "Add a caption here" },
     { "src": "/images/photos/p2.png", "alt": "Photo 2", "caption": "Add a caption here" },
     { "src": "/images/photos/p3.png", "alt": "Photo 3", "caption": "Add a caption here" },

@@ -1,21 +1,27 @@
 'use client'
 
 import { useState } from 'react'
+import Lightbox from './Lightbox'
+import { isVideo, type Photo } from './photo'
 
-export interface Photo {
-  src: string
-  alt: string
-  caption?: string
-}
+export type { Photo } from './photo'
+
+// Wider fade so photos ease in/out at the edges instead of cutting abruptly.
+const EDGE_MASK =
+  'linear-gradient(to right, transparent, #000 12%, #000 88%, transparent)'
+
+const GAP = 12 // px between tiles, applied as margin-right so the loop is seamless
 
 /**
- * Auto-scrolling horizontal photo strip (marquee). The set is duplicated so the
- * loop is seamless; hovering pauses it (see `.photo-strip:hover` in globals.css).
- * Each photo has an optional caption, and clicking opens it in a lightbox.
+ * Body-width auto-scrolling photo strip with faded edges. Spacing is applied as
+ * margin-right (not flex gap) so the duplicated set is exactly half the track —
+ * that makes translateX(-50%) loop seamlessly with no stutter. Hovering pauses
+ * the scroll, zooms the tile, and reveals its caption. Click opens a lightbox.
+ * Marquee + hover styles live in globals.css.
  */
 export default function PhotoStrip({
   photos,
-  durationSec = 40,
+  durationSec = 38,
 }: {
   photos: Photo[]
   durationSec?: number
@@ -25,93 +31,69 @@ export default function PhotoStrip({
 
   return (
     <>
-      <div className="photo-strip" style={{ overflow: 'hidden', width: '100%' }}>
+      <div style={{ margin: '2rem 0 2.5rem' }}>
         <div
-          className="photo-track"
+          className="photo-strip"
           style={{
-            display: 'flex',
-            gap: '12px',
-            width: 'max-content',
-            animation: `marquee ${durationSec}s linear infinite`,
+            overflow: 'hidden',
+            padding: '6px 0',
+            WebkitMaskImage: EDGE_MASK,
+            maskImage: EDGE_MASK,
           }}
         >
-          {loop.map((photo, i) => (
-            <figure
-              key={i}
-              onClick={() => setLightbox(photo)}
-              style={{ margin: 0, flexShrink: 0, cursor: 'zoom-in', width: '200px' }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photo.src}
-                alt={photo.alt}
+          <div
+            className="photo-track"
+            style={{
+              display: 'flex',
+              width: 'max-content',
+              ['--marquee-dur' as string]: `${durationSec}s`,
+            } as React.CSSProperties}
+          >
+            {loop.map((photo, i) => (
+              <figure
+                key={i}
+                className="photo-figure"
+                onClick={() => setLightbox(photo)}
                 style={{
-                  width: '200px',
-                  height: '150px',
-                  objectFit: 'cover',
+                  position: 'relative',
+                  margin: 0,
+                  marginRight: `${GAP}px`,
+                  flexShrink: 0,
+                  width: '165px',
+                  height: '112px',
                   borderRadius: '10px',
-                  display: 'block',
-                  border: '1px solid var(--n-border)',
+                  overflow: 'hidden',
+                  cursor: 'zoom-in',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
                 }}
-              />
-              {photo.caption && (
-                <figcaption
-                  style={{
-                    fontSize: '0.75rem',
-                    color: 'var(--n-secondary)',
-                    marginTop: '6px',
-                    lineHeight: 1.35,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {photo.caption}
-                </figcaption>
-              )}
-            </figure>
-          ))}
+              >
+                {isVideo(photo) ? (
+                  <video
+                    src={photo.src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={photo.src}
+                    alt={photo.alt}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                )}
+                {photo.caption && (
+                  <figcaption className="photo-cap">{photo.caption}</figcaption>
+                )}
+              </figure>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Lightbox */}
-      {lightbox && (
-        <div
-          onClick={() => setLightbox(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.8)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '14px',
-            padding: '5vw',
-            zIndex: 2000,
-            cursor: 'zoom-out',
-            animation: 'fadeIn 0.2s ease',
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={lightbox.src}
-            alt={lightbox.alt}
-            style={{
-              maxWidth: '100%',
-              maxHeight: '80vh',
-              objectFit: 'contain',
-              borderRadius: '12px',
-              boxShadow: '0 12px 48px rgba(0,0,0,0.5)',
-            }}
-          />
-          {lightbox.caption && (
-            <p style={{ color: '#fff', fontSize: '0.9375rem', margin: 0, textAlign: 'center', maxWidth: '600px' }}>
-              {lightbox.caption}
-            </p>
-          )}
-        </div>
-      )}
+      <Lightbox photo={lightbox} onClose={() => setLightbox(null)} />
     </>
   )
 }
