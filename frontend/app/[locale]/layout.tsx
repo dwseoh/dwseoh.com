@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
+import { inter, gowunDodum } from '../fonts'
 
 export default async function LocaleLayout({
   children,
@@ -15,5 +16,9 @@ export default async function LocaleLayout({
 
   const messages = await getMessages()
 
-  return <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+  return (
+    <div lang={locale} className={locale === 'ko' ? gowunDodum.className : inter.className}>
+      <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+    </div>
+  )
 }
