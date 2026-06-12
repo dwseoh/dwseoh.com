@@ -91,25 +91,34 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 14px 8px 6px;
+  padding: 16px 8px 6px;
   font-size: 0.6875rem;
   color: #fff;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.78));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.photo-figure:hover .photo-cap {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+/* loading skeleton for media tiles */
+.skeleton {
+  background: linear-gradient(
+    100deg,
+    rgba(55, 53, 47, 0.05) 30%,
+    rgba(55, 53, 47, 0.10) 50%,
+    rgba(55, 53, 47, 0.05) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
 }
 
 /* ---- Rotating text: out slides down, in drops from above ---- */

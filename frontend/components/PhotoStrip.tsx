@@ -12,6 +12,12 @@ const EDGE_MASK =
 
 const GAP = 12 // px between tiles, applied as margin-right so the loop is seamless
 
+// Strip tiles use a small thumbnail (foo.jpg -> foo-thumb.jpg) for fast loading;
+// the lightbox loads the full-size original.
+function thumbOf(src: string) {
+  return src.replace(/(\.[^.\/]+)$/, '-thumb$1')
+}
+
 /**
  * Body-width auto-scrolling photo strip with faded edges. Spacing is applied as
  * margin-right (not flex gap) so the duplicated set is exactly half the track —
@@ -27,7 +33,13 @@ export default function PhotoStrip({
   durationSec?: number
 }) {
   const [lightbox, setLightbox] = useState<Photo | null>(null)
+  const [loaded, setLoaded] = useState<Record<number, boolean>>({})
+  const [errored, setErrored] = useState<Record<number, boolean>>({})
+  const [fallback, setFallback] = useState<Record<number, boolean>>({})
   const loop = [...photos, ...photos]
+
+  const markLoaded = (i: number) => setLoaded((s) => (s[i] ? s : { ...s, [i]: true }))
+  const markError = (i: number) => setErrored((s) => ({ ...s, [i]: true }))
 
   return (
     <>
@@ -49,46 +61,108 @@ export default function PhotoStrip({
               ['--marquee-dur' as string]: `${durationSec}s`,
             } as React.CSSProperties}
           >
-            {loop.map((photo, i) => (
-              <figure
-                key={i}
-                className="photo-figure"
-                onClick={() => setLightbox(photo)}
-                style={{
-                  position: 'relative',
-                  margin: 0,
-                  marginRight: `${GAP}px`,
-                  flexShrink: 0,
-                  width: '165px',
-                  height: '112px',
-                  borderRadius: '10px',
-                  overflow: 'hidden',
-                  cursor: 'zoom-in',
-                  boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-                }}
-              >
-                {isVideo(photo) ? (
-                  <video
-                    src={photo.src}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                  />
-                ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={photo.src}
-                    alt={photo.alt}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                  />
-                )}
-                {photo.caption && (
-                  <figcaption className="photo-cap">{photo.caption}</figcaption>
-                )}
-              </figure>
-            ))}
+            {loop.map((photo, i) => {
+              const video = isVideo(photo)
+              const isLoaded = loaded[i]
+              const isError = errored[i]
+              const mediaStyle: React.CSSProperties = {
+                position: 'relative',
+                zIndex: 1,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: photo.position ?? 'center',
+                display: 'block',
+              }
+              return (
+                <figure
+                  key={i}
+                  className="photo-figure"
+                  onClick={() => !isError && setLightbox(photo)}
+                  style={{
+                    position: 'relative',
+                    margin: 0,
+                    marginRight: `${GAP}px`,
+                    flexShrink: 0,
+                    width: '165px',
+                    height: '112px',
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    cursor: isError ? 'default' : 'zoom-in',
+                    background: 'var(--n-hover)',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+                  }}
+                >
+                  {/* loading skeleton */}
+                  {!isLoaded && !isError && (
+                    <span className="skeleton" style={{ position: 'absolute', inset: 0 }} />
+                  )}
+
+                  {isError ? (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--n-light)',
+                        fontSize: '0.625rem',
+                      }}
+                    >
+                      unavailable
+                    </span>
+                  ) : (
+                    // Tiles always render a lightweight image: video poster, or the
+                    // photo thumbnail (falling back to the full image if missing).
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={video ? photo.poster : fallback[i] ? photo.src : thumbOf(photo.src)}
+                      alt={photo.alt}
+                      decoding="async"
+                      ref={(el) => {
+                        if (el && el.complete && el.naturalWidth > 0) markLoaded(i)
+                      }}
+                      onLoad={() => markLoaded(i)}
+                      onError={() => {
+                        if (!video && !fallback[i]) setFallback((s) => ({ ...s, [i]: true }))
+                        else markError(i)
+                      }}
+                      style={mediaStyle}
+                    />
+                  )}
+
+                  {/* video badge (top-left) */}
+                  {video && !isError && (
+                    <span
+                      aria-hidden
+                      style={{
+                        position: 'absolute',
+                        top: '6px',
+                        left: '6px',
+                        zIndex: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '18px',
+                        height: '18px',
+                        borderRadius: '5px',
+                        background: 'rgba(0,0,0,0.55)',
+                        backdropFilter: 'blur(2px)',
+                      }}
+                    >
+                      <svg width="9" height="9" viewBox="0 0 10 10" fill="#fff">
+                        <path d="M2 1l7 4-7 4z" />
+                      </svg>
+                    </span>
+                  )}
+
+                  {photo.caption && !isError && (
+                    <figcaption className="photo-cap">{photo.caption}</figcaption>
+                  )}
+                </figure>
+              )
+            })}
           </div>
         </div>
       </div>
