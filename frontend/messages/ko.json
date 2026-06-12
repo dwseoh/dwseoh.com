@@ -38,7 +38,7 @@
       "thumb": "/images/thumbnails/music.png",
       "desc": "클라리넷 연주, 작곡 작품 등을 만나보세요!",
       "links": [
-        { "label": "작곡 모음", "href": "#", "locked": true },
+        { "label": "작곡 모음", "href": "/compositions", "featured": true },
         { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
         { "label": "[구버전] 음악 프로젝트", "href": "https://projects.dwseoh.com", "icon": "music" }
       ]

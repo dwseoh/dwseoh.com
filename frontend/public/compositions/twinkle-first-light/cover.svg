@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="First Light placeholder cover">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2383e2"/>
+      <stop offset="1" stop-color="#9a86c4"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#g)"/>
+  <g fill="#ffffff" opacity="0.92">
+    <circle cx="150" cy="250" r="22"/>
+    <circle cx="250" cy="220" r="22"/>
+    <rect x="170" y="150" width="6" height="106"/>
+    <rect x="270" y="120" width="6" height="106"/>
+    <path d="M170 150 L276 120 L276 138 L170 168 Z"/>
+  </g>
+  <text x="200" y="350" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="700" fill="#ffffff">First Light</text>
+</svg>
