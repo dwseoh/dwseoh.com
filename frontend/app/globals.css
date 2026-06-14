@@ -161,6 +161,107 @@ body {
   to   { opacity: 1; }
 }
 
+/* ---- Projects: infinite focus carousel ---- */
+.proj-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--n-border);
+  border-radius: 9px;
+  background: var(--n-bg);
+  color: var(--n-text);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+    transform 0.18s ease, box-shadow 0.18s ease;
+}
+.proj-arrow svg {
+  transition: transform 0.18s ease;
+}
+.proj-arrow:hover {
+  background: var(--n-accent);
+  border-color: var(--n-accent);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(35, 131, 226, 0.3);
+}
+.proj-arrow:active {
+  transform: translateY(0) scale(0.94);
+  box-shadow: 0 2px 6px rgba(35, 131, 226, 0.25);
+}
+.proj-arrow--prev:hover svg {
+  transform: translateX(-2px);
+}
+.proj-arrow--next:hover svg {
+  transform: translateX(2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .proj-arrow, .proj-arrow svg { transition: none; }
+  .proj-arrow:hover { transform: none; }
+}
+.proj-linkbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--n-border);
+  color: var(--n-secondary);
+  text-decoration: none;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.proj-linkbtn:hover {
+  background: var(--n-hover);
+  color: var(--n-text);
+  border-color: var(--n-light);
+}
+.proj-linkbtn.is-featured {
+  background: var(--n-accent);
+  border-color: var(--n-accent);
+  color: #fff;
+}
+.proj-linkbtn.is-featured:hover {
+  box-shadow: 0 3px 10px rgba(35, 131, 226, 0.4);
+}
+@media (prefers-reduced-motion: reduce) {
+  .proj-arrow, .proj-linkbtn { transition: none; }
+}
+
+/* small "in progress" affordance shown beside a section heading */
+.inprogress {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  color: var(--n-light);
+  cursor: not-allowed;
+}
+.inprogress::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%) translateY(3px);
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--n-text);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.inprogress:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* loading skeleton for media tiles */
 .skeleton {
   background: linear-gradient(

@@ -9,11 +9,14 @@
   "sections": {
     "portfolio": "Portfolio Links",
     "projects": "Projects",
+    "experiences": "Experience",
     "hobbies": "Hobbies",
     "photos": "Photos",
     "contact": "Contact"
   },
   "construction": "under construction; coming soon.",
+  "projectsMore": "All projects",
+  "projectsMoreSoon": "soon",
   "previews": {
     "uw": "Canadian university known for its world-class co-op program and top-ranked engineering and computer science schools",
     "cerebras": "AI compute company behind the world's largest and fastest AI chip, powering some of the fastest inference on the planet",
@@ -31,6 +34,69 @@
     { "label": "Resume",   "href": "/static/resume.pdf",                      "desc": "view my resume",         "icon": "file"     },
     { "label": "Substack", "href": "https://substack.com/@dwseoh",            "desc": "read my blog",           "icon": "substack" }
   ],
+  "projects": [
+    {
+      "title": "Project One",
+      "desc": "A short description of what this project does and why it's worth a look. Swap in real copy.",
+      "tech": ["TypeScript", "React", "Node.js"],
+      "icon": "bolt",
+      "screenshot": "",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/dwseoh", "icon": "github" },
+        { "label": "Live", "href": "#", "featured": false }
+      ]
+    },
+    {
+      "title": "Project Two",
+      "desc": "Another placeholder project. Describe the problem it solves in a sentence or two.",
+      "tech": ["Python", "FastAPI", "Postgres"],
+      "icon": "spark",
+      "screenshot": "",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/dwseoh", "icon": "github" }
+      ]
+    },
+    {
+      "title": "Project Three",
+      "desc": "A third placeholder project. Highlight what makes the build interesting.",
+      "tech": ["C++", "WebAssembly"],
+      "icon": "cube",
+      "screenshot": "",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/dwseoh", "icon": "github" },
+        { "label": "Demo", "href": "#", "featured": false }
+      ]
+    },
+    {
+      "title": "Project Four",
+      "desc": "A fourth placeholder project. One or two sentences on what it is.",
+      "tech": ["Rust", "Tauri"],
+      "icon": "grid",
+      "screenshot": "",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/dwseoh", "icon": "github" }
+      ]
+    }
+  ],
+  "experienceGraph": {
+    "scrollHint": "scroll to pan",
+    "lanes": [
+      { "id": "main",        "label": "main",        "color": "#4b4a45" },
+      { "id": "engineering", "label": "co-op",       "color": "#2383e2" },
+      { "id": "community",   "label": "community",   "color": "#8B5CF6" },
+      { "id": "leadership",  "label": "leadership",  "color": "#0EA5E9" }
+    ],
+    "commits": [
+      { "col": 0, "branch": "main",        "org": "Moved to Canada",          "role": "git init",             "period": "2019" },
+      { "col": 1, "branch": "leadership",  "org": "Hack the Ridge",           "role": "President",            "period": "2021–2023", "desc": "Founded & led my high school's hackathon." },
+      { "col": 2, "branch": "community",   "org": "Ignition Hacks",           "role": "Sponsorship Director", "period": "2023",      "desc": "Led sponsorship outreach & fundraising." },
+      { "col": 3, "branch": "main",        "org": "University of Waterloo",   "role": "Software Engineering", "period": "2024",      "href": "https://uwaterloo.ca" },
+      { "col": 4, "branch": "community",   "org": "UW Korean Students' Assoc.","role": "Events",              "period": "2024",      "desc": "Organized cultural & community events on campus." },
+      { "col": 5, "branch": "community",   "org": "Hack the North",           "role": "Logistics Organizer",  "period": "2025–Now",  "desc": "Helping run Canada's largest hackathon.", "href": "https://hackthenorth.com" },
+      { "col": 6, "branch": "engineering", "org": "Cerebras Systems",         "role": "AI SWE Intern",        "period": "2026",      "desc": "Low-level C++ inference infra & debugging tools.", "href": "https://cerebras.ai" },
+      { "col": 7, "branch": "main",        "org": "HEAD",                     "role": "today",                "period": "2026" }
+    ]
+  },
   "hobbyCategories": [
     {
       "title": "Music Content",
