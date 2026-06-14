@@ -8,7 +8,7 @@
   --n-text:      #37352f;
   --n-secondary: #787774;
   --n-light:     #9b9a97;
-  --n-accent:    #2383e2;
+  --n-accent:    #3698e3;
   --n-border:    #e9e9e7;
   --n-hover:     rgba(55, 53, 47, 0.04);
   --n-hover-strong: rgba(55, 53, 47, 0.08);
@@ -295,4 +295,196 @@ body {
   50%  { transform: translate(calc(var(--dx, 0) * 0.45), -26px) rotate(calc(var(--rot, 20deg) * 0.5)) scale(1); }
   80%  { opacity: 0.6; }
   100% { opacity: 0; transform: translate(var(--dx, 0), -54px) rotate(var(--rot, 20deg)) scale(0.95); }
+}
+
+/* ============================================================
+   Experience — connected logo timeline. A single rail runs top
+   to bottom through the company logos (the nodes); each row
+   expands to reveal a blurb + skills. One accent (site blue)
+   marks the current role. Sits inline at the page column width.
+   ============================================================ */
+.xp {
+  border: 1px solid var(--n-border);
+  border-radius: 14px;
+  background: var(--n-bg);
+  overflow: hidden;
+}
+.xp-list { list-style: none; margin: 0; padding: 6px; }
+
+.xp-item { position: relative; }
+/* the rail: runs from this logo's centre down into the next logo (masked by it),
+   so the line reads as one continuous timeline punctuated by the marks. */
+.xp-item:not(.xp-last)::after {
+  content: '';
+  position: absolute;
+  left: 35px;
+  top: 34px;
+  height: 100%;
+  width: 2px;
+  background: var(--n-border);
+  z-index: 0;
+}
+
+.xp-head {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: background 0.12s ease;
+}
+.xp-head:hover { background: var(--n-hover); }
+
+/* logo node — opaque tile that masks the rail passing behind it */
+.xp-logo {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--n-border);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.xp-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 5px;
+}
+.xp-logo-live {
+  border-color: var(--n-accent);
+  box-shadow: 0 0 0 3px rgba(35, 131, 226, 0.14);
+}
+
+.xp-main { min-width: 0; }
+.xp-toprow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.xp-role {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--n-text);
+}
+.xp-period {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--n-light);
+  white-space: nowrap;
+}
+.xp-subrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+.xp-org { font-size: 0.8125rem; color: var(--n-secondary); }
+.xp-dur { font-size: 0.75rem; color: var(--n-light); }
+.xp-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--n-accent);
+}
+.xp-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--n-accent);
+  box-shadow: 0 0 0 0 rgba(35, 131, 226, 0.5);
+  animation: xpPulse 2s ease-out infinite;
+}
+@keyframes xpPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(35, 131, 226, 0.5); }
+  70%  { box-shadow: 0 0 0 6px rgba(35, 131, 226, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(35, 131, 226, 0); }
+}
+
+.xp-chev {
+  display: inline-flex;
+  color: var(--n-light);
+  transition: transform 0.22s ease, color 0.12s ease;
+}
+.xp-chev.is-open { transform: rotate(180deg); color: var(--n-secondary); }
+.xp-head:hover .xp-chev { color: var(--n-secondary); }
+
+/* expanding body — grid-rows 0fr→1fr animates height with no measuring */
+.xp-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.26s ease;
+}
+.xp-body[data-open='true'] { grid-template-rows: 1fr; }
+.xp-body-inner { overflow: hidden; }
+.xp-blurb {
+  margin: 0;
+  padding: 0 16px 0 70px;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--n-secondary);
+}
+.xp-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 16px 0 70px;
+}
+.xp-skill {
+  font-size: 0.6875rem;
+  color: var(--n-secondary);
+  background: var(--n-hover);
+  border: 1px solid var(--n-border);
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+.xp-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 16px 14px 70px;
+  font-size: 0.75rem;
+  color: var(--n-light);
+}
+.xp-meta-dot { color: var(--n-border); }
+.xp-visit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  color: var(--n-accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+.xp-visit:hover { text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+  .xp-dot { animation: none; }
+  .xp-chev, .xp-body { transition: none; }
+}
+
+@media (max-width: 640px) {
+  .xp-period { font-size: 0.6875rem; }
+  .xp-blurb, .xp-skills, .xp-meta { padding-left: 16px; }
 }

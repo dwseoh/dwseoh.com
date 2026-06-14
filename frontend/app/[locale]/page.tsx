@@ -10,6 +10,7 @@ import PhotoStrip, { type Photo } from '@/components/PhotoStrip'
 import WebringCarousel, { type Webring } from '@/components/WebringCarousel'
 import SocialPill from '@/components/SocialPill'
 import LangSwitcher from '@/components/LangSwitcher'
+import Experience from '@/components/Experience'
 
 interface SimpleLink {
   label: string
@@ -136,27 +137,7 @@ export default async function HomePage() {
         )}
 
         {sectionHeading(t('sections.experiences'))}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '10px',
-            padding: '2.75rem 1.5rem',
-            textAlign: 'center',
-            border: '1px dashed var(--n-border)',
-            borderRadius: '14px',
-            background: 'var(--n-hover)',
-            color: 'var(--n-light)',
-          }}
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 7v5l3 2" />
-          </svg>
-          <p style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 500 }}>{t('construction')}</p>
-        </div>
+        <Experience />
 
         {sectionHeading(t('sections.hobbies'))}
         <HobbyCards items={hobbyCategories} />
