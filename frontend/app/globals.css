@@ -230,6 +230,32 @@ body {
   .proj-arrow, .proj-linkbtn { transition: none; }
 }
 
+/* award accolade over a project thumbnail — bottom gradient caption (matches
+   .photo-cap), so it stays legible over any screenshot or the placeholder.
+   Shows the full-color DeltaHacks logo with a subtle shadow for legibility. */
+.proj-award {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 12px 9px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.proj-award-ico {
+  display: inline-flex;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
 /* small "in progress" affordance shown beside a section heading */
 .inprogress {
   position: relative;
