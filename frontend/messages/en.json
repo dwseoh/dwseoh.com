@@ -12,7 +12,7 @@
     "experiences": "Experience",
     "hobbies": "Hobbies",
     "photos": "Photos",
-    "contact": "Contact"
+    "contact": "Contact (Socials)"
   },
   "construction": "under construction; coming soon.",
   "projectsMore": "All projects",
@@ -36,24 +36,25 @@
   ],
   "projects": [
     {
-      "title": "Project One",
-      "desc": "A short description of what this project does and why it's worth a look. Swap in real copy.",
+      "title": "Quota",
+      "desc": "Real-time financial intelligence for your codebase. VScode ext. + web sandbox.",
       "tech": ["TypeScript", "React", "Node.js"],
-      "icon": "bolt",
-      "screenshot": "",
+      "logo": "/images/logos/quota.png",
+      "award": "DeltaHacks 12 First Place",
+      "screenshot": "/images/thumbnails/quota.png",
       "links": [
-        { "label": "GitHub", "href": "https://github.com/dwseoh", "icon": "github" },
-        { "label": "Live", "href": "#", "featured": false }
+        { "label": "GitHub", "href": "https://github.com/dwseoh/quota", "icon": "github" },
+        { "label": "Devpost", "href": "https://devpost.com/software/quota-fg4pzi", "icon": "devpost" }
       ]
     },
     {
-      "title": "Project Two",
-      "desc": "Another placeholder project. Describe the problem it solves in a sentence or two.",
+      "title": "Nebula",
+      "desc": "Mobile notes app with camera import via OCR, semantic search, and LLM chat.",
       "tech": ["Python", "FastAPI", "Postgres"],
-      "icon": "spark",
-      "screenshot": "",
+      "logo": "/images/logos/nebula.svg",
+      "screenshot": "/images/thumbnails/nebula.webp",
       "links": [
-        { "label": "GitHub", "href": "https://github.com/dwseoh", "icon": "github" }
+        { "label": "GitHub", "href": "https://github.com/rickytang666/nebula", "icon": "github" }
       ]
     },
     {
@@ -78,24 +79,77 @@
       ]
     }
   ],
-  "experienceGraph": {
-    "scrollHint": "scroll to pan",
-    "lanes": [
-      { "id": "main",        "label": "main",        "color": "#4b4a45" },
-      { "id": "engineering", "label": "co-op",       "color": "#2383e2" },
-      { "id": "community",   "label": "community",   "color": "#8B5CF6" },
-      { "id": "leadership",  "label": "leadership",  "color": "#0EA5E9" }
-    ],
-    "commits": [
-      { "col": 0, "branch": "main",        "org": "Moved to Canada",          "role": "git init",             "period": "2019" },
-      { "col": 1, "branch": "leadership",  "org": "Hack the Ridge",           "role": "President",            "period": "2021–2023", "desc": "Founded & led my high school's hackathon." },
-      { "col": 2, "branch": "community",   "org": "Ignition Hacks",           "role": "Sponsorship Director", "period": "2023",      "desc": "Led sponsorship outreach & fundraising." },
-      { "col": 3, "branch": "main",        "org": "University of Waterloo",   "role": "Software Engineering", "period": "2024",      "href": "https://uwaterloo.ca" },
-      { "col": 4, "branch": "community",   "org": "UW Korean Students' Assoc.","role": "Events",              "period": "2024",      "desc": "Organized cultural & community events on campus." },
-      { "col": 5, "branch": "community",   "org": "Hack the North",           "role": "Logistics Organizer",  "period": "2025–Now",  "desc": "Helping run Canada's largest hackathon.", "href": "https://hackthenorth.com" },
-      { "col": 6, "branch": "engineering", "org": "Cerebras Systems",         "role": "AI SWE Intern",        "period": "2026",      "desc": "Low-level C++ inference infra & debugging tools.", "href": "https://cerebras.ai" },
-      { "col": 7, "branch": "main",        "org": "HEAD",                     "role": "today",                "period": "2026" }
-    ]
+  "experiences": [
+    {
+      "id": "cerebras",
+      "role": "AI Software Engineer Intern",
+      "org": "Cerebras Systems",
+      "logo": "/images/logos/cerebras.png",
+      "period": "May 2026 — Present",
+      "duration": "2 mos",
+      "location": "Toronto, ON · Hybrid",
+      "type": "Internship",
+      "blurb": "Building low level C++ infrastructure and inference debugging tools for Cerebras' wafer-scale AI systems (the world's largest and fastest chip).",
+      "skills": ["AI Systems", "Python", "Performance"],
+      "href": "https://cerebras.ai",
+      "present": true
+    },
+    {
+      "id": "watonomous",
+      "role": "Autonomy Developer",
+      "org": "WATonomous",
+      "logo": "/images/logos/watonomous.jpg",
+      "period": "Feb 2026 — Apr 2026",
+      "duration": "3 mos",
+      "location": "Waterloo, ON · Hybrid",
+      "type": "Design team",
+      "blurb": "Autonomy software on the Eve team for Waterloo's self-driving vehicle and autonomous racing project.",
+      "skills": ["C++", "Autonomy", "Robotics"],
+      "href": "https://watonomous.ca"
+    },
+    {
+      "id": "orbital",
+      "role": "Software Engineer",
+      "org": "UW Orbital",
+      "logo": "/images/logos/orbital.png",
+      "period": "Oct 2025 — Apr 2026",
+      "duration": "7 mos",
+      "location": "Waterloo, ON · Hybrid",
+      "type": "Design team",
+      "blurb": "Built Mission Control interfaces for satellite operations on the Ground Station team — React & TypeScript front of a FastAPI backend.",
+      "skills": ["React", "TypeScript", "FastAPI", "Python"],
+      "href": "https://www.uworbital.com"
+    },
+    {
+      "id": "solvexchange",
+      "role": "Frontend Developer",
+      "org": "SolveXchange",
+      "logo": "/images/logos/solvexchange.png",
+      "period": "Mar 2024 — Jul 2025",
+      "duration": "1 yr 5 mos",
+      "location": "Remote",
+      "type": "Contract · Part-time",
+      "blurb": "Engineered full-stack web features that grew the platform to 50+ active users.",
+      "skills": ["JavaScript", "Flask", "SQLAlchemy", "CSS"],
+      "href": "https://solvexchange.ca"
+    },
+    {
+      "id": "pinpoint",
+      "role": "Web Development Intern",
+      "org": "PNPT (핀포인트)",
+      "logo": "/images/logos/pinpoint_logo.png",
+      "period": "Jun 2023 — Aug 2023",
+      "duration": "3 mos",
+      "location": "Seoul, South Korea",
+      "type": "Internship",
+      "blurb": "Prototyped responsive UI in Figma & React to support front-end development.",
+      "skills": ["Figma", "React", "UI Design"],
+      "href": "https://www.pnpt.kr/"
+    }
+  ],
+  "experienceLabels": {
+    "present": "Present",
+    "visit": "Visit"
   },
   "hobbyCategories": [
     {
@@ -137,7 +191,8 @@
     { "label": "Discord",   "href": "https://discord.com/users/891434702509060106", "icon": "discord"   },
     { "label": "Instagram", "href": "https://www.instagram.com/dongwan_seoh/",      "icon": "instagram" },
     { "label": "X (Twitter)",         "href": "https://x.com/sdw1_",                          "icon": "x"         },
-    { "label": "Email",     "href": "mailto:contact@dwseoh.com",                    "icon": "email"     }
+    { "label": "Email",     "href": "mailto:contact@dwseoh.com",                    "icon": "email"     },
+    { "label": "Devpost", "href":"https://devpost.com/dwseoh", "icon":"devpost"}
   ],
   "webrings": [
     { "label": "UWaterloo SE", "href": "https://se-webring.xyz/", "img": "/images/se_webstring.svg" },

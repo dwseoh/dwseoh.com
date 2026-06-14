@@ -10,7 +10,7 @@ import PhotoStrip, { type Photo } from '@/components/PhotoStrip'
 import WebringCarousel, { type Webring } from '@/components/WebringCarousel'
 import SocialPill from '@/components/SocialPill'
 import LangSwitcher from '@/components/LangSwitcher'
-import Experience from '@/components/Experience'
+import Experience, { type Experience as ExperienceItem, type ExperienceLabels } from '@/components/Experience'
 
 interface SimpleLink {
   label: string
@@ -56,6 +56,8 @@ export default async function HomePage() {
   const photos           = t.raw('photos') as Photo[]
   const webrings         = t.raw('webrings') as Webring[]
   const projects         = t.raw('projects') as Project[]
+  const experiences      = t.raw('experiences') as ExperienceItem[]
+  const experienceLabels = t.raw('experienceLabels') as ExperienceLabels
 
   return (
     <>
@@ -137,7 +139,7 @@ export default async function HomePage() {
         )}
 
         {sectionHeading(t('sections.experiences'))}
-        <Experience />
+        <Experience items={experiences} labels={experienceLabels} />
 
         {sectionHeading(t('sections.hobbies'))}
         <HobbyCards items={hobbyCategories} />

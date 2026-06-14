@@ -6,7 +6,10 @@ import BrandIcon from './BrandIcon'
 export interface ProjectLink {
   label: string
   href: string
+  /** Preset BrandIcon name (e.g. "github", "devpost"). */
   icon?: string
+  /** Custom logo image — path under /public or a URL. Takes priority over icon. */
+  logo?: string
   /** Emphasized "live / opens a page" link — accent fill + external-link icon. */
   featured?: boolean
 }
@@ -19,10 +22,13 @@ export interface Project {
   screenshot?: string
   /** Optional BrandIcon name shown on the card header. */
   icon?: string
+  /** Custom logo image for the card header — path under /public or a URL. Takes priority over icon. */
+  logo?: string
+  /** Optional award/recognition — shown as a badge over the thumbnail. */
+  award?: string
   links: ProjectLink[]
 }
 
-const AUTOPLAY_MS = 4000
 const GAP = 18
 const ACCENT = '#2383e2'
 
@@ -31,6 +37,14 @@ function ExternalIcon({ size = 13 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
       <path d="M7 17 17 7M9 7h8v8" />
     </svg>
+  )
+}
+
+function DeltaHacksIcon({ size = 14 }: { size?: number }) {
+  // DeltaHacks brand mark — the full-color Penrose-triangle logo.
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/images/logos/deltahacks.png" alt="" width={size} height={size} style={{ display: 'block', objectFit: 'contain' }} />
   )
 }
 
@@ -73,7 +87,17 @@ function LinkButtons({ links, enabled }: { links: ProjectLink[]; enabled: boolea
           title={l.label}
           tabIndex={enabled ? 0 : -1}
         >
-          {l.featured ? <LinkIcon /> : l.icon ? <BrandIcon name={l.icon} size={14} color="currentColor" /> : <ExternalIcon />}
+          {l.logo ? (
+            // custom logo image (path under /public or a URL)
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={l.logo} alt="" width={15} height={15} style={{ display: 'block', objectFit: 'contain', borderRadius: '3px' }} />
+          ) : l.featured ? (
+            <LinkIcon />
+          ) : l.icon ? (
+            <BrandIcon name={l.icon} size={14} color="currentColor" />
+          ) : (
+            <ExternalIcon />
+          )}
         </a>
       ))}
     </div>
@@ -117,7 +141,7 @@ function Card({
       <div
         style={{
           position: 'relative',
-          height: '120px',
+          aspectRatio: '3 / 2',
           background: `linear-gradient(135deg, ${ACCENT}22, ${ACCENT}08)`,
           borderBottom: '1px solid var(--n-border)',
         }}
@@ -130,23 +154,34 @@ function Card({
             screenshot
           </div>
         )}
+        {p.award && (
+          <span className="proj-award">
+            <span className="proj-award-ico"><DeltaHacksIcon /></span>
+            {p.award}
+          </span>
+        )}
       </div>
 
       {/* meta */}
-      <div style={{ padding: '12px 15px 13px' }}>
+      <div style={{ padding: '9px 14px 10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
-            {p.icon && <BrandIcon name={p.icon} size={17} color={ACCENT} />}
-            <h3 style={{ margin: 0, fontSize: '1.0625rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.title}</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', minWidth: 0, flex: 1 }}>
+            {p.logo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={p.logo} alt="" width={18} height={18} style={{ display: 'block', flexShrink: 0, objectFit: 'contain', borderRadius: '4px' }} />
+            ) : p.icon ? (
+              <BrandIcon name={p.icon} size={15} color={ACCENT} />
+            ) : null}
+            <h3 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.title}</h3>
           </div>
           <LinkButtons links={p.links} enabled={focus} />
         </div>
         <p
           style={{
-            margin: '7px 0 0',
-            fontSize: '0.875rem',
+            margin: '5px 0 0',
+            fontSize: '0.8125rem',
             color: 'var(--n-secondary)',
-            lineHeight: 1.5,
+            lineHeight: 1.45,
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
@@ -166,13 +201,11 @@ function Card({
  * a triple copy of the items translated so the active card stays centered;
  * whenever the active index drifts out of the middle copy it snaps back by one
  * copy-width with animation disabled — invisible since the copies are identical,
- * so there is always a card on the left and right. Auto-advances on a timer,
- * pausing on hover/focus; arrows and side-card clicks recenter. Respects
- * prefers-reduced-motion.
+ * so there is always a card on the left and right. Navigation is manual only —
+ * arrows and side-card clicks recenter. Respects prefers-reduced-motion.
  */
 export default function ProjectCarousel({ items }: { items: Project[] }) {
   const n = items.length
-  const [paused, setPaused] = useState(false)
   const [reduce, setReduce] = useState(false)
   const [metrics, setMetrics] = useState({ cardW: 300, vpW: 0 })
   const [pos, setPos] = useState(n) // start at first item of the middle copy
@@ -205,13 +238,6 @@ export default function ProjectCarousel({ items }: { items: Project[] }) {
     setNoAnim(false)
     setPos((p) => p + dir)
   }
-
-  // auto-advance
-  useEffect(() => {
-    if (reduce || paused || n <= 1) return
-    const id = setTimeout(() => setPos((p) => p + 1), AUTOPLAY_MS)
-    return () => clearTimeout(id)
-  }, [pos, paused, reduce, n])
 
   // seamless wrap: once the slide settles outside the middle copy, jump back by
   // one copy-width with animation off (the copies are identical, so unseen)
@@ -248,13 +274,7 @@ export default function ProjectCarousel({ items }: { items: Project[] }) {
   const offset = metrics.vpW / 2 - (pos * (metrics.cardW + GAP) + metrics.cardW / 2)
 
   return (
-    <div
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
-      style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-    >
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       <button className="proj-arrow proj-arrow--prev" aria-label="Previous project" onClick={() => go(-1)}>
         <ChevronLeft />
       </button>

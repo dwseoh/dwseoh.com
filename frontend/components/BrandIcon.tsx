@@ -10,6 +10,7 @@ export const BRAND_COLORS: Record<string, string> = {
   music:     '#8B5CF6',
   camera:    '#0EA5E9',
   email:     '#6B7280',
+  devpost:   '#003E54',
 }
 
 // LinkedIn is inlined because Simple Icons removed it (404 on the CDN).
@@ -37,6 +38,7 @@ const CDN_ICONS: Record<string, string> = {
   discord:   'discord/5865F2',
   substack:  'substack/FF6719',
   x:         'x/000000',
+  devpost:   'devpost/003E54',
 }
 
 export default function BrandIcon({

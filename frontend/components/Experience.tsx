@@ -1,12 +1,32 @@
 'use client'
 
 import { useState } from 'react'
-import { EXPERIENCES, type Experience } from './experienceData'
 
 /* Experience — a connected logo timeline. Each role is a node on a single rail
    running top to bottom; clicking a row expands its blurb + skills. One accent
    (the site blue) marks the current role. Designed to sit inline as a Notion
-   block at the page column width. */
+   block at the page column width. Content is passed in (localized) from the
+   page; logo is a path under /public, or null for the built-in pin monogram. */
+
+export interface Experience {
+  id: string
+  role: string
+  org: string
+  logo: string | null
+  period: string
+  duration: string
+  location: string
+  type: string
+  blurb: string
+  skills: string[]
+  href?: string
+  present?: boolean
+}
+
+export interface ExperienceLabels {
+  present: string
+  visit: string
+}
 
 function PinMark() {
   // Fallback "logo" for Pinpoint — an on-theme location pin.
@@ -46,8 +66,9 @@ function OutIcon() {
   )
 }
 
-function Row({ e, open, onToggle, last }: {
+function Row({ e, labels, open, onToggle, last }: {
   e: Experience
+  labels: ExperienceLabels
   open: boolean
   onToggle: () => void
   last: boolean
@@ -78,7 +99,7 @@ function Row({ e, open, onToggle, last }: {
           <span className="xp-subrow">
             <span className="xp-org">{e.org}</span>
             {e.present ? (
-              <span className="xp-now"><span className="xp-dot" />Present</span>
+              <span className="xp-now"><span className="xp-dot" />{labels.present}</span>
             ) : (
               <span className="xp-dur">{e.duration}</span>
             )}
@@ -108,7 +129,7 @@ function Row({ e, open, onToggle, last }: {
                 rel="noopener noreferrer"
                 onClick={(ev) => ev.stopPropagation()}
               >
-                Visit <OutIcon />
+                {labels.visit} <OutIcon />
               </a>
             )}
           </div>
@@ -118,21 +139,25 @@ function Row({ e, open, onToggle, last }: {
   )
 }
 
-export default function Experience() {
+export default function Experience({ items, labels }: {
+  items: Experience[]
+  labels: ExperienceLabels
+}) {
   // The current role starts expanded; rows toggle independently.
   const [open, setOpen] = useState<Record<string, boolean>>(
-    () => Object.fromEntries(EXPERIENCES.filter((e) => e.present).map((e) => [e.id, true])),
+    () => Object.fromEntries(items.filter((e) => e.present).map((e) => [e.id, true])),
   )
 
   return (
     <div className="xp">
       <ol className="xp-list">
-        {EXPERIENCES.map((e, i) => (
+        {items.map((e, i) => (
           <Row
             key={e.id}
             e={e}
+            labels={labels}
             open={!!open[e.id]}
-            last={i === EXPERIENCES.length - 1}
+            last={i === items.length - 1}
             onToggle={() => setOpen((s) => ({ ...s, [e.id]: !s[e.id] }))}
           />
         ))}
