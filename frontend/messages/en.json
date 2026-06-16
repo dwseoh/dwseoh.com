@@ -58,24 +58,23 @@
       ]
     },
     {
-      "title": "Project Three",
-      "desc": "A third placeholder project. Highlight what makes the build interesting.",
+      "title": "Prospector",
+      "desc": "Perplexity for design team sponsors. Ranks 1.6k+ companies by fit and draft outreach.",
       "tech": ["C++", "WebAssembly"],
-      "icon": "cube",
-      "screenshot": "",
+      "logo": "/images/logos/prospector.png",
+      "screenshot": "/images/thumbnails/prospector.png",
       "links": [
-        { "label": "GitHub", "href": "https://github.com/dwseoh", "icon": "github" },
-        { "label": "Demo", "href": "#", "featured": false }
+        { "label": "GitHub", "href": "https://github.com/rickytang666/prospector", "icon": "github" }
       ]
     },
     {
-      "title": "Project Four",
-      "desc": "A fourth placeholder project. One or two sentences on what it is.",
+      "title": "Sheetmusic Viewer",
+      "desc": "Store, share, and manage your sheet music on any device. Flip pages easily.",
       "tech": ["Rust", "Tauri"],
-      "icon": "grid",
-      "screenshot": "",
+      "icon": "music",
+      "screenshot": "/images/thumbnails/sheetmusic.png",
       "links": [
-        { "label": "GitHub", "href": "https://github.com/dwseoh", "icon": "github" }
+        { "label": "GitHub", "href": "https://github.com/dwseoh/sheetmusic-library", "icon": "github" }
       ]
     }
   ],
