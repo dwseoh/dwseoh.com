@@ -54,7 +54,7 @@ export default function PhotoStrip({
           }}
         >
           <div
-            className="photo-track"
+            className={`photo-track${lightbox ? ' is-paused' : ''}`}
             style={{
               display: 'flex',
               width: 'max-content',
