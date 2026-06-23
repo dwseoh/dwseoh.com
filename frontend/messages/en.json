@@ -36,7 +36,7 @@
       "title": "Music Content",
       "icon": "music",
       "thumb": "/images/thumbnails/music.png",
-      "desc": "Explore my clarinet performances, compositions, and more!",
+      "desc": "Explore my music performances, compositions, and more!",
       "links": [
         { "label": "Compositions", "href": "#", "locked": true },
         { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
