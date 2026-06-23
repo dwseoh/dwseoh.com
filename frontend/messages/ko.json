@@ -36,7 +36,7 @@
       "title": "음악 콘텐츠",
       "icon": "music",
       "thumb": "/images/thumbnails/music.png",
-      "desc": "클라리넷 연주, 작곡 작품 등을 만나보세요!",
+      "desc": "다양한 악기 연주, 작곡 작품 등을 만나보세요!",
       "links": [
         { "label": "작곡 모음", "href": "#", "locked": true },
         { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
