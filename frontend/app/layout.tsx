@@ -18,7 +18,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const locale = await getLocale()
   return (
     <html lang={locale}>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className} suppressHydrationWarning>{children}</body>
     </html>
   )
 }
