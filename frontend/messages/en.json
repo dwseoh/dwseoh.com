@@ -10,6 +10,7 @@
     "portfolio": "Portfolio Links",
     "projects": "Projects",
     "experiences": "Experience",
+    "extracurriculars": "Extracurriculars",
     "hobbies": "Hobbies",
     "photos": "Photos",
     "contact": "Contact (Socials)"
@@ -149,6 +150,94 @@
   "experienceLabels": {
     "present": "Present",
     "visit": "Visit"
+  },
+  "extracurriculars": [
+    {
+      "id": "hack-the-north",
+      "name": "Hack the North",
+      "role": "Logistics Organizer",
+      "date": "2024 — Present",
+      "logo": "/images/logos/deltahacks.png",
+      "blurb": "Organizing Canada's largest hackathon — 1,000+ hackers at the University of Waterloo.",
+      "href": "https://hackthenorth.com"
+    },
+    {
+      "id": "ignition-hacks",
+      "name": "Ignition Hacks",
+      "role": "Sponsorship Director",
+      "date": "2022 — 2023",
+      "logo": "/images/logos/quota.png",
+      "blurb": "TODO: one-line blurb about your Ignition Hacks sponsorship work.",
+      "href": "https://ignitionhacks.org"
+    },
+    {
+      "id": "uw-ksa",
+      "name": "UW Korean Student Association",
+      "role": "Events",
+      "date": "2024 — 2025",
+      "logo": "/images/logos/cerebras.png",
+      "blurb": "TODO: one-line blurb about your KSA events role."
+    },
+    {
+      "id": "hack-the-ridge",
+      "name": "Hack the Ridge",
+      "role": "President",
+      "date": "2021 — 2022",
+      "logo": "/images/logos/orbital.png",
+      "blurb": "TODO: one-line blurb about founding and leading Hack the Ridge."
+    },
+    {
+      "id": "mock-5",
+      "name": "Mock Org Five",
+      "role": "Member",
+      "date": "2021 — 2022",
+      "logo": "/images/logos/prospector.png",
+      "blurb": "TODO: mock entry for testing horizontal scroll behaviour."
+    },
+    {
+      "id": "mock-6",
+      "name": "Mock Org Six",
+      "role": "Member",
+      "date": "2020 — 2021",
+      "logo": "/images/logos/solvexchange.png",
+      "blurb": "TODO: mock entry for testing horizontal scroll behaviour."
+    },
+    {
+      "id": "mock-7",
+      "name": "Mock Org Seven",
+      "role": "Member",
+      "date": "2020 — 2021",
+      "logo": "/images/logos/pinpoint_logo.png",
+      "blurb": "TODO: mock entry for testing horizontal scroll behaviour."
+    },
+    {
+      "id": "mock-8",
+      "name": "Mock Org Eight",
+      "role": "Member",
+      "date": "2019 — 2020",
+      "logo": "/images/logos/watonomous.jpg",
+      "blurb": "TODO: mock entry for testing horizontal scroll behaviour."
+    },
+    {
+      "id": "mock-9",
+      "name": "Mock Org Nine",
+      "role": "Member",
+      "date": "2019 — 2020",
+      "logo": "/images/logos/nebula.svg",
+      "blurb": "TODO: mock entry for testing horizontal scroll behaviour."
+    },
+    {
+      "id": "mock-10",
+      "name": "Mock Org Ten",
+      "role": "Member",
+      "date": "2018 — 2019",
+      "logo": "/images/logos/quota.png",
+      "blurb": "TODO: mock entry for testing horizontal scroll behaviour."
+    }
+  ],
+  "extracurricularLabels": {
+    "visit": "Visit",
+    "reset": "Reset"
   },
   "hobbyCategories": [
     {

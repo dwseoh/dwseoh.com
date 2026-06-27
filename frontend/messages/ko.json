@@ -10,6 +10,7 @@
     "portfolio": "포트폴리오 링크",
     "projects": "프로젝트",
     "experiences": "경력",
+    "extracurriculars": "대외활동",
     "hobbies": "취미",
     "photos": "사진",
     "contact": "연락처"
@@ -103,6 +104,94 @@
   "experienceLabels": {
     "present": "현재",
     "visit": "방문"
+  },
+  "extracurriculars": [
+    {
+      "id": "hack-the-north",
+      "name": "Hack the North",
+      "role": "로지스틱스 오거나이저",
+      "date": "2024 — 현재",
+      "logo": "/images/logos/deltahacks.png",
+      "blurb": "캐나다 최대 해커톤 운영 — 워털루 대학교에 1,000명 이상의 해커가 모입니다.",
+      "href": "https://hackthenorth.com"
+    },
+    {
+      "id": "ignition-hacks",
+      "name": "Ignition Hacks",
+      "role": "스폰서십 디렉터",
+      "date": "2022 — 2023",
+      "logo": "/images/logos/quota.png",
+      "blurb": "TODO: Ignition Hacks 스폰서십 활동에 대한 한 줄 소개.",
+      "href": "https://ignitionhacks.org"
+    },
+    {
+      "id": "uw-ksa",
+      "name": "UW Korean Student Association",
+      "role": "행사 담당",
+      "date": "2024 — 2025",
+      "logo": "/images/logos/cerebras.png",
+      "blurb": "TODO: 한인 학생회 행사 담당 역할에 대한 한 줄 소개."
+    },
+    {
+      "id": "hack-the-ridge",
+      "name": "Hack the Ridge",
+      "role": "회장",
+      "date": "2021 — 2022",
+      "logo": "/images/logos/orbital.png",
+      "blurb": "TODO: Hack the Ridge 창립 및 운영에 대한 한 줄 소개."
+    },
+    {
+      "id": "mock-5",
+      "name": "Mock Org Five",
+      "role": "멤버",
+      "date": "2021 — 2022",
+      "logo": "/images/logos/prospector.png",
+      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+    },
+    {
+      "id": "mock-6",
+      "name": "Mock Org Six",
+      "role": "멤버",
+      "date": "2020 — 2021",
+      "logo": "/images/logos/solvexchange.png",
+      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+    },
+    {
+      "id": "mock-7",
+      "name": "Mock Org Seven",
+      "role": "멤버",
+      "date": "2020 — 2021",
+      "logo": "/images/logos/pinpoint_logo.png",
+      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+    },
+    {
+      "id": "mock-8",
+      "name": "Mock Org Eight",
+      "role": "멤버",
+      "date": "2019 — 2020",
+      "logo": "/images/logos/watonomous.jpg",
+      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+    },
+    {
+      "id": "mock-9",
+      "name": "Mock Org Nine",
+      "role": "멤버",
+      "date": "2019 — 2020",
+      "logo": "/images/logos/nebula.svg",
+      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+    },
+    {
+      "id": "mock-10",
+      "name": "Mock Org Ten",
+      "role": "멤버",
+      "date": "2018 — 2019",
+      "logo": "/images/logos/quota.png",
+      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+    }
+  ],
+  "extracurricularLabels": {
+    "visit": "방문",
+    "reset": "초기화"
   },
   "hobbyCategories": [
     {

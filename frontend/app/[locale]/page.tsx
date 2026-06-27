@@ -11,6 +11,7 @@ import WebringCarousel, { type Webring } from '@/components/WebringCarousel'
 import SocialPill from '@/components/SocialPill'
 import LangSwitcher from '@/components/LangSwitcher'
 import Experience, { type Experience as ExperienceItem, type ExperienceLabels } from '@/components/Experience'
+import GolfCourse, { type Extracurricular, type ExtracurricularLabels } from '@/components/GolfCourse'
 
 interface SimpleLink {
   label: string
@@ -58,6 +59,8 @@ export default async function HomePage() {
   const projects         = t.raw('projects') as Project[]
   const experiences      = t.raw('experiences') as ExperienceItem[]
   const experienceLabels = t.raw('experienceLabels') as ExperienceLabels
+  const extracurriculars      = t.raw('extracurriculars') as Extracurricular[]
+  const extracurricularLabels = t.raw('extracurricularLabels') as ExtracurricularLabels
 
   return (
     <>
@@ -140,6 +143,13 @@ export default async function HomePage() {
 
         {sectionHeading(t('sections.experiences'))}
         <Experience items={experiences} labels={experienceLabels} />
+
+        {Array.isArray(extracurriculars) && extracurriculars.length > 0 && (
+          <>
+            {sectionHeading(t('sections.extracurriculars'))}
+            <GolfCourse items={extracurriculars} labels={extracurricularLabels} />
+          </>
+        )}
 
         {sectionHeading(t('sections.hobbies'))}
         <HobbyCards items={hobbyCategories} />
