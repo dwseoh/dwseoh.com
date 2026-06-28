@@ -40,6 +40,8 @@ const BASE_Y = 152 // mean grass surface
 const AMP = 9 // primary hill amplitude
 const WAVE = 200 // primary hill wavelength
 const BALL_R = 6.5
+const BALL_SINK = 3 // how far the ball nestles into the crest so it rests *on* the grass
+const PLANT = 3 // how far stakes/flag/golfer sink into the turf so they read as planted
 const INSET = 56 // safe zone each side so flag/golfer clear the arrows
 const EASE = 'cubic-bezier(0.22, 0.61, 0.36, 1)'
 const TEE_BACK = 12 // ball tee sits this far left of the golfer's centre
@@ -62,6 +64,9 @@ const surfaceY = (x: number, L?: Layout): number => {
 // distant hill line behind the fairway (depth)
 const surfaceBack = (x: number) =>
   BASE_Y - 18 - 13 * Math.sin((x / (WAVE * 1.8)) * Math.PI * 2 + 1.1)
+
+// ball's top (css) so it rests on the crest with a slight nestle into the grass
+const ballTopAt = (x: number, L?: Layout) => surfaceY(x, L) - BALL_R * 2 + BALL_SINK
 
 // scoped grass palette (kept in JS — SVG presentation attrs don't accept var())
 const GRASS = {
@@ -123,8 +128,8 @@ function buildSegments(L: Layout): Seg[] {
     segs.push({
       x0: prev,
       x1,
-      y0: surfaceY(prev, L) - BALL_R,
-      y1: surfaceY(x1, L) - BALL_R,
+      y0: ballTopAt(prev, L),
+      y1: ballTopAt(x1, L),
       apex: apexes[k],
       dur: durs[k],
     })
@@ -154,6 +159,52 @@ function introBallAt(elapsed: number, segs: Seg[]): BallState {
   }
   const lastSeg = segs[segs.length - 1]
   return { bx: lastSeg.x1, by: lastSeg.y1, done: true }
+}
+
+// --- idle putt: terrain-following roll with energy-based speed ---
+// Each nav is a fresh "hit" toward the target marker. Speed tracks
+// sqrt(E - elevation), so the ball labours up rises and quickens through dips;
+// a decay envelope bleeds energy so it settles to rest at the cup. y is sampled
+// from the surface every frame, so the ball hugs the terrain instead of cutting
+// a straight chord across it.
+interface RollProfile { xs: number[]; cumT: number[]; total: number }
+function buildRollProfile(x0: number, x1: number, L: Layout): RollProfile {
+  const dir = Math.sign(x1 - x0) || 1
+  const dist = Math.abs(x1 - x0)
+  const xs: number[] = [x0]
+  for (let x = x0 + 2 * dir; dir > 0 ? x < x1 : x > x1; x += 2 * dir) xs.push(x)
+  xs.push(x1)
+  const N = xs.length
+  const elev = xs.map((x) => BASE_Y - surfaceY(x, L)) // higher ground -> larger
+  const eMax = Math.max(...elev)
+  const E = eMax + 30 // kinetic headroom above the highest point (the hit's strength)
+  const speed = elev.map((e, k) => {
+    const u = N > 1 ? k / (N - 1) : 0
+    const env = 0.3 + 0.7 * (1 - u) // shed energy: brisk off the hit, easing to rest
+    return Math.max(0.06, Math.sqrt(Math.max(0.001, E - e)) * env)
+  })
+  const cumT = [0]
+  for (let k = 1; k < N; k++) {
+    const dx = Math.abs(xs[k] - xs[k - 1])
+    const v = (speed[k] + speed[k - 1]) / 2
+    cumT.push(cumT[k - 1] + dx / v)
+  }
+  const raw = cumT[N - 1] || 1
+  const total = Math.min(820, Math.max(360, dist * 1.15))
+  for (let k = 0; k < N; k++) cumT[k] = (cumT[k] / raw) * total
+  return { xs, cumT, total }
+}
+
+function rollXAt(p: RollProfile, t: number): number {
+  const { xs, cumT } = p
+  const N = xs.length
+  if (t <= 0) return xs[0]
+  if (t >= cumT[N - 1]) return xs[N - 1]
+  let k = 1
+  while (k < N && cumT[k] < t) k++
+  const span = cumT[k] - cumT[k - 1]
+  const f = span > 0 ? (t - cumT[k - 1]) / span : 0
+  return xs[k - 1] + (xs[k] - xs[k - 1]) * f
 }
 
 // --- inline icons ---
@@ -191,67 +242,91 @@ function ChevronRight() {
   )
 }
 
-/* A small shaded golfer facing left (toward the course). Body is static; the
-   .golf-swing group (both arms + club) rotates about the shoulder on contact. */
+/* A shaded side-view golfer facing left (toward the course). On contact the
+   .golf-body group coils/uncoils about the hips (the torso twist) while the
+   .golf-arms group sweeps the club through its arc about the shoulders — the two
+   together read as a real driver swing. Legs stay planted. The root .golf-anim
+   carries the .is-swinging trigger so both sub-animations restart in lockstep. */
 function Golfer({ innerRef }: { innerRef: React.RefObject<SVGGElement | null> }) {
   return (
-    <svg width="44" height="58" viewBox="0 0 44 58" fill="none" aria-hidden>
+    <svg width="52" height="66" viewBox="0 0 56 70" fill="none" aria-hidden style={{ overflow: 'visible' }}>
       <defs>
         <linearGradient id="golferSkin" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#f0cca9" />
-          <stop offset="1" stopColor="#d6a274" />
+          <stop offset="0" stopColor="#f3d0ae" />
+          <stop offset="1" stopColor="#d39f6f" />
         </linearGradient>
         <linearGradient id="golferShirt" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#f3f5f8" />
-          <stop offset="1" stopColor="#c2c8cf" />
+          <stop offset="0" stopColor="#fbfcfd" />
+          <stop offset="1" stopColor="#c0c7cf" />
         </linearGradient>
         <linearGradient id="golferPants" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#5d6675" />
-          <stop offset="1" stopColor="#3c424d" />
+          <stop offset="1" stopColor="#363c47" />
         </linearGradient>
         <linearGradient id="golferCap" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#4ba0e6" />
+          <stop offset="0" stopColor="#5aa8ea" />
           <stop offset="1" stopColor="#2a7bc0" />
         </linearGradient>
         <linearGradient id="golferArm" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#eccba8" />
-          <stop offset="1" stopColor="#cf9c6e" />
+          <stop offset="0" stopColor="#efcaa6" />
+          <stop offset="1" stopColor="#cd9a6c" />
+        </linearGradient>
+        <linearGradient id="golferShaft" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#e6ebee" />
+          <stop offset="1" stopColor="#9aa2a8" />
         </linearGradient>
       </defs>
 
       {/* ground shadow */}
-      <ellipse cx="24" cy="56" rx="13" ry="2.4" fill="rgba(0,0,0,0.16)" />
+      <ellipse cx="27" cy="65.5" rx="15" ry="2.6" fill="rgba(0,0,0,0.16)" />
 
-      {/* legs (back leg darker for depth) */}
-      <path d="M24.5 37 L31 55" stroke="#363b45" strokeWidth="5.2" strokeLinecap="round" />
-      <path d="M25 38 L19 55" stroke="url(#golferPants)" strokeWidth="5.4" strokeLinecap="round" />
+      {/* legs — planted; back leg (right) darker for depth */}
+      <path d="M30 41 Q33.4 51.5 35.2 62.5" stroke="#363c47" strokeWidth="6" fill="none" strokeLinecap="round" />
+      <path d="M25 41 Q21.5 51.5 16.5 62.5" stroke="url(#golferPants)" strokeWidth="6.4" fill="none" strokeLinecap="round" />
       {/* shoes (pointing left) */}
-      <path d="M17 55 q-3 0.4 -3 2 q0 1.4 3 1.2 l3 -0.3 q1.4 -0.2 0.6 -1.6 z" fill="#2c313a" />
-      <path d="M29 55 q-1.6 1 -0.4 2.4 q0.9 1 3.4 0.7 l1 -0.2 q1.2 -0.4 0.2 -1.7 z" fill="#3a414c" />
+      <path d="M35.4 62 q-1.6 1.2 -0.3 2.6 q1 1 3.4 0.6 l1.1 -0.2 q1.3 -0.5 0.2 -1.9 z" fill="#3a414c" />
+      <path d="M16.5 62 q-3.6 0.4 -4.3 2.3 q-0.3 1.7 2.7 1.6 l3.3 -0.3 q1.6 -0.3 0.7 -1.9 z" fill="#2c313a" />
 
-      {/* torso (polo), leaning slightly toward the ball */}
-      <path d="M19 22 q-2 9 0.5 17 q4.5 2 9.5 0 q2.4 -8.5 -0.5 -17 q-4.6 -2.2 -9.5 0 z" fill="url(#golferShirt)" />
-      <path d="M19.4 22 q-1 8 0.4 16.5 q1.6 0.7 3 0.8 q-1.6 -8.6 -0.8 -17.6 q-1.4 0 -2.6 0.3 z" fill="rgba(0,0,0,0.06)" />
+      {/* hips / belt — pivot of the body twist */}
+      <path d="M23 38 q5 -1.4 10 0 l-0.3 5 q-4.7 1.4 -9.4 0 z" fill="url(#golferPants)" />
 
-      {/* neck + head */}
-      <path d="M21 19 l4 0 l0 4 l-4 0 z" fill="url(#golferSkin)" />
-      <circle cx="22" cy="13.5" r="5.4" fill="url(#golferSkin)" />
-      <path d="M16.8 12.8 a5.4 5.4 0 0 1 10.6 -0.9 q-5.4 -2.4 -10.6 0.9 z" fill="rgba(0,0,0,0.05)" />
-      {/* cap + visor (the one site accent) */}
-      <path d="M16.6 12.2 a5.6 5.6 0 0 1 11.1 -1.1 q-5.6 -2.2 -11.1 1.1 z" fill="url(#golferCap)" />
-      <path d="M16.6 12.2 q-3.4 -0.2 -5 1.5 q3.2 0.8 5.2 -0.1 z" fill="url(#golferCap)" />
-      <ellipse cx="27.4" cy="10.6" rx="1.1" ry="1.1" fill="#bfe0ff" opacity="0.7" />
+      {/* animated rig (body twist + arm swing restart together) */}
+      <g ref={innerRef} className="golf-anim">
+      {/* upper body — twists about the hips */}
+      <g className="golf-body" style={{ transformOrigin: '28px 42px' }}>
+        {/* torso / polo, leaning toward the ball */}
+        <path d="M23.4 40 q-1.4 -10 2.6 -19 q3.2 -1.4 6.4 0 q3 9 1.6 19 q-5.4 2 -10.6 0 z" fill="url(#golferShirt)" />
+        <path d="M24 40 q-1.2 -9.5 2.4 -18.4 q1.4 -0.5 2.2 -0.3 q-3 9 -1.6 19 q-1.6 0.2 -3 -0.3 z" fill="rgba(0,0,0,0.06)" />
+        {/* collar */}
+        <path d="M26 21 q2.8 -1.2 5.6 0 l-1 2.2 q-1.8 -0.7 -3.6 0 z" fill="rgba(255,255,255,0.55)" />
 
-      {/* swinging arms + club (rotates about the shoulder) */}
-      <g ref={innerRef} className="golf-swing" style={{ transformOrigin: '24px 23px' }}>
-        <path d="M24 23 L19 32" stroke="url(#golferArm)" strokeWidth="4" strokeLinecap="round" />
-        <circle cx="18.6" cy="32.2" r="2.4" fill="#e9eef2" stroke="#c4ccd2" strokeWidth="0.6" />
-        {/* club shaft */}
-        <path d="M18.6 32.2 L10 49" stroke="#9aa2a8" strokeWidth="1.7" strokeLinecap="round" />
-        <path d="M18.6 32.2 L10 49" stroke="#d7dde1" strokeWidth="0.6" strokeLinecap="round" />
-        {/* club head */}
-        <path d="M10 47.6 q-3.6 0.4 -4.2 2.6 q-0.2 1.6 2.4 1.8 l2.6 -0.6 q1.6 -0.6 0.6 -2.4 z" fill="#7f878d" />
-        <path d="M10 47.6 q-3.6 0.4 -4.2 2.6 l1 0.4 q1 -1.8 3.6 -1.7 z" fill="#aab1b6" />
+        {/* neck + head */}
+        <path d="M26 18.5 l4.2 0 l-0.3 4 l-3.6 0 z" fill="url(#golferSkin)" />
+        <circle cx="28" cy="12.4" r="5.4" fill="url(#golferSkin)" />
+        <path d="M22.8 11.8 a5.4 5.4 0 0 1 10.4 -1.3 q-5.2 -2.4 -10.4 1.3 z" fill="rgba(0,0,0,0.05)" />
+        {/* cap + visor (the one site accent), brim pointing left */}
+        <path d="M22.7 11 a5.6 5.6 0 0 1 10.9 -1.2 q-5.5 -2.2 -10.9 1.2 z" fill="url(#golferCap)" />
+        <path d="M22.9 10.8 q-3.6 -0.1 -5.3 1.7 q3.3 0.9 5.5 0 z" fill="url(#golferCap)" />
+        <ellipse cx="31" cy="8.4" rx="1.2" ry="1.1" fill="#cce6ff" opacity="0.75" />
+
+        {/* arms + club — sweep about the shoulder */}
+        <g className="golf-arms" style={{ transformOrigin: '28px 23px' }}>
+          {/* trail (back) arm */}
+          <path d="M30 23 L21.5 38.5" stroke="#c89464" strokeWidth="3.6" strokeLinecap="round" />
+          {/* lead (front) arm */}
+          <path d="M27 23 L21 38.5" stroke="url(#golferArm)" strokeWidth="4" strokeLinecap="round" />
+          {/* gloved hands on the grip */}
+          <circle cx="21" cy="38.6" r="2.6" fill="#eef2f5" stroke="#c4ccd2" strokeWidth="0.7" />
+          {/* shaft */}
+          <path d="M21 38.6 L6.5 58" stroke="url(#golferShaft)" strokeWidth="1.8" strokeLinecap="round" />
+          {/* driver head */}
+          <g transform="rotate(-20 5 60)">
+            <ellipse cx="5" cy="60" rx="4.6" ry="3.1" fill="#737a80" />
+            <ellipse cx="4.2" cy="59.2" rx="3" ry="1.7" fill="#a9b0b5" opacity="0.85" />
+            <path d="M1 60.4 l8 0" stroke="#5c6266" strokeWidth="0.5" opacity="0.7" />
+          </g>
+        </g>
+      </g>
       </g>
     </svg>
   )
@@ -263,6 +338,7 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
   const [selected, setSelected] = useState(0)
   const [phase, setPhase] = useState<'intro' | 'idle'>('intro')
   const [scrolling, setScrolling] = useState(false) // reset pre-scroll to the tee
+  const [rolling, setRolling] = useState<{ from: number; to: number } | null>(null) // a putt in flight
   const [reduce, setReduce] = useState(false)
 
   const bandRef = useRef<HTMLDivElement>(null)
@@ -271,6 +347,7 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
   const swingRef = useRef<SVGGElement>(null)
   const enteredRef = useRef(false)
   const introCancelRef = useRef(false)
+  const rollCancelRef = useRef(false)
   const rafRef = useRef(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -324,6 +401,8 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
 
   const stopAnim = useCallback(() => {
     cancelAnimationFrame(rafRef.current)
+    introCancelRef.current = true
+    rollCancelRef.current = true
     if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null }
   }, [])
 
@@ -351,6 +430,31 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
     }
     rafRef.current = requestAnimationFrame(tick)
   }, [layout])
+
+  // putt the ball from one marker to another, hugging the terrain (idle nav)
+  const runRoll = useCallback((from: number, to: number) => {
+    if (!layout) return
+    const prof = buildRollProfile(worldOf(from, layout), worldOf(to, layout), layout)
+    rollCancelRef.current = false
+    const t0 = performance.now()
+    const tick = (now: number) => {
+      if (rollCancelRef.current) return
+      const t = now - t0
+      const x = rollXAt(prof, t)
+      const cam = camFor(x, layout)
+      if (trackRef.current) trackRef.current.style.transform = `translateX(${-cam}px)`
+      if (ballRef.current) {
+        ballRef.current.style.left = `${x - cam}px`
+        ballRef.current.style.top = `${ballTopAt(x, layout)}px`
+      }
+      if (t >= prof.total) { setSelected(to); setRolling(null); return }
+      rafRef.current = requestAnimationFrame(tick)
+    }
+    rafRef.current = requestAnimationFrame(tick)
+  }, [layout])
+
+  // launch a putt once the freeze-at-start frame has committed
+  useEffect(() => { if (rolling) runRoll(rolling.from, rolling.to) }, [rolling, runRoll])
 
   // play (or replay) the intro: optional animated scroll to the tee, then swing
   const playIntro = useCallback((prescroll: boolean) => {
@@ -383,33 +487,34 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
   useEffect(() => () => stopAnim(), [stopAnim])
 
   const jumpTo = (i: number) => {
-    if (phase === 'intro') return // busy during the swing/flight
-    if (i < 0 || i > n - 1) return
-    introCancelRef.current = true
+    if (phase === 'intro' || rolling) return // busy during the swing/flight or a putt
+    if (i < 0 || i > n - 1 || i === selected) return
     stopAnim()
     setScrolling(false)
-    setSelected(i)
+    if (reduce) { setSelected(i); return }
+    setRolling({ from: selected, to: i }) // the effect kicks off the rAF putt
   }
 
   if (n === 0) return null
 
-  // resting view (idle) or the intro's first frame (ball at the tee)
-  let cam = 0, ballX = 0, ballY = surfaceY(0) - BALL_R
+  // resting view (idle) or the intro's first frame (ball at the tee). While a putt
+  // is rolling, freeze this to the start marker — the rAF loop drives the rest.
+  let cam = 0, ballX = 0, ballY = ballTopAt(0)
   if (layout) {
     const bw = phase === 'idle' ? worldOf(selected, layout) : teeWorld(layout)
     cam = camFor(bw, layout)
     ballX = bw - cam
-    ballY = surfaceY(bw, layout) - BALL_R
+    ballY = ballTopAt(bw, layout)
   }
 
-  const busy = phase === 'intro'
-  const animate = phase === 'idle' && !reduce
+  const busy = phase === 'intro' || !!rolling
+  const animate = phase === 'idle' && !reduce && !rolling
   const trackTrans = scrolling ? `transform 0.5s ${EASE}` : animate ? `transform 0.55s ${EASE}` : 'none'
   const ballTrans = scrolling
     ? `left 0.5s ${EASE}, top 0.5s ${EASE}`
     : animate ? `left 0.55s ${EASE}, top 0.55s ${EASE}` : 'none'
-  const cur = items[phase === 'idle' ? selected : 0]
-  const activeIdx = phase === 'idle' ? selected : 0
+  const activeIdx = phase === 'intro' ? 0 : rolling ? rolling.to : selected
+  const cur = items[activeIdx]
 
   return (
     <div className="golf-wrap">
@@ -445,7 +550,7 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
               </svg>
 
               {/* flag + hole (far-left feature) */}
-              <span className="golf-flag-slot" style={{ left: `${layout.flagWorld}px`, bottom: `${H - surfaceY(layout.flagWorld, layout)}px` }}>
+              <span className="golf-flag-slot" style={{ left: `${layout.flagWorld}px`, bottom: `${H - surfaceY(layout.flagWorld, layout) - PLANT}px` }}>
                 <span className="golf-hole" />
                 <span className="golf-flagstick"><span className="golf-flag" /></span>
               </span>
@@ -453,9 +558,9 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
               {/* markers */}
               {items.map((item, i) => {
                 const wx = worldOf(i, layout)
-                const active = phase === 'idle' && i === selected
+                const active = phase !== 'intro' && i === activeIdx
                 return (
-                  <span key={item.id} className="golf-marker-slot" style={{ left: `${wx}px`, bottom: `${H - surfaceY(wx, layout)}px` }}>
+                  <span key={item.id} className="golf-marker-slot" style={{ left: `${wx}px`, bottom: `${H - surfaceY(wx, layout) - PLANT}px` }}>
                     <button
                       type="button"
                       className={`golf-marker${active ? ' is-active' : ''}`}
@@ -481,7 +586,7 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
               })}
 
               {/* golfer (far-right tee) */}
-              <span className="golf-golfer-slot" style={{ left: `${layout.golferWorld}px`, bottom: `${H - surfaceY(layout.golferWorld, layout)}px` }}>
+              <span className="golf-golfer-slot" style={{ left: `${layout.golferWorld}px`, bottom: `${H - surfaceY(layout.golferWorld, layout) - PLANT}px` }}>
                 <Golfer innerRef={swingRef} />
               </span>
             </div>
@@ -508,18 +613,29 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
         )}
       </div>
 
-      {/* detail panel (part of the same widget) */}
+      {/* detail panel — same widget; mirrors an Experience row (logo · text) */}
       <div className="golf-detail">
-        <div className="golf-detail-head">
-          <span className="golf-detail-name">{cur.name}</span>
-          <span className="golf-detail-sub">{cur.role} · {cur.date}</span>
+        <span className="golf-detail-logo">
+          {cur.logo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={cur.logo} alt="" loading="lazy" />
+          ) : (
+            <span className="golf-detail-initial">{cur.name.charAt(0)}</span>
+          )}
+        </span>
+        <div className="golf-detail-main">
+          <div className="golf-detail-toprow">
+            <span className="golf-detail-name">{cur.name}</span>
+            <span className="golf-detail-date">{cur.date}</span>
+          </div>
+          <div className="golf-detail-role">{cur.role}</div>
+          <p className="golf-detail-blurb">{cur.blurb}</p>
+          {cur.href && (
+            <a className="golf-detail-visit" href={cur.href} target="_blank" rel="noopener noreferrer">
+              {labels.visit} <OutIcon />
+            </a>
+          )}
         </div>
-        <p className="golf-detail-blurb">{cur.blurb}</p>
-        {cur.href && (
-          <a className="golf-detail-visit" href={cur.href} target="_blank" rel="noopener noreferrer">
-            {labels.visit} <OutIcon />
-          </a>
-        )}
       </div>
     </div>
   )
