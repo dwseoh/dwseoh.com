@@ -121,7 +121,7 @@ const isOngoing = (date: string) => /\b(present|current|now|ongoing)\b/i.test(da
 // ONE small bounce, then rolls the rest of the way into the cup along the
 // terrain (handed off to the energy roll below).
 interface Seg { x0: number; x1: number; y0: number; y1: number; apex: number; dur: number }
-const WINDUP = 800 // ms of swing before contact (matches the swing's ~64% impact)
+const WINDUP = 1200 // ms of swing before contact (matches the swing's ~64% impact)
 
 function buildFlightSegs(L: Layout): Seg[] {
   const start = teeWorld(L)
@@ -130,9 +130,9 @@ function buildFlightSegs(L: Layout): Seg[] {
   const bounceX = target + L.GAP * 0.14 // one small bounce carries it most of the rest
   return [
     // the flight: a tall, gravity-shaped arc
-    { x0: start, x1: landX, y0: ballTopAt(start, L), y1: ballTopAt(landX, L), apex: 116, dur: 1080 },
+    { x0: start, x1: landX, y0: ballTopAt(start, L), y1: ballTopAt(landX, L), apex: 116, dur: 1620 },
     // the single bounce: low, energy mostly spent
-    { x0: landX, x1: bounceX, y0: ballTopAt(landX, L), y1: ballTopAt(bounceX, L), apex: 21, dur: 300 },
+    { x0: landX, x1: bounceX, y0: ballTopAt(landX, L), y1: ballTopAt(bounceX, L), apex: 21, dur: 450 },
   ]
 }
 
@@ -173,7 +173,7 @@ function buildRollProfile(x0: number, x1: number, L: Layout): RollProfile {
     cumT.push(cumT[k - 1] + dx / v)
   }
   const raw = cumT[N - 1] || 1
-  const total = Math.min(820, Math.max(360, dist * 1.15))
+  const total = Math.min(1230, Math.max(540, dist * 1.73))
   for (let k = 0; k < N; k++) cumT[k] = (cumT[k] / raw) * total
   return { xs, cumT, total }
 }
@@ -731,14 +731,15 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
         <div className="golf-detail-main">
           <div className="golf-detail-line">
             <span className="golf-detail-role">
-              <strong>{cur.role}</strong>
-              <span className="golf-detail-at"> @{cur.name}</span>
+              <strong>{cur.role}</strong>{' '}
+              {cur.href ? (
+                <a className="golf-detail-at golf-detail-at--link" href={cur.href} target="_blank" rel="noopener noreferrer">
+                  @{cur.name} <OutIcon />
+                </a>
+              ) : (
+                <span className="golf-detail-at">@{cur.name}</span>
+              )}
             </span>
-            {cur.href && (
-              <a className="golf-detail-visit" href={cur.href} target="_blank" rel="noopener noreferrer">
-                {labels.visit} <OutIcon />
-              </a>
-            )}
             <span className="golf-detail-date">{cur.date}</span>
           </div>
           <p className="golf-detail-blurb">{cur.blurb}</p>

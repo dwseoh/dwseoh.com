@@ -729,7 +729,7 @@ body {
    true side view the body's turn about the spine is into the screen, so large
    torso rotations would just topple the figure over. The kinetic-chain feel
    comes from timing + the club LAGGING the arms (wrists cock at the top, hold
-   the lag, then release/whip through impact). Across the 1.25s clip: backswing
+   the lag, then release/whip through impact). Across the 1.875s clip: backswing
    to a loaded top at 44%, brief transition, fast downswing, impact at ~64%
    (= WINDUP, when the ball launches), then a decelerating high finish. When
    .is-swinging is removed (after the shot) the groups ease back to address. */
@@ -741,11 +741,11 @@ body {
 /* posture: spine tilts forward over the ball, head drops to look down at the tee */
 .golf-torso { transform: rotate(-13deg); transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.3, 1); }
 .golf-head { transform: rotate(11deg); transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.3, 1); }
-.golf-anim.is-swinging .golf-lower { animation: golfHips 1.25s var(--swing-ease) both; }
-.golf-anim.is-swinging .golf-torso { animation: golfTorso 1.25s var(--swing-ease) both; }
-.golf-anim.is-swinging .golf-head { animation: golfHead 1.25s var(--swing-ease) both; }
-.golf-anim.is-swinging .golf-arms { animation: golfArms 1.25s var(--swing-ease) both; }
-.golf-anim.is-swinging .golf-club { animation: golfClub 1.25s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-lower { animation: golfHips 1.875s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-torso { animation: golfTorso 1.875s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-head { animation: golfHead 1.875s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-arms { animation: golfArms 1.875s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-club { animation: golfClub 1.875s var(--swing-ease) both; }
 
 /* hips — barely visible in side view; a hint of weight shift */
 @keyframes golfHips {
@@ -908,7 +908,7 @@ body {
   width: 34px;
   height: 34px;
   border-radius: 9px;
-  border: 1px solid var(--n-accent);
+  border: 1px solid var(--n-border);
   background: #fff;
   display: flex;
   align-items: center;
@@ -931,17 +931,9 @@ body {
 }
 .golf-detail-role strong { font-weight: 700; color: var(--n-text); }
 .golf-detail-at { color: var(--n-secondary); font-weight: 500; }
-.golf-detail-visit {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--n-accent);
-  text-decoration: none;
-}
-.golf-detail-visit:hover { text-decoration: underline; }
+.golf-detail-at--link { color: var(--n-accent); text-decoration: none; }
+.golf-detail-at--link:hover { text-decoration: underline; }
+.golf-detail-at--link svg { display: inline-block; vertical-align: -2px; margin-left: 2px; }
 .golf-detail-date {
   flex-shrink: 0;
   font-size: 0.75rem;
