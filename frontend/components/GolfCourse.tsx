@@ -44,7 +44,8 @@ const BALL_SINK = 3 // how far the ball nestles into the crest so it rests *on* 
 const PLANT = 3 // how far stakes/flag/golfer sink into the turf so they read as planted
 const INSET = 56 // safe zone each side so flag/golfer clear the arrows
 const EASE = 'cubic-bezier(0.22, 0.61, 0.36, 1)'
-const TEE_BACK = 12 // ball tee sits this far left of the golfer's centre
+const TEE_BACK = 22 // ball tee sits under the club head at address (left of golfer centre)
+const TRAIL_N = 11 // motion-trail particles (the "wind whoosh" behind the struck ball)
 
 // rolling-green surface (two harmonics for natural undulation); shared by the
 // SVG path and the ball so it appears to rest on the slope as the course scrolls.
@@ -110,55 +111,34 @@ const camFor = (worldX: number, L: Layout) =>
 const worldOf = (i: number, L: Layout) => L.PAD + i * L.GAP
 const teeWorld = (L: Layout) => L.golferWorld - TEE_BACK
 
-// --- intro flight: scripted parabolic hops (reliable landing, physical look) ---
+// --- intro shot: one ballistic arc -> a single small bounce -> roll to the cup ---
+// On contact the ball gets a launch velocity and flies a gravity-governed
+// parabola (constant horizontal speed, vertical decelerating to the apex then
+// accelerating down) toward the most-recent marker. It lands just short, takes
+// ONE small bounce, then rolls the rest of the way into the cup along the
+// terrain (handed off to the energy roll below).
 interface Seg { x0: number; x1: number; y0: number; y1: number; apex: number; dur: number }
-const WINDUP = 360 // ms of swing before contact (matches golferSwing's 50% impact)
+const WINDUP = 800 // ms of swing before contact (matches the swing's ~64% impact)
 
-function buildSegments(L: Layout): Seg[] {
+function buildFlightSegs(L: Layout): Seg[] {
   const start = teeWorld(L)
-  const end = worldOf(0, L) // most-recent item
-  const dist = start - end
-  const fracs = [0.5, 0.78, 0.93, 1] // cumulative share of the journey per landing
-  const apexes = [112, 58, 26, 0] // hop heights (px above surface), decaying
-  const durs = [820, 520, 340, 300]
-  const segs: Seg[] = []
-  let prev = start
-  fracs.forEach((f, k) => {
-    const x1 = start - dist * f
-    segs.push({
-      x0: prev,
-      x1,
-      y0: ballTopAt(prev, L),
-      y1: ballTopAt(x1, L),
-      apex: apexes[k],
-      dur: durs[k],
-    })
-    prev = x1
-  })
-  return segs
+  const target = worldOf(0, L) // most-recent item
+  const landX = target + L.GAP * 0.34 // land a touch short (ball travels leftward)
+  const bounceX = target + L.GAP * 0.14 // one small bounce carries it most of the rest
+  return [
+    // the flight: a tall, gravity-shaped arc
+    { x0: start, x1: landX, y0: ballTopAt(start, L), y1: ballTopAt(landX, L), apex: 116, dur: 1080 },
+    // the single bounce: low, energy mostly spent
+    { x0: landX, x1: bounceX, y0: ballTopAt(landX, L), y1: ballTopAt(bounceX, L), apex: 21, dur: 300 },
+  ]
 }
 
-interface BallState { bx: number; by: number; done: boolean }
-
-function introBallAt(elapsed: number, segs: Seg[]): BallState {
-  if (elapsed < WINDUP) {
-    return { bx: segs[0].x0, by: segs[0].y0, done: false }
-  }
-  const t = elapsed - WINDUP
-  let acc = 0
-  for (let k = 0; k < segs.length; k++) {
-    const s = segs[k]
-    const last = k === segs.length - 1
-    if (t <= acc + s.dur || last) {
-      const p = Math.min(1, (t - acc) / s.dur)
-      const bx = s.x0 + (s.x1 - s.x0) * p
-      const by = s.y0 + (s.y1 - s.y0) * p - s.apex * 4 * p * (1 - p)
-      return { bx, by, done: last && p >= 1 }
-    }
-    acc += s.dur
-  }
-  const lastSeg = segs[segs.length - 1]
-  return { bx: lastSeg.x1, by: lastSeg.y1, done: true }
+// parabolic position within a flight/bounce segment (p in 0..1); constant
+// horizontal speed, symmetric vertical arc = no air resistance, just gravity.
+function arcAt(s: Seg, p: number): { bx: number; by: number } {
+  const bx = s.x0 + (s.x1 - s.x0) * p
+  const by = s.y0 + (s.y1 - s.y0) * p - s.apex * 4 * p * (1 - p)
+  return { bx, by }
 }
 
 // --- idle putt: terrain-following roll with energy-based speed ---
@@ -242,11 +222,16 @@ function ChevronRight() {
   )
 }
 
-/* A shaded side-view golfer facing left (toward the course). On contact the
-   .golf-body group coils/uncoils about the hips (the torso twist) while the
-   .golf-arms group sweeps the club through its arc about the shoulders — the two
-   together read as a real driver swing. Legs stay planted. The root .golf-anim
-   carries the .is-swinging trigger so both sub-animations restart in lockstep. */
+/* A shaded side-view golfer facing left (toward the course). The swing is a
+   kinetic chain of nested groups, each pivoting about an anatomical joint and
+   each lagging the previous so power transfers from the ground up:
+     .golf-lower (hips)  ->  .golf-torso (chest/shoulders)  ->
+       .golf-head (kept ~stable, eyes on the ball)  +
+       .golf-arms (shoulder swing)  ->  .golf-club (wrist cock + release).
+   Because the groups nest, rotations compound (the shoulders carry the arms,
+   the arms carry the club) — the backswing is a body turn, not just arm-flapping.
+   The club cocks at the top and *releases* through impact (the whip). The root
+   .golf-anim carries the .is-swinging trigger so all five restart in lockstep. */
 function Golfer({ innerRef }: { innerRef: React.RefObject<SVGGElement | null> }) {
   return (
     <svg width="52" height="66" viewBox="0 0 56 70" fill="none" aria-hidden style={{ overflow: 'visible' }}>
@@ -287,46 +272,53 @@ function Golfer({ innerRef }: { innerRef: React.RefObject<SVGGElement | null> })
       <path d="M35.4 62 q-1.6 1.2 -0.3 2.6 q1 1 3.4 0.6 l1.1 -0.2 q1.3 -0.5 0.2 -1.9 z" fill="#3a414c" />
       <path d="M16.5 62 q-3.6 0.4 -4.3 2.3 q-0.3 1.7 2.7 1.6 l3.3 -0.3 q1.6 -0.3 0.7 -1.9 z" fill="#2c313a" />
 
-      {/* hips / belt — pivot of the body twist */}
-      <path d="M23 38 q5 -1.4 10 0 l-0.3 5 q-4.7 1.4 -9.4 0 z" fill="url(#golferPants)" />
-
-      {/* animated rig (body twist + arm swing restart together) */}
+      {/* animated rig: kinetic chain hips -> torso -> (head, arms -> club) */}
       <g ref={innerRef} className="golf-anim">
-      {/* upper body — twists about the hips */}
-      <g className="golf-body" style={{ transformOrigin: '28px 42px' }}>
-        {/* torso / polo, leaning toward the ball */}
-        <path d="M23.4 40 q-1.4 -10 2.6 -19 q3.2 -1.4 6.4 0 q3 9 1.6 19 q-5.4 2 -10.6 0 z" fill="url(#golferShirt)" />
-        <path d="M24 40 q-1.2 -9.5 2.4 -18.4 q1.4 -0.5 2.2 -0.3 q-3 9 -1.6 19 q-1.6 0.2 -3 -0.3 z" fill="rgba(0,0,0,0.06)" />
-        {/* collar */}
-        <path d="M26 21 q2.8 -1.2 5.6 0 l-1 2.2 q-1.8 -0.7 -3.6 0 z" fill="rgba(255,255,255,0.55)" />
+        {/* hips — lead the downswing; the whole upper body turns about them */}
+        <g className="golf-lower" style={{ transformOrigin: '28px 43px' }}>
+          {/* hips / belt */}
+          <path d="M23 38 q5 -1.4 10 0 l-0.3 5 q-4.7 1.4 -9.4 0 z" fill="url(#golferPants)" />
 
-        {/* neck + head */}
-        <path d="M26 18.5 l4.2 0 l-0.3 4 l-3.6 0 z" fill="url(#golferSkin)" />
-        <circle cx="28" cy="12.4" r="5.4" fill="url(#golferSkin)" />
-        <path d="M22.8 11.8 a5.4 5.4 0 0 1 10.4 -1.3 q-5.2 -2.4 -10.4 1.3 z" fill="rgba(0,0,0,0.05)" />
-        {/* cap + visor (the one site accent), brim pointing left */}
-        <path d="M22.7 11 a5.6 5.6 0 0 1 10.9 -1.2 q-5.5 -2.2 -10.9 1.2 z" fill="url(#golferCap)" />
-        <path d="M22.9 10.8 q-3.6 -0.1 -5.3 1.7 q3.3 0.9 5.5 0 z" fill="url(#golferCap)" />
-        <ellipse cx="31" cy="8.4" rx="1.2" ry="1.1" fill="#cce6ff" opacity="0.75" />
+          {/* torso / chest — the big coil; carries the arms */}
+          <g className="golf-torso" style={{ transformOrigin: '28px 41px' }}>
+            <path d="M23.4 40 q-1.4 -10 2.6 -19 q3.2 -1.4 6.4 0 q3 9 1.6 19 q-5.4 2 -10.6 0 z" fill="url(#golferShirt)" />
+            <path d="M24 40 q-1.2 -9.5 2.4 -18.4 q1.4 -0.5 2.2 -0.3 q-3 9 -1.6 19 q-1.6 0.2 -3 -0.3 z" fill="rgba(0,0,0,0.06)" />
+            <path d="M26 21 q2.8 -1.2 5.6 0 l-1 2.2 q-1.8 -0.7 -3.6 0 z" fill="rgba(255,255,255,0.55)" />
 
-        {/* arms + club — sweep about the shoulder */}
-        <g className="golf-arms" style={{ transformOrigin: '28px 23px' }}>
-          {/* trail (back) arm */}
-          <path d="M30 23 L21.5 38.5" stroke="#c89464" strokeWidth="3.6" strokeLinecap="round" />
-          {/* lead (front) arm */}
-          <path d="M27 23 L21 38.5" stroke="url(#golferArm)" strokeWidth="4" strokeLinecap="round" />
-          {/* gloved hands on the grip */}
-          <circle cx="21" cy="38.6" r="2.6" fill="#eef2f5" stroke="#c4ccd2" strokeWidth="0.7" />
-          {/* shaft */}
-          <path d="M21 38.6 L6.5 58" stroke="url(#golferShaft)" strokeWidth="1.8" strokeLinecap="round" />
-          {/* driver head */}
-          <g transform="rotate(-20 5 60)">
-            <ellipse cx="5" cy="60" rx="4.6" ry="3.1" fill="#737a80" />
-            <ellipse cx="4.2" cy="59.2" rx="3" ry="1.7" fill="#a9b0b5" opacity="0.85" />
-            <path d="M1 60.4 l8 0" stroke="#5c6266" strokeWidth="0.5" opacity="0.7" />
+            {/* head — counter-rotates so the eyes stay on the ball, lifts at finish */}
+            <g className="golf-head" style={{ transformOrigin: '28px 19px' }}>
+              <path d="M26 18.5 l4.2 0 l-0.3 4 l-3.6 0 z" fill="url(#golferSkin)" />
+              <circle cx="28" cy="12.4" r="5.4" fill="url(#golferSkin)" />
+              <path d="M22.8 11.8 a5.4 5.4 0 0 1 10.4 -1.3 q-5.2 -2.4 -10.4 1.3 z" fill="rgba(0,0,0,0.05)" />
+              {/* cap + brim (the one site accent), pointing left */}
+              <path d="M22.7 11 a5.6 5.6 0 0 1 10.9 -1.2 q-5.5 -2.2 -10.9 1.2 z" fill="url(#golferCap)" />
+              <path d="M22.9 10.8 q-3.6 -0.1 -5.3 1.7 q3.3 0.9 5.5 0 z" fill="url(#golferCap)" />
+              <ellipse cx="31" cy="8.4" rx="1.2" ry="1.1" fill="#cce6ff" opacity="0.75" />
+            </g>
+
+            {/* arms — swing about the shoulder */}
+            <g className="golf-arms" style={{ transformOrigin: '27px 23px' }}>
+              {/* trail (back) arm */}
+              <path d="M30 23 L21.5 38.5" stroke="#c89464" strokeWidth="3.6" strokeLinecap="round" />
+              {/* lead (front) arm */}
+              <path d="M27 23 L21 38.5" stroke="url(#golferArm)" strokeWidth="4" strokeLinecap="round" />
+              {/* gloved hands on the grip */}
+              <circle cx="21" cy="38.6" r="2.6" fill="#eef2f5" stroke="#c4ccd2" strokeWidth="0.7" />
+
+              {/* club — cocks against the arms, then whips through impact */}
+              <g className="golf-club" style={{ transformOrigin: '21px 38.6px' }}>
+                {/* shaft */}
+                <path d="M21 38.6 L6.5 58" stroke="url(#golferShaft)" strokeWidth="1.8" strokeLinecap="round" />
+                {/* driver head */}
+                <g transform="rotate(-20 5 60)">
+                  <ellipse cx="5" cy="60" rx="4.6" ry="3.1" fill="#737a80" />
+                  <ellipse cx="4.2" cy="59.2" rx="3" ry="1.7" fill="#a9b0b5" opacity="0.85" />
+                  <path d="M1 60.4 l8 0" stroke="#5c6266" strokeWidth="0.5" opacity="0.7" />
+                </g>
+              </g>
+            </g>
           </g>
         </g>
-      </g>
       </g>
     </svg>
   )
@@ -345,11 +337,52 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
   const trackRef = useRef<HTMLDivElement>(null)
   const ballRef = useRef<HTMLDivElement>(null)
   const swingRef = useRef<SVGGElement>(null)
+  const trailRefs = useRef<(HTMLDivElement | null)[]>([])
+  const histRef = useRef<{ x: number; y: number }[]>([]) // recent screen positions
   const enteredRef = useRef(false)
   const introCancelRef = useRef(false)
   const rollCancelRef = useRef(false)
   const rafRef = useRef(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // wind-whoosh trail: a short comet tail of the ball's recent positions.
+  // paintTrail pushes the live point and re-lays the pool with fading opacity;
+  // fadeTrail bleeds it out as the ball slows into a roll; clearTrail resets it.
+  const paintTrail = useCallback((sx: number, sy: number) => {
+    const h = histRef.current
+    h.unshift({ x: sx, y: sy })
+    if (h.length > TRAIL_N + 1) h.length = TRAIL_N + 1
+    for (let i = 0; i < TRAIL_N; i++) {
+      const el = trailRefs.current[i]
+      if (!el) continue
+      const p = h[i]
+      if (!p) { el.style.opacity = '0'; continue }
+      const k = i / TRAIL_N
+      // stretch each puff along the ball's travel so it reads as a motion streak
+      const q = h[i + 1]
+      let ang = 0, stretch = 1
+      if (q) {
+        const dx = p.x - q.x, dy = p.y - q.y
+        ang = Math.atan2(dy, dx) * 180 / Math.PI
+        stretch = Math.min(2.6, 1 + Math.hypot(dx, dy) / 9)
+      }
+      el.style.left = `${p.x}px`
+      el.style.top = `${p.y}px`
+      el.style.transform = `translate(-50%, -50%) rotate(${ang.toFixed(1)}deg) scale(${(stretch * (1 - 0.45 * k)).toFixed(2)}, ${(1 - 0.55 * k).toFixed(2)})`
+      el.style.opacity = `${(0.62 * (1 - k)).toFixed(3)}`
+    }
+  }, [])
+  const fadeTrail = useCallback(() => {
+    for (const el of trailRefs.current) {
+      if (!el) continue
+      const o = parseFloat(el.style.opacity || '0')
+      el.style.opacity = o > 0.012 ? `${(o * 0.78).toFixed(3)}` : '0'
+    }
+  }, [])
+  const clearTrail = useCallback(() => {
+    histRef.current.length = 0
+    for (const el of trailRefs.current) if (el) el.style.opacity = '0'
+  }, [])
 
   // measure viewport width
   useLayoutEffect(() => {
@@ -408,28 +441,77 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
 
   const runFlight = useCallback(() => {
     if (!layout) return
-    const segs = buildSegments(layout)
+    const segs = buildFlightSegs(layout)
+    const flightDur = segs.reduce((a, s) => a + s.dur, 0)
+    const startX = segs[0].x0
+    const bounceEndX = segs[segs.length - 1].x1
+    const target = worldOf(0, layout)
+    const rollProf = buildRollProfile(bounceEndX, target, layout) // the settle into the cup
+    // During the flight the camera pans smoothly (tracking the ball's horizontal
+    // progress) from the tee view to the flag view, instead of pinning the ball
+    // at screen-centre. That way the ball traces a real parabola across the
+    // screen rather than appearing to go straight up and straight back down.
+    const camStart = camFor(startX, layout)
+    const camEnd = camFor(bounceEndX, layout) // == the roll's starting camera, so the hand-off is seamless
+    const flightSpan = startX - bounceEndX || 1
+    const camFlight = (bx: number) => {
+      const hp = Math.min(1, Math.max(0, (startX - bx) / flightSpan))
+      return camStart + (camEnd - camStart) * hp
+    }
     const sw = swingRef.current
     if (sw) {
       sw.classList.remove('is-swinging')
       void sw.getBoundingClientRect() // restart the keyframes on replay
       sw.classList.add('is-swinging')
     }
+    clearTrail()
+    const place = (bx: number, by: number, cam: number) => {
+      if (trackRef.current) trackRef.current.style.transform = `translateX(${-cam}px)`
+      if (ballRef.current) {
+        ballRef.current.style.left = `${bx - cam}px`
+        ballRef.current.style.top = `${by}px`
+      }
+    }
     const t0 = performance.now()
     const tick = (now: number) => {
       if (introCancelRef.current) return // a manual move took over
-      const s = introBallAt(now - t0, segs)
-      const cam = camFor(s.bx, layout)
-      if (trackRef.current) trackRef.current.style.transform = `translateX(${-cam}px)`
-      if (ballRef.current) {
-        ballRef.current.style.left = `${s.bx - cam}px`
-        ballRef.current.style.top = `${s.by}px`
+      const elapsed = now - t0
+      // wind-up: ball waits at the tee until the club reaches it (impact)
+      if (elapsed < WINDUP) {
+        place(startX, segs[0].y0, camStart)
+        rafRef.current = requestAnimationFrame(tick)
+        return
       }
-      if (s.done) { setPhase('idle'); setSelected(0); return }
+      const t = elapsed - WINDUP
+      if (t < flightDur) {
+        // the ballistic arc + single bounce — fast, so it leaves a whoosh trail
+        let acc = 0, k = 0
+        while (k < segs.length - 1 && t > acc + segs[k].dur) { acc += segs[k].dur; k++ }
+        const s = segs[k]
+        const p = Math.min(1, (t - acc) / s.dur)
+        const { bx, by } = arcAt(s, p)
+        const cam = camFlight(bx)
+        place(bx, by, cam)
+        paintTrail(bx - cam, by)
+        rafRef.current = requestAnimationFrame(tick)
+        return
+      }
+      // roll the rest of the way into the cup, hugging the terrain
+      const tr = t - flightDur
+      if (tr >= rollProf.total) {
+        place(target, ballTopAt(target, layout), camFor(target, layout))
+        clearTrail()
+        if (sw) sw.classList.remove('is-swinging') // ease the golfer back to address
+        setPhase('idle'); setSelected(0)
+        return
+      }
+      const x = rollXAt(rollProf, tr)
+      place(x, ballTopAt(x, layout), camFor(x, layout))
+      fadeTrail() // the whoosh dies away as the ball slows to a roll
       rafRef.current = requestAnimationFrame(tick)
     }
     rafRef.current = requestAnimationFrame(tick)
-  }, [layout])
+  }, [layout, paintTrail, fadeTrail, clearTrail])
 
   // putt the ball from one marker to another, hugging the terrain (idle nav)
   const runRoll = useCallback((from: number, to: number) => {
@@ -590,6 +672,16 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
                 <Golfer innerRef={swingRef} />
               </span>
             </div>
+
+            {/* wind-whoosh trail — screen overlay behind the ball, driven by rAF */}
+            {Array.from({ length: TRAIL_N }).map((_, i) => (
+              <div
+                key={i}
+                ref={(el) => { trailRefs.current[i] = el }}
+                className="golf-trail"
+                aria-hidden
+              />
+            ))}
 
             {/* ball — screen overlay, clean sphere, the only free mover */}
             <div
