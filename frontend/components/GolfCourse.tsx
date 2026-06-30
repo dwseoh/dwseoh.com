@@ -111,6 +111,9 @@ const camFor = (worldX: number, L: Layout) =>
 const worldOf = (i: number, L: Layout) => L.PAD + i * L.GAP
 const teeWorld = (L: Layout) => L.golferWorld - TEE_BACK
 
+// "ongoing" items (still active today) get the periodic gold shimmer + sparkle
+const isOngoing = (date: string) => /\b(present|current|now|ongoing)\b/i.test(date)
+
 // --- intro shot: one ballistic arc -> a single small bounce -> roll to the cup ---
 // On contact the ball gets a launch velocity and flies a gravity-governed
 // parabola (constant horizontal speed, vertical decelerating to the apex then
@@ -641,23 +644,33 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
               {items.map((item, i) => {
                 const wx = worldOf(i, layout)
                 const active = phase !== 'intro' && i === activeIdx
+                const ongoing = isOngoing(item.date)
                 return (
                   <span key={item.id} className="golf-marker-slot" style={{ left: `${wx}px`, bottom: `${H - surfaceY(wx, layout) - PLANT}px` }}>
                     <button
                       type="button"
-                      className={`golf-marker${active ? ' is-active' : ''}`}
+                      className={`golf-marker${active ? ' is-active' : ''}${ongoing ? ' is-ongoing' : ''}`}
                       aria-label={item.name}
                       aria-pressed={active}
                       disabled={busy}
                       onClick={() => jumpTo(i)}
                     >
                       <span className="golf-name">{item.name}</span>
-                      <span className="golf-chip">
-                        {item.logo ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={item.logo} alt="" loading="lazy" />
-                        ) : (
-                          <span className="golf-chip-initial">{item.name.charAt(0)}</span>
+                      <span className="golf-chip-wrap">
+                        <span className="golf-chip">
+                          {item.logo ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={item.logo} alt="" loading="lazy" />
+                          ) : (
+                            <span className="golf-chip-initial">{item.name.charAt(0)}</span>
+                          )}
+                        </span>
+                        {ongoing && (
+                          <span className="golf-sparkles" aria-hidden>
+                            <i className="golf-spark golf-spark--1" />
+                            <i className="golf-spark golf-spark--2" />
+                            <i className="golf-spark golf-spark--3" />
+                          </span>
                         )}
                       </span>
                       <span className="golf-pole" />
@@ -716,17 +729,19 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
           )}
         </span>
         <div className="golf-detail-main">
-          <div className="golf-detail-toprow">
-            <span className="golf-detail-name">{cur.name}</span>
+          <div className="golf-detail-line">
+            <span className="golf-detail-role">
+              <strong>{cur.role}</strong>
+              <span className="golf-detail-at"> @{cur.name}</span>
+            </span>
+            {cur.href && (
+              <a className="golf-detail-visit" href={cur.href} target="_blank" rel="noopener noreferrer">
+                {labels.visit} <OutIcon />
+              </a>
+            )}
             <span className="golf-detail-date">{cur.date}</span>
           </div>
-          <div className="golf-detail-role">{cur.role}</div>
           <p className="golf-detail-blurb">{cur.blurb}</p>
-          {cur.href && (
-            <a className="golf-detail-visit" href={cur.href} target="_blank" rel="noopener noreferrer">
-              {labels.visit} <OutIcon />
-            </a>
-          )}
         </div>
       </div>
     </div>
