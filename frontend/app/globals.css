@@ -533,6 +533,8 @@ body {
 
 .golf {
   --golf-flag: #e5484d;
+  --golf-gold: #e3a92b;
+  --golf-gold-lt: #ffe7a0;
   --swing-ease: cubic-bezier(0.4, 0.05, 0.45, 1);
   position: relative;
   overflow: hidden;
@@ -584,7 +586,10 @@ body {
 }
 .golf-marker.is-active .golf-name,
 .golf-marker:hover .golf-name { opacity: 1; transform: translateY(0); }
+.golf-chip-wrap { position: relative; display: flex; }
 .golf-chip {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -603,6 +608,71 @@ body {
 .golf-marker.is-active .golf-chip {
   border-color: var(--n-accent);
   box-shadow: 0 0 0 2px rgba(35, 131, 226, 0.30), 0 5px 12px rgba(0, 0, 0, 0.16);
+}
+
+/* ongoing markers — a gold "shine" passes over the logo every 5s, with a soft
+   gold halo and a few twinkling sparkles, marking the still-active item. Pure
+   CSS: a 5s loop where the effect plays in the first ~0.8s then idles, so it
+   pulses once every five seconds without any JS timer. */
+.golf-marker.is-ongoing .golf-chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.85) 47%,
+    var(--golf-gold-lt) 52%,
+    transparent 62%);
+  transform: translateX(-120%);
+  animation: golfShimmer 5s ease-in-out infinite;
+  pointer-events: none;
+}
+.golf-sparkles {
+  position: absolute;
+  inset: -6px;
+  pointer-events: none;
+  z-index: 2;
+}
+.golf-sparkles::before { /* glowing gold ring around the chip */
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 14px;
+  background: radial-gradient(closest-side, rgba(227, 169, 43, 0) 52%, rgba(227, 169, 43, 0.5) 70%, rgba(227, 169, 43, 0) 86%);
+  opacity: 0;
+  animation: golfHalo 5s ease-in-out infinite;
+}
+.golf-spark {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: radial-gradient(circle, #fff 0%, var(--golf-gold-lt) 45%, var(--golf-gold) 100%);
+  clip-path: polygon(50% 0%, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0% 50%, 40% 40%);
+  filter: drop-shadow(0 0 2px rgba(255, 228, 150, 0.85));
+  opacity: 0;
+  transform: scale(0);
+  animation: golfSpark 5s ease-in-out infinite;
+}
+.golf-spark--1 { top: -3px; right: 1px; animation-delay: 0s; }
+.golf-spark--2 { top: 9px; left: -4px; width: 7px; height: 7px; animation-delay: 0.22s; }
+.golf-spark--3 { bottom: -2px; right: 6px; width: 6px; height: 6px; animation-delay: 0.42s; }
+
+@keyframes golfShimmer {
+  0%   { transform: translateX(-120%); }
+  16%  { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+@keyframes golfHalo {
+  0%   { opacity: 0; transform: scale(0.7); }
+  6%   { opacity: 0.75; transform: scale(1); }
+  22%  { opacity: 0; transform: scale(1.16); }
+  100% { opacity: 0; transform: scale(1.16); }
+}
+@keyframes golfSpark {
+  0%   { opacity: 0; transform: scale(0) rotate(0deg); }
+  5%   { opacity: 1; transform: scale(1) rotate(30deg); }
+  13%  { opacity: 0; transform: scale(0.2) rotate(55deg); }
+  100% { opacity: 0; transform: scale(0) rotate(55deg); }
 }
 .golf-pole {
   width: 2px;
@@ -824,54 +894,69 @@ body {
   border-radius: 999px;
 }
 
-/* detail panel — flush below the band (same widget); mirrors an Experience row:
-   logo tile · role/date · org/blurb, with the accent ring marking the current pick */
+/* detail panel — flush below the band (same widget); a single condensed line:
+   logo · Role @Org · Visit · right-aligned date, with a one-line blurb beneath */
 .golf-detail {
   display: grid;
-  grid-template-columns: 40px 1fr;
-  gap: 14px;
-  align-items: start;
-  padding: 14px 16px 16px;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 16px 11px;
   background: var(--n-bg);
 }
 .golf-detail-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
   border: 1px solid var(--n-accent);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(35, 131, 226, 0.14);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
 }
-.golf-detail-logo img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
-.golf-detail-initial { font-size: 1.05rem; font-weight: 700; color: var(--n-accent); }
+.golf-detail-logo img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+.golf-detail-initial { font-size: 0.95rem; font-weight: 700; color: var(--n-accent); }
 .golf-detail-main { min-width: 0; }
-.golf-detail-toprow { display: flex; align-items: baseline; gap: 10px; }
-.golf-detail-name { font-size: 0.9375rem; font-weight: 600; line-height: 1.3; color: var(--n-text); }
-.golf-detail-date {
-  margin-left: auto;
-  flex-shrink: 0;
-  font-size: 0.75rem;
-  color: var(--n-light);
+.golf-detail-line { display: flex; align-items: center; gap: 10px; }
+.golf-detail-role {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.8125rem;
+  color: var(--n-secondary);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.golf-detail-role { margin-top: 2px; font-size: 0.8125rem; color: var(--n-secondary); }
-.golf-detail-blurb { margin: 8px 0 0; font-size: 0.8125rem; line-height: 1.6; color: var(--n-secondary); }
+.golf-detail-role strong { font-weight: 700; color: var(--n-text); }
+.golf-detail-at { color: var(--n-secondary); font-weight: 500; }
 .golf-detail-visit {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-top: 10px;
-  font-size: 0.8125rem;
+  flex-shrink: 0;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--n-accent);
   text-decoration: none;
 }
 .golf-detail-visit:hover { text-decoration: underline; }
+.golf-detail-date {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--n-light);
+  white-space: nowrap;
+}
+.golf-detail-blurb {
+  margin: 3px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--n-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .golf-track, .golf-ball, .golf-chip, .golf-name, .golf-arrow, .golf-reset { transition: none; }
@@ -881,4 +966,8 @@ body {
   .golf-anim.is-swinging .golf-arms,
   .golf-anim.is-swinging .golf-club { animation: none; }
   .golf-trail { display: none; }
+  .golf-marker.is-ongoing .golf-chip::after,
+  .golf-sparkles::before,
+  .golf-spark { animation: none; }
+  .golf-sparkles { display: none; }
 }
