@@ -533,6 +533,7 @@ body {
 
 .golf {
   --golf-flag: #e5484d;
+  --swing-ease: cubic-bezier(0.4, 0.05, 0.45, 1);
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--n-border);
@@ -653,25 +654,70 @@ body {
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18));
 }
 
-/* golfer — far-right tee. On contact the torso coils/uncoils about the hips
-   while the arms sweep the club through its arc; both restart together when
-   .is-swinging lands on the rig. Impact (club at the ball) is at 50% = WINDUP. */
-.golf-anim { transform: rotate(0deg); }
-.golf-body { transform: rotate(0deg); }
-.golf-arms { transform: rotate(0deg); }
-.golf-anim.is-swinging .golf-body { animation: golferTwist 0.72s cubic-bezier(0.34, 0.02, 0.2, 1) both; }
-.golf-anim.is-swinging .golf-arms { animation: golferSwing 0.72s cubic-bezier(0.30, 0.00, 0.18, 1) both; }
-@keyframes golferSwing {
-  0%   { transform: rotate(-150deg); } /* top of the backswing — club up & back */
-  8%   { transform: rotate(-158deg); } /* brief load at the top */
-  50%  { transform: rotate(0deg); }    /* impact — club down at the ball */
-  78%  { transform: rotate(82deg); }   /* swinging up the front side */
-  100% { transform: rotate(112deg); }  /* high finish over the lead shoulder, held */
+/* golfer — far-right tee. Read as a side-view swing: the big visible arc is the
+   arms + club (in the swing plane), while the body adds only subtle tilt — in a
+   true side view the body's turn about the spine is into the screen, so large
+   torso rotations would just topple the figure over. The kinetic-chain feel
+   comes from timing + the club LAGGING the arms (wrists cock at the top, hold
+   the lag, then release/whip through impact). Across the 1.25s clip: backswing
+   to a loaded top at 44%, brief transition, fast downswing, impact at ~64%
+   (= WINDUP, when the ball launches), then a decelerating high finish. When
+   .is-swinging is removed (after the shot) the groups ease back to address. */
+.golf-anim,
+.golf-lower, .golf-arms, .golf-club {
+  transform: rotate(0deg);
+  transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.3, 1); /* graceful return to address */
 }
-@keyframes golferTwist {
-  0%   { transform: rotate(8deg); }    /* coiled away from the target */
-  50%  { transform: rotate(-5deg); }   /* square at impact */
-  100% { transform: rotate(-16deg); }  /* turned through to face the target */
+/* posture: spine tilts forward over the ball, head drops to look down at the tee */
+.golf-torso { transform: rotate(-13deg); transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.3, 1); }
+.golf-head { transform: rotate(11deg); transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.3, 1); }
+.golf-anim.is-swinging .golf-lower { animation: golfHips 1.25s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-torso { animation: golfTorso 1.25s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-head { animation: golfHead 1.25s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-arms { animation: golfArms 1.25s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-club { animation: golfClub 1.25s var(--swing-ease) both; }
+
+/* hips — barely visible in side view; a hint of weight shift */
+@keyframes golfHips {
+  0%   { transform: rotate(0deg); }
+  44%  { transform: rotate(-2deg); }
+  50%  { transform: rotate(-1deg); }   /* fires first into the downswing */
+  64%  { transform: rotate(3deg); }    /* nudges toward the target at impact */
+  100% { transform: rotate(6deg); }
+}
+/* spine — holds its forward tilt over the ball through impact, stands up at finish */
+@keyframes golfTorso {
+  0%   { transform: rotate(-13deg); }  /* forward golf posture, over the ball */
+  44%  { transform: rotate(-10deg); }  /* eases up a touch as the arms load */
+  50%  { transform: rotate(-10deg); }
+  64%  { transform: rotate(-13deg); }  /* back in posture, stacked over the ball */
+  100% { transform: rotate(-1deg); }   /* stands tall to a balanced finish */
+}
+/* head — eyes stay down on the ball the whole way; never looks up */
+@keyframes golfHead {
+  0%   { transform: rotate(11deg); }   /* looking down at the tee */
+  44%  { transform: rotate(8deg); }    /* holds the gaze as the body coils */
+  50%  { transform: rotate(8deg); }
+  64%  { transform: rotate(11deg); }   /* still watching the ball at impact */
+  100% { transform: rotate(15deg); }   /* head stays down through the finish */
+}
+/* arms — the big readable arc: down at the ball -> up & back -> whip down -> high */
+@keyframes golfArms {
+  0%   { transform: rotate(0deg); }
+  44%  { transform: rotate(-150deg); animation-timing-function: cubic-bezier(0.3, 0, 0.7, 0.25); } /* slow to the top, then accelerate down */
+  50%  { transform: rotate(-156deg); animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.45); } /* transition pause at the top */
+  64%  { transform: rotate(0deg); animation-timing-function: cubic-bezier(0.2, 0.55, 0.3, 1); }     /* slammed back down to impact */
+  100% { transform: rotate(118deg); }  /* decelerating up over the lead shoulder */
+}
+/* club — cocks against the arms at the top, holds the lag, releases at impact */
+@keyframes golfClub {
+  0%   { transform: rotate(0deg); }
+  44%  { transform: rotate(-60deg); }  /* wrists cock */
+  50%  { transform: rotate(-68deg); }  /* max lag at the transition */
+  58%  { transform: rotate(-52deg); animation-timing-function: cubic-bezier(0.45, 0, 0.15, 1); } /* lag retained as the hands drop */
+  64%  { transform: rotate(0deg); }    /* release — the whip, square at impact */
+  70%  { transform: rotate(24deg); }   /* club passes the hands */
+  100% { transform: rotate(14deg); }   /* settles, club up at the finish */
 }
 
 /* ball — screen overlay; clean textureless sphere */
@@ -684,6 +730,27 @@ body {
   background: radial-gradient(circle at 36% 30%, #ffffff 0%, #f3f5f6 52%, #d6dcdf 100%);
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.28), inset -1.2px -1.2px 2px rgba(0, 0, 0, 0.10);
   z-index: 3;
+}
+
+/* wind-whoosh trail — motion-blur streaks streaming off the struck ball. A white
+   core keeps it bright over the grass while a cooler blue-grey halo gives it
+   contrast against the near-white sky (pure white would vanish there). rAF
+   stretches/rotates each puff along the ball's travel and fades it, so there is
+   no CSS transition here. */
+.golf-trail {
+  position: absolute;
+  width: 17px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(166, 188, 212, 0.55) 52%,
+    rgba(166, 188, 212, 0) 80%);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+  will-change: left, top, opacity, transform;
 }
 
 /* navigation */
@@ -808,6 +875,10 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .golf-track, .golf-ball, .golf-chip, .golf-name, .golf-arrow, .golf-reset { transition: none; }
-  .golf-anim.is-swinging .golf-body,
-  .golf-anim.is-swinging .golf-arms { animation: none; }
+  .golf-anim.is-swinging .golf-lower,
+  .golf-anim.is-swinging .golf-torso,
+  .golf-anim.is-swinging .golf-head,
+  .golf-anim.is-swinging .golf-arms,
+  .golf-anim.is-swinging .golf-club { animation: none; }
+  .golf-trail { display: none; }
 }
