@@ -112,7 +112,7 @@ const worldOf = (i: number, L: Layout) => L.PAD + i * L.GAP
 const teeWorld = (L: Layout) => L.golferWorld - TEE_BACK
 
 // "ongoing" items (still active today) get the periodic gold shimmer + sparkle
-const isOngoing = (date: string) => /\b(present|current|now|ongoing)\b/i.test(date)
+const isOngoing = (date: string) => /present|current|now|ongoing|현재/i.test(date)
 
 // --- intro shot: one ballistic arc -> a single small bounce -> roll to the cup ---
 // On contact the ball gets a launch velocity and flies a gravity-governed
@@ -130,9 +130,9 @@ function buildFlightSegs(L: Layout): Seg[] {
   const bounceX = target + L.GAP * 0.14 // one small bounce carries it most of the rest
   return [
     // the flight: a tall, gravity-shaped arc
-    { x0: start, x1: landX, y0: ballTopAt(start, L), y1: ballTopAt(landX, L), apex: 116, dur: 1620 },
+    { x0: start, x1: landX, y0: ballTopAt(start, L), y1: ballTopAt(landX, L), apex: 116, dur: 1320 },
     // the single bounce: low, energy mostly spent
-    { x0: landX, x1: bounceX, y0: ballTopAt(landX, L), y1: ballTopAt(bounceX, L), apex: 21, dur: 450 },
+    { x0: landX, x1: bounceX, y0: ballTopAt(landX, L), y1: ballTopAt(bounceX, L), apex: 21, dur: 360 },
   ]
 }
 
@@ -173,7 +173,7 @@ function buildRollProfile(x0: number, x1: number, L: Layout): RollProfile {
     cumT.push(cumT[k - 1] + dx / v)
   }
   const raw = cumT[N - 1] || 1
-  const total = Math.min(1230, Math.max(540, dist * 1.73))
+  const total = Math.min(980, Math.max(440, dist * 1.38))
   for (let k = 0; k < N; k++) cumT[k] = (cumT[k] / raw) * total
   return { xs, cumT, total }
 }
@@ -363,15 +363,22 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
       const k = i / TRAIL_N
       // stretch each puff along the ball's travel so it reads as a motion streak
       const q = h[i + 1]
-      let ang = 0, stretch = 1
+      let angRad = 0, stretch = 1
       if (q) {
         const dx = p.x - q.x, dy = p.y - q.y
-        ang = Math.atan2(dy, dx) * 180 / Math.PI
+        angRad = Math.atan2(dy, dx)
         stretch = Math.min(2.6, 1 + Math.hypot(dx, dy) / 9)
       }
-      el.style.left = `${p.x}px`
-      el.style.top = `${p.y}px`
-      el.style.transform = `translate(-50%, -50%) rotate(${ang.toFixed(1)}deg) scale(${(stretch * (1 - 0.45 * k)).toFixed(2)}, ${(1 - 0.55 * k).toFixed(2)})`
+      const scaleX = stretch * (1 - 0.45 * k)
+      const scaleY = 1 - 0.55 * k
+      // shift each puff back along the travel direction by its own forward
+      // half-length (half the 17px base width, scaled) so its leading edge sits at
+      // the sample point — the streak reads as trailing behind, never poking out
+      // ahead of the ball (which is drawn on top of it).
+      const back = 8.5 * scaleX
+      el.style.left = `${(p.x - Math.cos(angRad) * back).toFixed(1)}px`
+      el.style.top = `${(p.y - Math.sin(angRad) * back).toFixed(1)}px`
+      el.style.transform = `translate(-50%, -50%) rotate(${(angRad * 180 / Math.PI).toFixed(1)}deg) scale(${scaleX.toFixed(2)}, ${scaleY.toFixed(2)})`
       el.style.opacity = `${(0.62 * (1 - k)).toFixed(3)}`
     }
   }, [])
