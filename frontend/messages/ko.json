@@ -10,8 +10,8 @@
     "portfolio": "포트폴리오 링크",
     "projects": "프로젝트",
     "experiences": "경력",
-    "extracurriculars": "대외활동",
-    "hobbies": "취미",
+    "extracurriculars": "리더십및 동아리 활동",
+    "hobbies": "취미생활",
     "photos": "사진",
     "contact": "연락처"
   },
@@ -32,6 +32,50 @@
     { "label": "GitHub",   "href": "https://github.com/dwseoh",               "desc": "제 프로젝트 구경하기!", "icon": "github"   },
     { "label": "이력서",    "href": "/static/resume.pdf",                      "desc": "이력서 보기",           "icon": "file"     },
     { "label": "Substack", "href": "https://substack.com/@dwseoh",            "desc": "블로그 읽기",           "icon": "substack" }
+  ],
+  "projects": [
+    {
+      "title": "Quota",
+      "desc": "Real-time financial intelligence for your codebase. VScode ext. + web sandbox.",
+      "tech": ["TypeScript", "React", "Node.js"],
+      "logo": "/images/logos/quota.png",
+      "award": "DeltaHacks 12 우승",
+      "screenshot": "/images/thumbnails/quota.png",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/dwseoh/quota", "icon": "github" },
+        { "label": "Devpost", "href": "https://devpost.com/software/quota-fg4pzi", "icon": "devpost" }
+      ]
+    },
+    {
+      "title": "Nebula",
+      "desc": "Mobile notes app with camera import via OCR, semantic search, and LLM chat.",
+      "tech": ["Python", "FastAPI", "Postgres"],
+      "logo": "/images/logos/nebula.svg",
+      "screenshot": "/images/thumbnails/nebula.webp",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/rickytang666/nebula", "icon": "github" }
+      ]
+    },
+    {
+      "title": "Prospector",
+      "desc": "Perplexity for design team sponsors. Ranks 1.6k+ companies by fit and draft outreach.",
+      "tech": ["C++", "WebAssembly"],
+      "logo": "/images/logos/prospector.png",
+      "screenshot": "/images/thumbnails/prospector.png",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/rickytang666/prospector", "icon": "github" }
+      ]
+    },
+    {
+      "title": "Sheetmusic Viewer",
+      "desc": "Store, share, and manage your sheet music on any device. Flip pages easily.",
+      "tech": ["Rust", "Tauri"],
+      "icon": "music",
+      "screenshot": "/images/thumbnails/sheetmusic.png",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/dwseoh/sheetmusic-library", "icon": "github" }
+      ]
+    }
   ],
   "experiences": [
     {
@@ -109,108 +153,128 @@
     {
       "id": "hack-the-north",
       "name": "Hack the North",
-      "role": "로지스틱스 오거나이저",
-      "date": "2024 — 현재",
+      "role": "Logistics Organizer",
+      "date": "2026 — Present",
       "logo": "/images/logos/hackthenorth.png",
-      "blurb": "캐나다 최대 해커톤 운영 — 워털루 대학교에 1,000명 이상의 해커가 모입니다.",
+      "blurb": "Organizing Canada's largest hackathon: 1,000+ hackers at the University of Waterloo.",
       "href": "https://hackthenorth.com"
     },
     {
       "id": "uw-ksa",
       "name": "UW Korean Student Association",
-      "role": "행사 담당",
-      "date": "2024 — 2025",
-      "logo": null,
-      "blurb": "TODO: 한인 학생회 행사 담당 역할에 대한 한 줄 소개."
+      "role": "Events",
+      "date": "2025 — 2026",
+      "logo": "/images/logos/uwksa.jpg",
+      "blurb": "Planned and executed events that celebrate and preserve Korean culture.",
+      "href":"https://uwksa.ca"
+    },
+    {
+      "id": "uw-csc",
+      "name": "UW CSC",
+      "role": "Termcom Member",
+      "date": "2025",
+      "logo": "/images/logos/cs_club.png",
+      "blurb": "Maintaining internal CSC systems and servers.",
+      "href":"csclub.uwaterloo.ca"
+    },
+    {
+      "id": "mef",
+      "name": "UW MEF",
+      "role": "Funding Council Member",
+      "date": "2025",
+      "logo": "/images/logos/mef.png",
+      "blurb": "Reviewed and evaluated funding proposals for student-led projects.",
+      "href":"https://uwaterloo.ca/math-endowment-fund/"
     },
     {
       "id": "ignition-hacks",
       "name": "Ignition Hacks",
-      "role": "스폰서십 디렉터",
-      "date": "2022 — 2023",
-      "logo": null,
-      "blurb": "TODO: Ignition Hacks 스폰서십 활동에 대한 한 줄 소개.",
+      "role": "Sponsorship Director",
+      "date": "2023 — 2026",
+      "logo": "/images/logos/ignitionhacks.png",
+      "imageCover": true,
+      "blurb": "Responsible for all sponsorships, maintaining professional relationships with sponsors, managing finance, and directing the subteam.",
       "href": "https://ignitionhacks.org"
-    },
-    {
-      "id": "mef",
-      "name": "MEF",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: 한 줄 소개."
     },
     {
       "id": "hack-the-ridge",
       "name": "Hack the Ridge",
-      "role": "회장",
+      "role": "President",
       "date": "2021 — 2022",
-      "logo": null,
-      "blurb": "TODO: Hack the Ridge 창립 및 운영에 대한 한 줄 소개."
+      "imageCover":true,
+      "logo": "/images/logos/hacktheridge.jpg",
+      "blurb": "Organized one of the biggest and prominent high school hackathon as president.",
+      "href":"https://hacktheridge.ca"
     },
     {
       "id": "msyo",
-      "name": "MSYO",
-      "role": "지휘자 · 수석 클라리넷",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: 한 줄 소개."
+      "name": "Missisauga Symphony Youth Orchestra",
+      "role": "Conductor & Principal Clarinetist",
+      "date": "2022 — 2025",
+      "logo": "/images/logos/msyo.jpeg",
+      "href":"https://www.mississaugasymphony.ca/msyo/",
+      "blurb": "Principal Clarinetist for 3 years with conducting experience in a real concert."
     },
     {
       "id": "project-apollo",
       "name": "Project Apollo",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: 한 줄 소개."
+      "role": "National Chapter Development Director",
+      "date": "2024 — 2025",
+      "imageCover":true,
+      "logo": "/images/logos/apollo.png",
+      "blurb": "Led chapter development for the goal of music education for all."
     },
     {
       "id": "woowoo-ensemble",
       "name": "WooWoo Ensemble",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: 한 줄 소개."
+      "role": "Founder, Leader, Clarinetist",
+      "date": "2023 — 2025",
+      "imageCover":true,
+      "logo": "/images/logos/woowoo.png",
+      "blurb": "A unique woodwind ensemble founded by passionate musicians to bring bright energy to the community."
     },
     {
       "id": "concert-band",
       "name": "Concert Band",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: 한 줄 소개."
+      "role": "Section Leader, Conductor, Clarinetist",
+      "date": "2021 — 2025",
+      "logo": "/images/logos/irhs.png",
+      "blurb": "Previously part of the HS music family at my school with various and active involvement."
     },
     {
       "id": "korean-club",
       "name": "Korean Club",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: 한 줄 소개."
+      "role": "Founder & President",
+      "date": "2024 — 2025",
+      "imageCover":true,
+      "logo": "/images/logos/irhskorea.png",
+      "blurb": "Oversaw events that explore various aspects of Korean culture (dance, food, language, etc)."
     },
     {
       "id": "student-voice",
       "name": "Student Voice",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: 한 줄 소개."
+      "role": "Outreach Director",
+      "imageCover": true,
+      "date": "2023 — 2025",
+      "logo": "/images/logos/studvo.jpg",
+      "blurb": "Handled outreach to local charities and communication with the school admin & other clubs for events."
     },
     {
       "id": "marketyze",
       "name": "Marketyze",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: 한 줄 소개."
+      "role": "Director of Programs",
+      "date": "2024",
+      "logo": "/images/logos/marketyze.png",
+      "blurb": "Led the planning of the Marketyze Startup Program."
     },
     {
       "id": "puzzle-club",
       "name": "Puzzle Club",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: 한 줄 소개."
+      "role": "Founder & President",
+      "date": "2022 - 2024",
+      "imageCover":true,
+      "logo": "/images/logos/puzzleclub.png",
+      "blurb": "Led weekly logic puzzle lessons and hosted contests for enjoyers and learners."
     }
   ],
   "extracurricularLabels": {
