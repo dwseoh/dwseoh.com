@@ -27,6 +27,10 @@ export interface Extracurricular {
   logo: string | null
   blurb: string
   href?: string
+  /** When true, the logo fills the marker edge-to-edge and is trimmed by the
+   *  rounded-corner mask (good for full-bleed square logos). Default: the logo
+   *  sits inset inside the chip with padding. */
+  imageCover?: boolean
 }
 
 export interface ExtracurricularLabels {
@@ -664,7 +668,7 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
                     >
                       <span className="golf-name">{item.name}</span>
                       <span className="golf-chip-wrap">
-                        <span className="golf-chip">
+                        <span className={`golf-chip${item.imageCover ? ' is-cover' : ''}`}>
                           {item.logo ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={item.logo} alt="" loading="lazy" />
@@ -727,7 +731,7 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
 
       {/* detail panel — same widget; mirrors an Experience row (logo · text) */}
       <div className="golf-detail">
-        <span className="golf-detail-logo">
+        <span className={`golf-detail-logo${cur.imageCover ? ' is-cover' : ''}`}>
           {cur.logo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={cur.logo} alt="" loading="lazy" />
