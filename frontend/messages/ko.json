@@ -111,82 +111,106 @@
       "name": "Hack the North",
       "role": "로지스틱스 오거나이저",
       "date": "2024 — 현재",
-      "logo": "/images/logos/deltahacks.png",
+      "logo": "/images/logos/hackthenorth.png",
       "blurb": "캐나다 최대 해커톤 운영 — 워털루 대학교에 1,000명 이상의 해커가 모입니다.",
       "href": "https://hackthenorth.com"
-    },
-    {
-      "id": "ignition-hacks",
-      "name": "Ignition Hacks",
-      "role": "스폰서십 디렉터",
-      "date": "2022 — 2023",
-      "logo": "/images/logos/quota.png",
-      "blurb": "TODO: Ignition Hacks 스폰서십 활동에 대한 한 줄 소개.",
-      "href": "https://ignitionhacks.org"
     },
     {
       "id": "uw-ksa",
       "name": "UW Korean Student Association",
       "role": "행사 담당",
       "date": "2024 — 2025",
-      "logo": "/images/logos/cerebras.png",
+      "logo": null,
       "blurb": "TODO: 한인 학생회 행사 담당 역할에 대한 한 줄 소개."
+    },
+    {
+      "id": "ignition-hacks",
+      "name": "Ignition Hacks",
+      "role": "스폰서십 디렉터",
+      "date": "2022 — 2023",
+      "logo": null,
+      "blurb": "TODO: Ignition Hacks 스폰서십 활동에 대한 한 줄 소개.",
+      "href": "https://ignitionhacks.org"
+    },
+    {
+      "id": "mef",
+      "name": "MEF",
+      "role": "TODO",
+      "date": "TODO",
+      "logo": null,
+      "blurb": "TODO: 한 줄 소개."
     },
     {
       "id": "hack-the-ridge",
       "name": "Hack the Ridge",
       "role": "회장",
       "date": "2021 — 2022",
-      "logo": "/images/logos/orbital.png",
+      "logo": null,
       "blurb": "TODO: Hack the Ridge 창립 및 운영에 대한 한 줄 소개."
     },
     {
-      "id": "mock-5",
-      "name": "Mock Org Five",
-      "role": "멤버",
-      "date": "2021 — 2022",
-      "logo": "/images/logos/prospector.png",
-      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+      "id": "msyo",
+      "name": "MSYO",
+      "role": "지휘자 · 수석 클라리넷",
+      "date": "TODO",
+      "logo": null,
+      "blurb": "TODO: 한 줄 소개."
     },
     {
-      "id": "mock-6",
-      "name": "Mock Org Six",
-      "role": "멤버",
-      "date": "2020 — 2021",
-      "logo": "/images/logos/solvexchange.png",
-      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+      "id": "project-apollo",
+      "name": "Project Apollo",
+      "role": "TODO",
+      "date": "TODO",
+      "logo": null,
+      "blurb": "TODO: 한 줄 소개."
     },
     {
-      "id": "mock-7",
-      "name": "Mock Org Seven",
-      "role": "멤버",
-      "date": "2020 — 2021",
-      "logo": "/images/logos/pinpoint_logo.png",
-      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+      "id": "woowoo-ensemble",
+      "name": "WooWoo Ensemble",
+      "role": "TODO",
+      "date": "TODO",
+      "logo": null,
+      "blurb": "TODO: 한 줄 소개."
     },
     {
-      "id": "mock-8",
-      "name": "Mock Org Eight",
-      "role": "멤버",
-      "date": "2019 — 2020",
-      "logo": "/images/logos/watonomous.jpg",
-      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+      "id": "concert-band",
+      "name": "Concert Band",
+      "role": "TODO",
+      "date": "TODO",
+      "logo": null,
+      "blurb": "TODO: 한 줄 소개."
     },
     {
-      "id": "mock-9",
-      "name": "Mock Org Nine",
-      "role": "멤버",
-      "date": "2019 — 2020",
-      "logo": "/images/logos/nebula.svg",
-      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+      "id": "korean-club",
+      "name": "Korean Club",
+      "role": "TODO",
+      "date": "TODO",
+      "logo": null,
+      "blurb": "TODO: 한 줄 소개."
     },
     {
-      "id": "mock-10",
-      "name": "Mock Org Ten",
-      "role": "멤버",
-      "date": "2018 — 2019",
-      "logo": "/images/logos/quota.png",
-      "blurb": "TODO: 가로 스크롤 테스트용 모의 항목."
+      "id": "student-voice",
+      "name": "Student Voice",
+      "role": "TODO",
+      "date": "TODO",
+      "logo": null,
+      "blurb": "TODO: 한 줄 소개."
+    },
+    {
+      "id": "marketyze",
+      "name": "Marketyze",
+      "role": "TODO",
+      "date": "TODO",
+      "logo": null,
+      "blurb": "TODO: 한 줄 소개."
+    },
+    {
+      "id": "puzzle-club",
+      "name": "Puzzle Club",
+      "role": "TODO",
+      "date": "TODO",
+      "logo": null,
+      "blurb": "TODO: 한 줄 소개."
     }
   ],
   "extracurricularLabels": {
@@ -227,7 +251,10 @@
     { "src": "/images/photos/woowoo-ensemble.jpg", "alt": "WooWoo Ensemble 공연", "caption": "WooWoo Ensemble 공연", "position": "50% 65%" },
     { "src": "/images/photos/conducting-concert-band.jpg", "alt": "콘서트 밴드 지휘", "caption": "콘서트 밴드 지휘", "position": "50% 27%"},
     { "src": "/images/photos/shad-dalhousie-24.jpg", "alt": "SHAD Dalhousie 2024", "caption": "SHAD Dalhousie '24" },
-    { "src": "/images/photos/world-sudoku-and-puzzle-championships.jpg", "alt": "World Sudoku and Puzzle Championships", "caption": "World Sudoku & Puzzle Championships" }
+    { "src": "/images/photos/world-sudoku-and-puzzle-championships.jpg", "alt": "World Sudoku and Puzzle Championships", "caption": "World Sudoku & Puzzle Championships" },
+    { "src": "/images/photos/best-pitch-eureka-hacks.jpg", "alt": "Eureka Hacks 베스트 피치 수상", "caption": "Eureka Hacks 베스트 피치", "position": "50% 22%" },
+    { "src": "/images/photos/gold-utsc-oba-ensemble-festival.jpg", "alt": "OBA 앙상블 페스티벌 금상", "caption": "OBA 앙상블 페스티벌 금상", "position": "50% 28%" },
+    { "src": "/images/photos/presenting-hack-the-ridge.jpg", "alt": "Hack the Ridge에서 발표", "caption": "Hack the Ridge에서 발표" }
   ],
   "contactLinks": [
     { "label": "Discord",   "href": "https://discord.com/users/891434702509060106", "icon": "discord"   },
