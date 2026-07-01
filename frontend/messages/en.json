@@ -2,6 +2,10 @@
   "greeting": "Hi, I'm",
   "name": "Jamie Seoh",
   "wave": "👋",
+  "seo": {
+    "title": "Jamie Seoh (SE @ UWaterloo)",
+    "description": "Jamie Seoh (Dongwan Seoh) — Software Engineering student at the University of Waterloo and AI Software Engineer intern at Cerebras Systems. Clarinetist, conductor, and hackathon organizer."
+  },
   "bio1": "I study software engineering at <uw>University of Waterloo</uw>. I'm a native Korean speaker, and I moved to Canada in the fall of 2019. This summer, I am working at <cerebras>Cerebras Systems</cerebras> as an AI Software Engineering Intern, building low-level C++ infrastructure and debugging tools for inference.",
   "bioMusic": "I have a great passion for music during my spare time. I am a <roles></roles>",
   "bioCommunity": "Additionally, I'm a big community contributor. Currently, I'm a Logistics Organizer at <htn>Hack the North</htn>. Previously, I was the Sponsorship Director at Ignition Hacks, Events at UW Korean Student Association, Hack the Ridge President, and more.",
