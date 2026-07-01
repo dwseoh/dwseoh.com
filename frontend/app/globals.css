@@ -549,7 +549,10 @@ body {
   background: linear-gradient(180deg, #e2eff9 0%, #eef5fb 60%, #f4f9fd 100%);
 }
 
-.golf-track { position: absolute; left: 0; top: 0; bottom: 0; will-change: transform; }
+/* z-index 2 lifts the course (grass + markers) above the trail (z-index 1) so the
+   trail is hidden where it passes over the grass, yet still shows through the
+   transparent sky region; the ball (z-index 3) stays above the course. */
+.golf-track { position: absolute; left: 0; top: 0; bottom: 0; z-index: 2; will-change: transform; }
 .golf-grass { position: absolute; left: 0; bottom: 0; display: block; }
 
 /* markers — logo chip on a stake, planted on the surface */
@@ -831,7 +834,7 @@ body {
   opacity: 0;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  z-index: 2;
+  z-index: 1;
   will-change: left, top, opacity, transform;
 }
 
