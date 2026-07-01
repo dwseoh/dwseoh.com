@@ -4,11 +4,13 @@ import { inter } from './fonts'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: "Jamie's Website",
-  description: "Jamie Seoh's personal website",
+  metadataBase: new URL('https://dwseoh.com'),
+  title: 'Jamie Seoh (SE @ UWaterloo)',
+  description:
+    "Jamie Seoh's personal website — Software Engineering @ University of Waterloo, AI Software Engineering Intern @ Cerebras Systems, musician and community builder.",
   openGraph: {
     siteName: 'dwseoh.com',
-    title: 'Dwseoh > Main',
+    title: 'Dongwan Jamie Seoh',
     type: 'website',
     description: "Jamie Seoh's personal website",
   },
