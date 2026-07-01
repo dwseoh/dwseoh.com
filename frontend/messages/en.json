@@ -156,107 +156,127 @@
       "id": "hack-the-north",
       "name": "Hack the North",
       "role": "Logistics Organizer",
-      "date": "2024 — Present",
+      "date": "2026 — Present",
       "logo": "/images/logos/hackthenorth.png",
-      "blurb": "Organizing Canada's largest hackathon — 1,000+ hackers at the University of Waterloo.",
+      "blurb": "Organizing Canada's largest hackathon: 1,000+ hackers at the University of Waterloo.",
       "href": "https://hackthenorth.com"
     },
     {
       "id": "uw-ksa",
       "name": "UW Korean Student Association",
       "role": "Events",
-      "date": "2024 — 2025",
-      "logo": null,
-      "blurb": "TODO: one-line blurb about your KSA events role."
+      "date": "2025 — 2026",
+      "logo": "/images/logos/uwksa.jpg",
+      "blurb": "Planned and executed events that celebrate and preserve Korean culture.",
+      "href":"https://uwksa.ca"
+    },
+    {
+      "id": "uw-csc",
+      "name": "UW CSC",
+      "role": "Termcom Member",
+      "date": "2025",
+      "logo": "/images/logos/cs_club.png",
+      "blurb": "Maintaining internal CSC systems and servers.",
+      "href":"csclub.uwaterloo.ca"
+    },
+    {
+      "id": "mef",
+      "name": "UW MEF",
+      "role": "Funding Council Member",
+      "date": "2025",
+      "logo": "/images/logos/mef.png",
+      "blurb": "Reviewed and evaluated funding proposals for student-led projects.",
+      "href":"https://uwaterloo.ca/math-endowment-fund/"
     },
     {
       "id": "ignition-hacks",
       "name": "Ignition Hacks",
       "role": "Sponsorship Director",
-      "date": "2022 — 2023",
-      "logo": null,
-      "blurb": "TODO: one-line blurb about your Ignition Hacks sponsorship work.",
+      "date": "2023 — 2026",
+      "logo": "/images/logos/ignitionhacks.png",
+      "imageCover": true,
+      "blurb": "Responsible for all sponsorships, maintaining professional relationships with sponsors, managing finance, and directing the subteam.",
       "href": "https://ignitionhacks.org"
-    },
-    {
-      "id": "mef",
-      "name": "MEF",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: one-line blurb."
     },
     {
       "id": "hack-the-ridge",
       "name": "Hack the Ridge",
       "role": "President",
       "date": "2021 — 2022",
-      "logo": null,
-      "blurb": "TODO: one-line blurb about founding and leading Hack the Ridge."
+      "imageCover":true,
+      "logo": "/images/logos/hacktheridge.jpg",
+      "blurb": "Organized one of the biggest and prominent high school hackathon as president.",
+      "href":"https://hacktheridge.ca"
     },
     {
       "id": "msyo",
-      "name": "MSYO",
+      "name": "Missisauga Symphony Youth Orchestra",
       "role": "Conductor & Principal Clarinetist",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: one-line blurb."
+      "date": "2022 — 2025",
+      "logo": "/images/logos/msyo.jpeg",
+      "href":"https://www.mississaugasymphony.ca/msyo/",
+      "blurb": "Principal Clarinetist for 3 years with conducting experience in a real concert."
     },
     {
       "id": "project-apollo",
       "name": "Project Apollo",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: one-line blurb."
+      "role": "National Chapter Development Director",
+      "date": "2024 — 2025",
+      "imageCover":true,
+      "logo": "/images/logos/apollo.png",
+      "blurb": "Led chapter development for the goal of music education for all."
     },
     {
       "id": "woowoo-ensemble",
       "name": "WooWoo Ensemble",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: one-line blurb."
+      "role": "Founder, Leader, Clarinetist",
+      "date": "2023 — 2025",
+      "imageCover":true,
+      "logo": "/images/logos/woowoo.png",
+      "blurb": "A unique woodwind ensemble founded by passionate musicians to bring bright energy to the community."
     },
     {
       "id": "concert-band",
       "name": "Concert Band",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: one-line blurb."
+      "role": "Section Leader, Conductor, Clarinetist",
+      "date": "2021 — 2025",
+      "logo": "/images/logos/irhs.png",
+      "blurb": "Previously part of the HS music family at my school with various and active involvement."
     },
     {
       "id": "korean-club",
       "name": "Korean Club",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: one-line blurb."
+      "role": "Founder & President",
+      "date": "2024 — 2025",
+      "imageCover":true,
+      "logo": "/images/logos/irhskorea.png",
+      "blurb": "Oversaw events that explore various aspects of Korean culture (dance, food, language, etc)."
     },
     {
       "id": "student-voice",
       "name": "Student Voice",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: one-line blurb."
+      "role": "Outreach Director",
+      "imageCover": true,
+      "date": "2023 — 2025",
+      "logo": "/images/logos/studvo.jpg",
+      "blurb": "Handled outreach to local charities and communication with the school admin & other clubs for events."
     },
     {
       "id": "marketyze",
       "name": "Marketyze",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: one-line blurb."
+      "role": "Director of Programs",
+      "date": "2024",
+      "logo": "/images/logos/marketyze.png",
+      "blurb": "Led the planning of the Marketyze Startup Program."
     },
     {
       "id": "puzzle-club",
       "name": "Puzzle Club",
-      "role": "TODO",
-      "date": "TODO",
-      "logo": null,
-      "blurb": "TODO: one-line blurb."
+      "role": "Founder & President",
+      "date": "2022 - 2024",
+      "imageCover":true,
+      "logo": "/images/logos/puzzleclub.png",
+      "blurb": "Led weekly logic puzzle lessons and hosted contests for enjoyers and learners."
     }
   ],
   "extracurricularLabels": {
