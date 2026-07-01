@@ -512,8 +512,15 @@ body {
 }
 
 @media (max-width: 640px) {
-  .xp-period { font-size: 0.6875rem; }
-  .xp-blurb, .xp-skills, .xp-meta { padding-left: 16px; }
+  /* align the expanded content under the role text (past the logo + rail) so it
+     clears the timeline line — 14px head pad + 40px logo + 12px gap = 66px */
+  .xp-blurb, .xp-skills, .xp-meta { padding-left: 66px; }
+  /* stack the role over its dates so long titles get the full column width
+     instead of wrapping into a tall, narrow stack beside the date */
+  .xp-head { gap: 12px; padding: 12px 14px; }
+  .xp-toprow { flex-direction: column; align-items: flex-start; gap: 1px; }
+  .xp-period { margin-left: 0; font-size: 0.6875rem; }
+  .xp-item:not(.xp-last)::after { left: 33px; }
 }
 
 /* ============================================================
@@ -704,7 +711,7 @@ body {
 }
 .golf-flagstick {
   position: absolute;
-  left: 0;
+  left: -1px; /* 2px wide — centre the pole on the slot origin (and its hole) */
   bottom: 0;
   width: 2px;
   height: 58px;

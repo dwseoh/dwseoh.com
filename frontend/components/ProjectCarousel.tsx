@@ -225,7 +225,13 @@ export default function ProjectCarousel({ items }: { items: Project[] }) {
       const vp = viewportRef.current
       if (!vp) return
       const w = vp.clientWidth
-      const cardW = Math.round(Math.min(280, Math.max(186, w * 0.5)))
+      // Phones (matches the 640px CSS breakpoint): let the focused card fill most
+      // of the track with a slim ~22px peek each side, so it isn't dwarfed by the
+      // arrows and its text has room. Larger screens keep the focus-carousel peeks.
+      const mobile = window.innerWidth <= 640
+      const cardW = mobile
+        ? Math.round(Math.max(150, w - 44))
+        : Math.round(Math.min(280, Math.max(186, w * 0.5)))
       setMetrics({ cardW, vpW: w })
     }
     measure()
