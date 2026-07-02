@@ -5,9 +5,8 @@ import { notFound } from 'next/navigation'
 import { routing, getPathname } from '@/i18n/routing'
 import { inter, gowunDodum } from '../fonts'
 
-// Existing headshot used as the social-share image until a dedicated
-// 1200x630 OG image is added (see app/opengraph-image note in the report).
-const OG_IMAGE = '/images/photos/headshot.jpg'
+// The social-share image is served automatically from app/opengraph-image.png
+// (Next.js file convention) with alt text from app/opengraph-image.alt.txt.
 
 export async function generateMetadata({
   params,
@@ -40,14 +39,12 @@ export async function generateMetadata({
       siteName: 'dwseoh.com',
       locale: locale === 'ko' ? 'ko_KR' : 'en_US',
       type: 'website',
-      images: [{ url: OG_IMAGE, width: 1600, height: 1066, alt: 'Jamie Seoh' }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
       creator: '@sdw1_',
-      images: [OG_IMAGE],
     },
   }
 }
