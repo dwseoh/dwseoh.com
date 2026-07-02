@@ -10,13 +10,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     routing.locales.map((locale) => [locale, BASE_URL + getPathname({ href: '/', locale })])
   )
 
-  return [
-    {
-      url: BASE_URL + getPathname({ href: '/', locale: routing.defaultLocale }),
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 1,
-      alternates: { languages },
-    },
-  ]
+  // One <url> entry per locale, each advertising all language alternates
+  // (Google's recommended hreflang-in-sitemap structure).
+  return routing.locales.map((locale) => ({
+    url: BASE_URL + getPathname({ href: '/', locale }),
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 1,
+    alternates: { languages },
+  }))
 }
