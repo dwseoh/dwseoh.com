@@ -2,18 +2,26 @@
   "greeting": "Hi, I'm",
   "name": "Jamie Seoh",
   "wave": "👋",
+  "seo": {
+    "title": "Jamie Seoh (SE @ UWaterloo)",
+    "description": "Jamie Seoh (Dongwan Seoh) — Software Engineering student at the University of Waterloo and AI Software Engineer intern at Cerebras Systems. Clarinetist, conductor, and hackathon organizer."
+  },
   "bio1": "I study software engineering at <uw>University of Waterloo</uw>. I'm a native Korean speaker, and I moved to Canada in the fall of 2019. This summer, I am working at <cerebras>Cerebras Systems</cerebras> as an AI Software Engineering Intern, building low-level C++ infrastructure and debugging tools for inference.",
   "bioMusic": "I have a great passion for music during my spare time. I am a <roles></roles>",
-  "bioCommunity": "Additionally, I'm a big community contributor. Currently, I'm a Logistics Organizer at <htn>Hack the North</htn>. Previously, I was the Sponsorship Director at Ignition Hacks, UW Korean Student Association (Events), Hack the Ridge President, and more.",
+  "bioCommunity": "Additionally, I'm a big community contributor. Currently, I'm a Logistics Organizer at <htn>Hack the North</htn>. Previously, I was the Sponsorship Director at Ignition Hacks, Events at UW Korean Student Association, Hack the Ridge President, and more.",
   "roles": ["clarinetist.", "conductor.", "composer.", "music producer.", "pianist.", "ensemble director."],
   "sections": {
     "portfolio": "Portfolio Links",
     "projects": "Projects",
+    "experiences": "Experience",
+    "extracurriculars": "Extracurriculars",
     "hobbies": "Hobbies",
     "photos": "Photos",
-    "contact": "Contact"
+    "contact": "Contact (Socials)"
   },
   "construction": "under construction; coming soon.",
+  "projectsMore": "All projects",
+  "projectsMoreSoon": "soon",
   "previews": {
     "uw": "Canadian university known for its world-class co-op program and top-ranked engineering and computer science schools",
     "cerebras": "AI compute company behind the world's largest and fastest AI chip, powering some of the fastest inference on the planet",
@@ -31,6 +39,254 @@
     { "label": "Resume",   "href": "/static/resume.pdf",                      "desc": "view my resume",         "icon": "file"     },
     { "label": "Substack", "href": "https://substack.com/@dwseoh",            "desc": "read my blog",           "icon": "substack" }
   ],
+  "projects": [
+    {
+      "title": "Quota",
+      "desc": "Real-time financial intelligence for your codebase. VScode ext. + web sandbox.",
+      "tech": ["TypeScript", "React", "Node.js"],
+      "logo": "/images/logos/quota.png",
+      "award": "DeltaHacks 12 First Place",
+      "screenshot": "/images/thumbnails/quota.png",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/dwseoh/quota", "icon": "github" },
+        { "label": "Devpost", "href": "https://devpost.com/software/quota-fg4pzi", "icon": "devpost" }
+      ]
+    },
+    {
+      "title": "Nebula",
+      "desc": "Mobile notes app with camera import via OCR, semantic search, and LLM chat.",
+      "tech": ["Python", "FastAPI", "Postgres"],
+      "logo": "/images/logos/nebula.svg",
+      "screenshot": "/images/thumbnails/nebula.webp",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/rickytang666/nebula", "icon": "github" }
+      ]
+    },
+    {
+      "title": "Prospector",
+      "desc": "Perplexity for design team sponsors. Ranks 1.6k+ companies by fit and draft outreach.",
+      "tech": ["C++", "WebAssembly"],
+      "logo": "/images/logos/prospector.png",
+      "screenshot": "/images/thumbnails/prospector.png",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/rickytang666/prospector", "icon": "github" }
+      ]
+    },
+    {
+      "title": "Sheetmusic Viewer",
+      "desc": "Store, share, and manage your sheet music on any device. Flip pages easily.",
+      "tech": ["Rust", "Tauri"],
+      "icon": "music",
+      "screenshot": "/images/thumbnails/sheetmusic.png",
+      "links": [
+        { "label": "GitHub", "href": "https://github.com/dwseoh/sheetmusic-library", "icon": "github" }
+      ]
+    }
+  ],
+  "experiences": [
+    {
+      "id": "cerebras",
+      "role": "AI Software Engineer Intern",
+      "org": "Cerebras Systems",
+      "logo": "/images/logos/cerebras.png",
+      "period": "May 2026 — Present",
+      "duration": "2 mos",
+      "location": "Toronto, ON · Hybrid",
+      "type": "Internship",
+      "blurb": "Building low level C++ infrastructure and inference debugging tools for Cerebras' wafer-scale AI systems (the world's largest and fastest chip).",
+      "skills": ["AI Systems", "Python", "Performance"],
+      "href": "https://cerebras.ai",
+      "present": true
+    },
+    {
+      "id": "watonomous",
+      "role": "Autonomy Developer",
+      "org": "WATonomous",
+      "logo": "/images/logos/watonomous.jpg",
+      "period": "Feb 2026 — Apr 2026",
+      "duration": "3 mos",
+      "location": "Waterloo, ON · Hybrid",
+      "type": "Design team",
+      "blurb": "Autonomy software on the Eve team for Waterloo's self-driving vehicle and autonomous racing project.",
+      "skills": ["C++", "Autonomy", "Robotics"],
+      "href": "https://watonomous.ca"
+    },
+    {
+      "id": "orbital",
+      "role": "Software Engineer",
+      "org": "UW Orbital",
+      "logo": "/images/logos/orbital.png",
+      "period": "Oct 2025 — Apr 2026",
+      "duration": "7 mos",
+      "location": "Waterloo, ON · Hybrid",
+      "type": "Design team",
+      "blurb": "Built Mission Control interfaces for satellite operations on the Ground Station team — React & TypeScript front of a FastAPI backend.",
+      "skills": ["React", "TypeScript", "FastAPI", "Python"],
+      "href": "https://www.uworbital.com"
+    },
+    {
+      "id": "solvexchange",
+      "role": "Frontend Developer",
+      "org": "SolveXchange",
+      "logo": "/images/logos/solvexchange.png",
+      "period": "Mar 2024 — Jul 2025",
+      "duration": "1 yr 5 mos",
+      "location": "Remote",
+      "type": "Contract · Part-time",
+      "blurb": "Engineered full-stack web features that grew the platform to 50+ active users.",
+      "skills": ["JavaScript", "Flask", "SQLAlchemy", "CSS"],
+      "href": "https://solvexchange.ca"
+    },
+    {
+      "id": "pinpoint",
+      "role": "Web Development Intern",
+      "org": "PNPT (핀포인트)",
+      "logo": "/images/logos/pinpoint_logo.png",
+      "period": "Jun 2023 — Aug 2023",
+      "duration": "3 mos",
+      "location": "Seoul, South Korea",
+      "type": "Internship",
+      "blurb": "Prototyped responsive UI in Figma & React to support front-end development.",
+      "skills": ["Figma", "React", "UI Design"],
+      "href": "https://www.pnpt.kr/"
+    }
+  ],
+  "experienceLabels": {
+    "present": "Present",
+    "visit": "Visit"
+  },
+  "extracurriculars": [
+    {
+      "id": "hack-the-north",
+      "name": "Hack the North",
+      "role": "Logistics Organizer",
+      "date": "2026 — Present",
+      "logo": "/images/logos/hackthenorth.png",
+      "blurb": "Organizing Canada's largest hackathon: 1,000+ hackers at the University of Waterloo.",
+      "href": "https://hackthenorth.com"
+    },
+    {
+      "id": "uw-ksa",
+      "name": "UW Korean Student Association",
+      "role": "Events",
+      "date": "2025 — 2026",
+      "logo": "/images/logos/uwksa.jpg",
+      "blurb": "Planned and executed events that celebrate and preserve Korean culture.",
+      "href":"https://uwksa.ca"
+    },
+    {
+      "id": "uw-csc",
+      "name": "UW CSC",
+      "role": "Termcom Member",
+      "date": "2025",
+      "logo": "/images/logos/cs_club.png",
+      "blurb": "Maintaining internal CSC systems and servers.",
+      "href":"https://csclub.uwaterloo.ca"
+    },
+    {
+      "id": "mef",
+      "name": "UW MEF",
+      "role": "Funding Council Member",
+      "date": "2025",
+      "logo": "/images/logos/mef.png",
+      "blurb": "Reviewed and evaluated funding proposals for student-led projects.",
+      "href":"https://uwaterloo.ca/math-endowment-fund/"
+    },
+    {
+      "id": "ignition-hacks",
+      "name": "Ignition Hacks",
+      "role": "Sponsorship Director",
+      "date": "2023 — 2026",
+      "logo": "/images/logos/ignitionhacks.png",
+      "imageCover": true,
+      "blurb": "Responsible for all sponsorships, maintaining professional relationships with sponsors, managing finance, and directing the subteam.",
+      "href": "https://ignitionhacks.org"
+    },
+    {
+      "id": "hack-the-ridge",
+      "name": "Hack the Ridge",
+      "role": "President",
+      "date": "2021 — 2022",
+      "imageCover":true,
+      "logo": "/images/logos/hacktheridge.jpg",
+      "blurb": "Organized one of the biggest and prominent high school hackathon as president.",
+      "href":"https://hacktheridge.ca"
+    },
+    {
+      "id": "msyo",
+      "name": "Missisauga Symphony Youth Orchestra",
+      "role": "Conductor & Principal Clarinetist",
+      "date": "2022 — 2025",
+      "logo": "/images/logos/msyo.jpeg",
+      "href":"https://www.mississaugasymphony.ca/msyo/",
+      "blurb": "Principal Clarinetist for 3 years with conducting experience in a real concert."
+    },
+    {
+      "id": "project-apollo",
+      "name": "Project Apollo",
+      "role": "National Chapter Development Director",
+      "date": "2024 — 2025",
+      "imageCover":true,
+      "logo": "/images/logos/apollo.png",
+      "blurb": "Led chapter development for the goal of music education for all."
+    },
+    {
+      "id": "woowoo-ensemble",
+      "name": "WooWoo Ensemble",
+      "role": "Founder, Leader, Clarinetist",
+      "date": "2023 — 2025",
+      "imageCover":true,
+      "logo": "/images/logos/woowoo.png",
+      "blurb": "A unique woodwind ensemble founded by passionate musicians to bring bright energy to the community."
+    },
+    {
+      "id": "concert-band",
+      "name": "Concert Band",
+      "role": "Section Leader, Conductor, Clarinetist",
+      "date": "2021 — 2025",
+      "logo": "/images/logos/irhs.png",
+      "blurb": "Previously part of the HS music family at my school with various and active involvement."
+    },
+    {
+      "id": "korean-club",
+      "name": "Korean Club",
+      "role": "Founder & President",
+      "date": "2024 — 2025",
+      "imageCover":true,
+      "logo": "/images/logos/irhskorea.png",
+      "blurb": "Oversaw events that explore various aspects of Korean culture (dance, food, language, etc)."
+    },
+    {
+      "id": "student-voice",
+      "name": "Student Voice",
+      "role": "Outreach Director",
+      "imageCover": true,
+      "date": "2023 — 2025",
+      "logo": "/images/logos/studvo.jpg",
+      "blurb": "Handled outreach to local charities and communication with the school admin & other clubs for events."
+    },
+    {
+      "id": "marketyze",
+      "name": "Marketyze",
+      "role": "Director of Programs",
+      "date": "2024",
+      "logo": "/images/logos/marketyze.png",
+      "blurb": "Led the planning of the Marketyze Startup Program."
+    },
+    {
+      "id": "puzzle-club",
+      "name": "Puzzle Club",
+      "role": "Founder & President",
+      "date": "2022 - 2024",
+      "imageCover":true,
+      "logo": "/images/logos/puzzleclub.png",
+      "blurb": "Led weekly logic puzzle lessons and hosted contests for enjoyers and learners."
+    }
+  ],
+  "extracurricularLabels": {
+    "visit": "Visit",
+    "reset": "Reset"
+  },
   "hobbyCategories": [
     {
       "title": "Music Content",
@@ -58,20 +314,24 @@
     { "src": "/images/photos/presenting-microsoft.jpg", "alt": "Presenting at Microsoft", "caption": "Presenting at Microsoft" },
     { "src": "/images/photos/img-4093.jpg", "alt": "Running a Half Marathon", "caption": "Running a Half Marathon", "position": "50% 25%"},
     { "src": "/images/photos/delta-hacks.jpg", "alt": "Winning DeltaHacks", "caption": "Winning DeltaHacks 12"},
-    { "src": "/videos/orchestra-conducting.mp4", "poster": "/videos/orchestra-conducting-poster.jpg", "alt": "Conducting an Orchestra", "caption": "Conducting My Orchestra @Live Concert" },
+    { "src": "/videos/orchestra-conducting.mp4", "poster": "/videos/orchestra-conducting-poster.jpg", "alt": "Conducting an Orchestra", "caption": "Conducting My Orchestra at Live Concert" },
     { "src": "/images/photos/img-6411.jpg", "alt": "High School Graduation!", "caption": "High School Grad!", "position": "50% 100%"},
     { "src": "/images/photos/stem-fellowship.jpg", "alt": "STEM Fellowship", "caption": "STEM Fellowship" },
     { "src": "/images/photos/photography.jpg", "alt": "Photography", "caption": "Photography"},
     { "src": "/images/photos/woowoo-ensemble.jpg", "alt": "WooWoo Ensemble Performance", "caption": "WooWoo Ensemble Performance", "position": "50% 65%" },
     { "src": "/images/photos/conducting-concert-band.jpg", "alt": "Conducting concert band", "caption": "Conducting Concert Band", "position": "50% 27%"},
     { "src": "/images/photos/shad-dalhousie-24.jpg", "alt": "SHAD Dalhousie 2024", "caption": "SHAD Dalhousie '24" },
-    { "src": "/images/photos/world-sudoku-and-puzzle-championships.jpg", "alt": "World Sudoku and Puzzle Championships", "caption": "World Sudoku & Puzzle Championships" }
+    { "src": "/images/photos/world-sudoku-and-puzzle-championships.jpg", "alt": "World Sudoku and Puzzle Championships", "caption": "World Sudoku & Puzzle Championships" },
+    { "src": "/images/photos/best-pitch-eureka-hacks.jpg", "alt": "Winning Best Pitch at Eureka Hacks", "caption": "Best Pitch at Eureka Hacks", "position": "50% 22%" },
+    { "src": "/images/photos/gold-utsc-oba-ensemble-festival.jpg", "alt": "Gold at the OBA Ensemble Festival", "caption": "Gold at OBA Ensemble Festival", "position": "50% 28%" },
+    { "src": "/images/photos/presenting-hack-the-ridge.jpg", "alt": "Presenting at Hack the Ridge", "caption": "Presenting at Hack the Ridge" }
   ],
   "contactLinks": [
     { "label": "Discord",   "href": "https://discord.com/users/891434702509060106", "icon": "discord"   },
     { "label": "Instagram", "href": "https://www.instagram.com/dongwan_seoh/",      "icon": "instagram" },
     { "label": "X (Twitter)",         "href": "https://x.com/sdw1_",                          "icon": "x"         },
-    { "label": "Email",     "href": "mailto:contact@dwseoh.com",                    "icon": "email"     }
+    { "label": "Email",     "href": "mailto:contact@dwseoh.com",                    "icon": "email"     },
+    { "label": "Devpost", "href":"https://devpost.com/dwseoh", "icon":"devpost"}
   ],
   "webrings": [
     { "label": "UWaterloo SE", "href": "https://se-webring.xyz/", "img": "/images/se_webstring.svg" },
