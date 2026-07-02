@@ -10,6 +10,7 @@ export const BRAND_COLORS: Record<string, string> = {
   music:     '#8B5CF6',
   camera:    '#0EA5E9',
   email:     '#6B7280',
+  devpost:   '#003E54',
 }
 
 // LinkedIn is inlined because Simple Icons removed it (404 on the CDN).
@@ -23,6 +24,11 @@ const INLINE_SVG: Record<string, string> = {
   music: 'M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z',
   email: 'M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z',
   camera: 'M9 2 7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3.17L15 2H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+  // generic project glyphs (solid, single-shape) used as placeholder logos
+  bolt: 'M13 2 3 14h7l-1 8 10-12h-7l1-8z',
+  spark: 'M12 2c.4 4.6 2.4 6.6 7 7-4.6.4-6.6 2.4-7 7-.4-4.6-2.4-6.6-7-7 4.6-.4 6.6-2.4 7-7z',
+  cube: 'M12 2 21 7v10l-9 5-9-5V7l9-5z',
+  grid: 'M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z',
 }
 
 // Icons fetched from the Simple Icons CDN (these all resolve correctly).
@@ -32,6 +38,7 @@ const CDN_ICONS: Record<string, string> = {
   discord:   'discord/5865F2',
   substack:  'substack/FF6719',
   x:         'x/000000',
+  devpost:   'devpost/003E54',
 }
 
 export default function BrandIcon({

@@ -8,7 +8,7 @@
   --n-text:      #37352f;
   --n-secondary: #787774;
   --n-light:     #9b9a97;
-  --n-accent:    #2383e2;
+  --n-accent:    #3698e3;
   --n-border:    #e9e9e7;
   --n-hover:     rgba(55, 53, 47, 0.04);
   --n-hover-strong: rgba(55, 53, 47, 0.08);
@@ -129,7 +129,8 @@ body {
   will-change: transform;
   backface-visibility: hidden;
 }
-.photo-strip:hover .photo-track {
+.photo-strip:hover .photo-track,
+.photo-track.is-paused {
   animation-play-state: paused;
 }
 
@@ -159,6 +160,133 @@ body {
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+/* ---- Projects: infinite focus carousel ---- */
+.proj-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--n-border);
+  border-radius: 9px;
+  background: var(--n-bg);
+  color: var(--n-text);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+    transform 0.18s ease, box-shadow 0.18s ease;
+}
+.proj-arrow svg {
+  transition: transform 0.18s ease;
+}
+.proj-arrow:hover {
+  background: var(--n-accent);
+  border-color: var(--n-accent);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(35, 131, 226, 0.3);
+}
+.proj-arrow:active {
+  transform: translateY(0) scale(0.94);
+  box-shadow: 0 2px 6px rgba(35, 131, 226, 0.25);
+}
+.proj-arrow--prev:hover svg {
+  transform: translateX(-2px);
+}
+.proj-arrow--next:hover svg {
+  transform: translateX(2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .proj-arrow, .proj-arrow svg { transition: none; }
+  .proj-arrow:hover { transform: none; }
+}
+.proj-linkbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--n-border);
+  color: var(--n-secondary);
+  text-decoration: none;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.proj-linkbtn:hover {
+  background: var(--n-hover);
+  color: var(--n-text);
+  border-color: var(--n-light);
+}
+.proj-linkbtn.is-featured {
+  background: var(--n-accent);
+  border-color: var(--n-accent);
+  color: #fff;
+}
+.proj-linkbtn.is-featured:hover {
+  box-shadow: 0 3px 10px rgba(35, 131, 226, 0.4);
+}
+@media (prefers-reduced-motion: reduce) {
+  .proj-arrow, .proj-linkbtn { transition: none; }
+}
+
+/* award accolade over a project thumbnail — bottom gradient caption (matches
+   .photo-cap), so it stays legible over any screenshot or the placeholder.
+   Shows the full-color DeltaHacks logo with a subtle shadow for legibility. */
+.proj-award {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 12px 9px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.72));
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.proj-award-ico {
+  display: inline-flex;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+/* small "in progress" affordance shown beside a section heading */
+.inprogress {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  color: var(--n-light);
+  cursor: not-allowed;
+}
+.inprogress::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%) translateY(3px);
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--n-text);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.inprogress:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* loading skeleton for media tiles */
@@ -194,4 +322,660 @@ body {
   50%  { transform: translate(calc(var(--dx, 0) * 0.45), -26px) rotate(calc(var(--rot, 20deg) * 0.5)) scale(1); }
   80%  { opacity: 0.6; }
   100% { opacity: 0; transform: translate(var(--dx, 0), -54px) rotate(var(--rot, 20deg)) scale(0.95); }
+}
+
+/* ============================================================
+   Experience — connected logo timeline. A single rail runs top
+   to bottom through the company logos (the nodes); each row
+   expands to reveal a blurb + skills. One accent (site blue)
+   marks the current role. Sits inline at the page column width.
+   ============================================================ */
+.xp {
+  border: 1px solid var(--n-border);
+  border-radius: 14px;
+  background: var(--n-bg);
+  overflow: hidden;
+}
+.xp-list { list-style: none; margin: 0; padding: 6px; }
+
+.xp-item { position: relative; }
+/* the rail: runs from this logo's centre down into the next logo (masked by it),
+   so the line reads as one continuous timeline punctuated by the marks. */
+.xp-item:not(.xp-last)::after {
+  content: '';
+  position: absolute;
+  left: 35px;
+  top: 34px;
+  height: 100%;
+  width: 2px;
+  background: var(--n-border);
+  z-index: 0;
+}
+
+.xp-head {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: background 0.12s ease;
+}
+.xp-head:hover { background: var(--n-hover); }
+
+/* logo node — opaque tile that masks the rail passing behind it */
+.xp-logo {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--n-border);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.xp-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 5px;
+}
+.xp-logo-live {
+  border-color: var(--n-accent);
+  box-shadow: 0 0 0 3px rgba(35, 131, 226, 0.14);
+}
+
+.xp-main { min-width: 0; }
+.xp-toprow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.xp-role {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--n-text);
+}
+.xp-period {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--n-light);
+  white-space: nowrap;
+}
+.xp-subrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+.xp-org { font-size: 0.8125rem; color: var(--n-secondary); }
+.xp-dur { font-size: 0.75rem; color: var(--n-light); }
+.xp-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--n-accent);
+}
+.xp-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--n-accent);
+  box-shadow: 0 0 0 0 rgba(35, 131, 226, 0.5);
+  animation: xpPulse 2s ease-out infinite;
+}
+@keyframes xpPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(35, 131, 226, 0.5); }
+  70%  { box-shadow: 0 0 0 6px rgba(35, 131, 226, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(35, 131, 226, 0); }
+}
+
+.xp-chev {
+  display: inline-flex;
+  color: var(--n-light);
+  transition: transform 0.22s ease, color 0.12s ease;
+}
+.xp-chev.is-open { transform: rotate(180deg); color: var(--n-secondary); }
+.xp-head:hover .xp-chev { color: var(--n-secondary); }
+
+/* expanding body — grid-rows 0fr→1fr animates height with no measuring */
+.xp-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.26s ease;
+}
+.xp-body[data-open='true'] { grid-template-rows: 1fr; }
+.xp-body-inner { overflow: hidden; }
+.xp-blurb {
+  margin: 0;
+  padding: 0 16px 0 70px;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--n-secondary);
+}
+.xp-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 16px 0 70px;
+}
+.xp-skill {
+  font-size: 0.6875rem;
+  color: var(--n-secondary);
+  background: var(--n-hover);
+  border: 1px solid var(--n-border);
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+.xp-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 16px 14px 70px;
+  font-size: 0.75rem;
+  color: var(--n-light);
+}
+.xp-meta-dot { color: var(--n-border); }
+.xp-visit {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  color: var(--n-accent);
+  font-weight: 500;
+  text-decoration: none;
+}
+.xp-visit:hover { text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+  .xp-dot { animation: none; }
+  .xp-chev, .xp-body { transition: none; }
+}
+
+@media (max-width: 640px) {
+  /* align the expanded content under the role text (past the logo + rail) so it
+     clears the timeline line — 14px head pad + 40px logo + 12px gap = 66px */
+  .xp-blurb, .xp-skills, .xp-meta { padding-left: 66px; }
+  /* stack the role over its dates so long titles get the full column width
+     instead of wrapping into a tall, narrow stack beside the date */
+  .xp-head { gap: 12px; padding: 12px 14px; }
+  .xp-toprow { flex-direction: column; align-items: flex-start; gap: 1px; }
+  .xp-period { margin-left: 0; font-size: 0.6875rem; }
+  .xp-item:not(.xp-last)::after { left: 33px; }
+}
+
+/* ============================================================
+   Extracurriculars — side-scrolling mini golf course. Logo
+   markers sit on a striped rolling green between a red flag
+   (just inside the left arrow) and the golfer (just inside the
+   right arrow); the ball is the only free mover, with a 3-phase
+   camera. The band + detail form one bordered widget.
+   ============================================================ */
+.golf-wrap {
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--n-border);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--n-bg);
+}
+
+.golf {
+  --golf-flag: #e5484d;
+  --golf-gold: #e3a92b;
+  --golf-gold-lt: #ffe7a0;
+  --swing-ease: cubic-bezier(0.4, 0.05, 0.45, 1);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--n-border);
+  background: linear-gradient(180deg, #e2eff9 0%, #eef5fb 60%, #f4f9fd 100%);
+}
+
+/* z-index 2 lifts the course (grass + markers) above the trail (z-index 1) so the
+   trail is hidden where it passes over the grass, yet still shows through the
+   transparent sky region; the ball (z-index 3) stays above the course. */
+.golf-track { position: absolute; left: 0; top: 0; bottom: 0; z-index: 2; will-change: transform; }
+.golf-grass { position: absolute; left: 0; bottom: 0; display: block; }
+
+/* markers — logo chip on a stake, planted on the surface */
+.golf-marker-slot, .golf-flag-slot, .golf-golfer-slot {
+  position: absolute;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+.golf-marker-slot:hover,
+.golf-marker-slot:has(.is-active) { z-index: 6; }
+.golf-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.golf-marker:disabled { cursor: default; }
+.golf-name {
+  max-width: 124px;
+  margin-bottom: 7px;
+  padding: 2px 9px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--n-text);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--n-border);
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+}
+.golf-marker.is-active .golf-name,
+.golf-marker:hover .golf-name { opacity: 1; transform: translateY(0); }
+.golf-chip-wrap { position: relative; display: flex; }
+.golf-chip {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 5px;
+  border-radius: 11px;
+  background: #fff;
+  border: 1px solid var(--n-border);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.golf-chip img { width: 100%; height: 100%; object-fit: contain; display: block; }
+/* opt-in (imageCover: true in JSON): logo fills the chip edge-to-edge so its own
+   corners get trimmed by the chip's rounded-corner mask (overflow:hidden) instead
+   of sitting inset inside it. Best for full-bleed square logos. */
+.golf-chip.is-cover { padding: 0; }
+.golf-chip.is-cover img { object-fit: cover; }
+.golf-chip-initial { font-size: 0.95rem; font-weight: 700; color: var(--n-accent); }
+.golf-marker:hover .golf-chip { transform: translateY(-3px); box-shadow: 0 5px 12px rgba(0, 0, 0, 0.16); }
+.golf-marker.is-active .golf-chip {
+  border-color: var(--n-accent);
+  box-shadow: 0 0 0 2px rgba(35, 131, 226, 0.30), 0 5px 12px rgba(0, 0, 0, 0.16);
+}
+
+/* ongoing markers — a gold "shine" passes over the logo every 5s, with a soft
+   gold halo and a few twinkling sparkles, marking the still-active item. Pure
+   CSS: a 5s loop where the effect plays in the first ~0.8s then idles, so it
+   pulses once every five seconds without any JS timer. */
+.golf-marker.is-ongoing .golf-chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.85) 47%,
+    var(--golf-gold-lt) 52%,
+    transparent 62%);
+  transform: translateX(-120%);
+  animation: golfShimmer 5s ease-in-out infinite;
+  pointer-events: none;
+}
+.golf-sparkles {
+  position: absolute;
+  inset: -6px;
+  pointer-events: none;
+  z-index: 2;
+}
+.golf-sparkles::before { /* glowing gold ring around the chip */
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 14px;
+  background: radial-gradient(closest-side, rgba(227, 169, 43, 0) 52%, rgba(227, 169, 43, 0.5) 70%, rgba(227, 169, 43, 0) 86%);
+  opacity: 0;
+  animation: golfHalo 5s ease-in-out infinite;
+}
+.golf-spark {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: radial-gradient(circle, #fff 0%, var(--golf-gold-lt) 45%, var(--golf-gold) 100%);
+  clip-path: polygon(50% 0%, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0% 50%, 40% 40%);
+  filter: drop-shadow(0 0 2px rgba(255, 228, 150, 0.85));
+  opacity: 0;
+  transform: scale(0);
+  animation: golfSpark 5s ease-in-out infinite;
+}
+.golf-spark--1 { top: -3px; right: 1px; animation-delay: 0s; }
+.golf-spark--2 { top: 9px; left: -4px; width: 7px; height: 7px; animation-delay: 0.22s; }
+.golf-spark--3 { bottom: -2px; right: 6px; width: 6px; height: 6px; animation-delay: 0.42s; }
+
+@keyframes golfShimmer {
+  0%   { transform: translateX(-120%); }
+  16%  { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+@keyframes golfHalo {
+  0%   { opacity: 0; transform: scale(0.7); }
+  6%   { opacity: 0.75; transform: scale(1); }
+  22%  { opacity: 0; transform: scale(1.16); }
+  100% { opacity: 0; transform: scale(1.16); }
+}
+@keyframes golfSpark {
+  0%   { opacity: 0; transform: scale(0) rotate(0deg); }
+  5%   { opacity: 1; transform: scale(1) rotate(30deg); }
+  13%  { opacity: 0; transform: scale(0.2) rotate(55deg); }
+  100% { opacity: 0; transform: scale(0) rotate(55deg); }
+}
+.golf-pole {
+  width: 2px;
+  height: 23px;
+  margin-top: 1px;
+  background: linear-gradient(#9aa39a, rgba(154, 163, 154, 0.35));
+  border-radius: 1px;
+}
+.golf-marker.is-active .golf-pole { background: linear-gradient(var(--n-accent), rgba(35, 131, 226, 0.25)); }
+/* ground contact — a soft shadow flush at the pole's foot (the stake is sunk
+   into the turf via PLANT), so it reads as planted rather than a floating dot */
+.golf-base {
+  width: 11px;
+  height: 4px;
+  margin-top: -1px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(20, 50, 20, 0.38) 0%, rgba(20, 50, 20, 0) 74%);
+}
+
+/* flag + hole (far-left feature, anchored in the course) */
+.golf-hole {
+  position: absolute;
+  left: -8px;
+  bottom: -3px;
+  width: 16px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(20, 50, 20, 0.45);
+}
+.golf-flagstick {
+  position: absolute;
+  left: -1px; /* 2px wide — centre the pole on the slot origin (and its hole) */
+  bottom: 0;
+  width: 2px;
+  height: 58px;
+  background: linear-gradient(#fafafa, #c9cfcf);
+  border-radius: 1px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.golf-flag {
+  position: absolute;
+  left: 2px;
+  top: 1px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 16px solid var(--golf-flag);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18));
+}
+
+/* golfer — far-right tee. Read as a side-view swing: the big visible arc is the
+   arms + club (in the swing plane), while the body adds only subtle tilt — in a
+   true side view the body's turn about the spine is into the screen, so large
+   torso rotations would just topple the figure over. The kinetic-chain feel
+   comes from timing + the club LAGGING the arms (wrists cock at the top, hold
+   the lag, then release/whip through impact). Across the 1.875s clip: backswing
+   to a loaded top at 44%, brief transition, fast downswing, impact at ~64%
+   (= WINDUP, when the ball launches), then a decelerating high finish. When
+   .is-swinging is removed (after the shot) the groups ease back to address. */
+.golf-anim,
+.golf-lower, .golf-arms, .golf-club {
+  transform: rotate(0deg);
+  transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.3, 1); /* graceful return to address */
+}
+/* posture: spine tilts forward over the ball, head drops to look down at the tee */
+.golf-torso { transform: rotate(-13deg); transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.3, 1); }
+.golf-head { transform: rotate(11deg); transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.3, 1); }
+.golf-anim.is-swinging .golf-lower { animation: golfHips 1.875s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-torso { animation: golfTorso 1.875s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-head { animation: golfHead 1.875s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-arms { animation: golfArms 1.875s var(--swing-ease) both; }
+.golf-anim.is-swinging .golf-club { animation: golfClub 1.875s var(--swing-ease) both; }
+
+/* hips — barely visible in side view; a hint of weight shift */
+@keyframes golfHips {
+  0%   { transform: rotate(0deg); }
+  44%  { transform: rotate(-2deg); }
+  50%  { transform: rotate(-1deg); }   /* fires first into the downswing */
+  64%  { transform: rotate(3deg); }    /* nudges toward the target at impact */
+  100% { transform: rotate(6deg); }
+}
+/* spine — holds its forward tilt over the ball through impact, stands up at finish */
+@keyframes golfTorso {
+  0%   { transform: rotate(-13deg); }  /* forward golf posture, over the ball */
+  44%  { transform: rotate(-10deg); }  /* eases up a touch as the arms load */
+  50%  { transform: rotate(-10deg); }
+  64%  { transform: rotate(-13deg); }  /* back in posture, stacked over the ball */
+  100% { transform: rotate(-1deg); }   /* stands tall to a balanced finish */
+}
+/* head — eyes stay down on the ball the whole way; never looks up */
+@keyframes golfHead {
+  0%   { transform: rotate(11deg); }   /* looking down at the tee */
+  44%  { transform: rotate(8deg); }    /* holds the gaze as the body coils */
+  50%  { transform: rotate(8deg); }
+  64%  { transform: rotate(11deg); }   /* still watching the ball at impact */
+  100% { transform: rotate(15deg); }   /* head stays down through the finish */
+}
+/* arms — the big readable arc: down at the ball -> up & back -> whip down -> high */
+@keyframes golfArms {
+  0%   { transform: rotate(0deg); }
+  44%  { transform: rotate(-150deg); animation-timing-function: cubic-bezier(0.3, 0, 0.7, 0.25); } /* slow to the top, then accelerate down */
+  50%  { transform: rotate(-156deg); animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.45); } /* transition pause at the top */
+  64%  { transform: rotate(0deg); animation-timing-function: cubic-bezier(0.2, 0.55, 0.3, 1); }     /* slammed back down to impact */
+  100% { transform: rotate(118deg); }  /* decelerating up over the lead shoulder */
+}
+/* club — cocks against the arms at the top, holds the lag, releases at impact */
+@keyframes golfClub {
+  0%   { transform: rotate(0deg); }
+  44%  { transform: rotate(-60deg); }  /* wrists cock */
+  50%  { transform: rotate(-68deg); }  /* max lag at the transition */
+  58%  { transform: rotate(-52deg); animation-timing-function: cubic-bezier(0.45, 0, 0.15, 1); } /* lag retained as the hands drop */
+  64%  { transform: rotate(0deg); }    /* release — the whip, square at impact */
+  70%  { transform: rotate(24deg); }   /* club passes the hands */
+  100% { transform: rotate(14deg); }   /* settles, club up at the finish */
+}
+
+/* ball — screen overlay; clean textureless sphere */
+.golf-ball {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  margin: -6.5px 0 0 -6.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #ffffff 0%, #f3f5f6 52%, #d6dcdf 100%);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.28), inset -1.2px -1.2px 2px rgba(0, 0, 0, 0.10);
+  z-index: 3;
+}
+
+/* wind-whoosh trail — motion-blur streaks streaming off the struck ball. A white
+   core keeps it bright over the grass while a cooler blue-grey halo gives it
+   contrast against the near-white sky (pure white would vanish there). rAF
+   stretches/rotates each puff along the ball's travel and fades it, so there is
+   no CSS transition here. */
+.golf-trail {
+  position: absolute;
+  width: 17px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(166, 188, 212, 0.55) 52%,
+    rgba(166, 188, 212, 0) 80%);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+  will-change: left, top, opacity, transform;
+}
+
+/* navigation */
+.golf-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--n-border);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--n-text);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+.golf-arrow--prev { left: 8px; }
+.golf-arrow--next { right: 8px; }
+.golf-arrow:hover:not(:disabled) {
+  background: var(--n-accent);
+  border-color: var(--n-accent);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(35, 131, 226, 0.3);
+}
+.golf-arrow:disabled { opacity: 0.35; cursor: default; }
+
+/* replay button — top right */
+.golf-reset {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 11px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border: 1px solid var(--n-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--n-secondary);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.golf-reset:hover:not(:disabled) {
+  background: var(--n-accent);
+  border-color: var(--n-accent);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(35, 131, 226, 0.28);
+}
+.golf-reset:disabled { opacity: 0.45; cursor: default; }
+
+.golf-counter {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+/* detail panel — flush below the band (same widget); a single condensed line:
+   logo · Role @Org · Visit · right-aligned date, with a one-line blurb beneath */
+.golf-detail {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 16px 11px;
+  background: var(--n-bg);
+}
+.golf-detail-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--n-border);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.golf-detail-logo img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+.golf-detail-logo.is-cover img { object-fit: cover; padding: 0; }
+.golf-detail-initial { font-size: 0.95rem; font-weight: 700; color: var(--n-accent); }
+.golf-detail-main { min-width: 0; }
+.golf-detail-line { display: flex; align-items: center; gap: 10px; }
+.golf-detail-role {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.8125rem;
+  color: var(--n-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.golf-detail-role strong { font-weight: 700; color: var(--n-text); }
+.golf-detail-at { color: var(--n-secondary); font-weight: 500; }
+.golf-detail-at--link { color: var(--n-accent); text-decoration: none; }
+.golf-detail-at--link:hover { text-decoration: underline; }
+.golf-detail-at--link svg { display: inline-block; vertical-align: -2px; margin-left: 2px; }
+.golf-detail-date {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--n-light);
+  white-space: nowrap;
+}
+.golf-detail-blurb {
+  margin: 3px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--n-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .golf-track, .golf-ball, .golf-chip, .golf-name, .golf-arrow, .golf-reset { transition: none; }
+  .golf-anim.is-swinging .golf-lower,
+  .golf-anim.is-swinging .golf-torso,
+  .golf-anim.is-swinging .golf-head,
+  .golf-anim.is-swinging .golf-arms,
+  .golf-anim.is-swinging .golf-club { animation: none; }
+  .golf-trail { display: none; }
+  .golf-marker.is-ongoing .golf-chip::after,
+  .golf-sparkles::before,
+  .golf-spark { animation: none; }
+  .golf-sparkles { display: none; }
 }

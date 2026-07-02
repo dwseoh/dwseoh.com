@@ -4,12 +4,14 @@ import RotatingText from '@/components/RotatingText'
 import ScrambleText from '@/components/ScrambleText'
 import LinkRow from '@/components/LinkRow'
 import HoverPreview from '@/components/HoverPreview'
-import Callout from '@/components/Callout'
+import ProjectCarousel, { type Project } from '@/components/ProjectCarousel'
 import HobbyCards, { type CarouselItem } from '@/components/HobbyCards'
 import PhotoStrip, { type Photo } from '@/components/PhotoStrip'
 import WebringCarousel, { type Webring } from '@/components/WebringCarousel'
 import SocialPill from '@/components/SocialPill'
 import LangSwitcher from '@/components/LangSwitcher'
+import Experience, { type Experience as ExperienceItem, type ExperienceLabels } from '@/components/Experience'
+import GolfCourse, { type Extracurricular, type ExtracurricularLabels } from '@/components/GolfCourse'
 
 interface SimpleLink {
   label: string
@@ -26,21 +28,24 @@ const favicon = (url: string) => {
   }
 }
 
-const sectionHeading = (text: string) => (
-  <h2
-    style={{
-      fontSize: '0.75rem',
-      fontWeight: 600,
-      textTransform: 'uppercase',
-      letterSpacing: '0.06em',
-      color: 'var(--n-secondary)',
-      margin: '2.5rem 0 0.875rem',
-    }}
-  >
-    {text}
-  </h2>
-)
+const headingStyle: React.CSSProperties = {
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
+  color: 'var(--n-secondary)',
+  margin: '2.5rem 0 0.875rem',
+}
 
+const sectionHeading = (text: string) => <h2 style={headingStyle}>{text}</h2>
+
+function OpenInNewIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 4h6v6M20 4 11 13M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5" />
+    </svg>
+  )
+}
 export default async function HomePage() {
   const t = await getTranslations()
   const locale = await getLocale()
@@ -51,6 +56,11 @@ export default async function HomePage() {
   const contactLinks     = t.raw('contactLinks') as SimpleLink[]
   const photos           = t.raw('photos') as Photo[]
   const webrings         = t.raw('webrings') as Webring[]
+  const projects         = t.raw('projects') as Project[]
+  const experiences      = t.raw('experiences') as ExperienceItem[]
+  const experienceLabels = t.raw('experienceLabels') as ExperienceLabels
+  const extracurriculars      = t.raw('extracurriculars') as Extracurricular[]
+  const extracurricularLabels = t.raw('extracurricularLabels') as ExtracurricularLabels
 
   return (
     <>
@@ -119,8 +129,27 @@ export default async function HomePage() {
           ))}
         </div>
 
-        {sectionHeading(t('sections.projects'))}
-        <Callout emoji="🚧">{t('construction')}</Callout>
+        {Array.isArray(projects) && projects.length > 0 && (
+          <>
+            <h2 style={{ ...headingStyle, display: 'flex', alignItems: 'center', gap: '7px' }}>
+              <span className="inprogress" data-tip="coming soon" aria-label="Projects page — coming soon" role="img">
+                <OpenInNewIcon />
+              </span>
+              {t('sections.projects')}
+            </h2>
+            <ProjectCarousel items={projects} />
+          </>
+        )}
+
+        {sectionHeading(t('sections.experiences'))}
+        <Experience items={experiences} labels={experienceLabels} />
+
+        {Array.isArray(extracurriculars) && extracurriculars.length > 0 && (
+          <>
+            {sectionHeading(t('sections.extracurriculars'))}
+            <GolfCourse items={extracurriculars} labels={extracurricularLabels} />
+          </>
+        )}
 
         {sectionHeading(t('sections.hobbies'))}
         <HobbyCards items={hobbyCategories} />
