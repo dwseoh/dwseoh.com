@@ -5,8 +5,15 @@ import { notFound } from 'next/navigation'
 import { routing, getPathname } from '@/i18n/routing'
 import { inter, gowunDodum } from '../fonts'
 
-// The social-share image is served automatically from app/opengraph-image.png
-// (Next.js file convention) with alt text from app/opengraph-image.alt.txt.
+// Social-share card. Referenced explicitly (not just via the app/opengraph-image
+// file convention) because the convention doesn't reliably emit the og:image tag
+// through the [locale] segment's generateMetadata openGraph object.
+const OG_IMAGE = {
+  url: '/opengraph-image.png',
+  width: 1200,
+  height: 630,
+  alt: 'Jamie Seoh — Software Engineer @ Waterloo',
+}
 
 export async function generateMetadata({
   params,
@@ -39,12 +46,14 @@ export async function generateMetadata({
       siteName: 'dwseoh.com',
       locale: locale === 'ko' ? 'ko_KR' : 'en_US',
       type: 'website',
+      images: [OG_IMAGE],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
       creator: '@sdw1_',
+      images: [OG_IMAGE.url],
     },
   }
 }
