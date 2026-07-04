@@ -1,0 +1,20 @@
+name = "dwseoh-blog-stats"
+main = "src/index.ts"
+compatibility_date = "2025-06-01"
+
+# Public origins allowed to call the API (comma-separated). Add your production
+# domain and localhost for dev. Leave empty to reflect any origin.
+[vars]
+ALLOWED_ORIGINS = "https://dwseoh.com,http://localhost:3000"
+
+# KV namespace for view/like counters.
+# Create it first:  npx wrangler kv namespace create STATS
+#                   npx wrangler kv namespace create STATS --preview
+# then paste the ids below.
+[[kv_namespaces]]
+binding = "STATS"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+preview_id = "REPLACE_WITH_PREVIEW_KV_NAMESPACE_ID"
+
+# SALT (for hashing IPs on view-dedupe) is a secret, not a var:
+#   npx wrangler secret put SALT

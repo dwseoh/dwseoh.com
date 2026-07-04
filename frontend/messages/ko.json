@@ -6,6 +6,47 @@
     "title": "서동완 (소프트웨어 공학과 @ 워털루 대학교)",
     "description": "서동완 (Jamie Seoh) — 워털루 대학교 소프트웨어 공학과 재학. 해커톤 주최자, 작곡가, 클라리넷 연주자, 사진작가."
   },
+  "blog": {
+    "title": "Jamie's Blog",
+    "intro": "I talk about everything and anything that interests me or think other people should know about.",
+    "seo": {
+      "title": "블로그 — 서동완",
+      "description": "워털루 소프트웨어 공학과 서동완(Jamie Seoh)이 소프트웨어, 음악, 커뮤니티에 대해 쓰는 글."
+    },
+    "nav": "블로그",
+    "backHome": "서동완",
+    "backToList": "모든 글",
+    "minRead": "분 분량",
+    "views": "조회",
+    "likes": "좋아요",
+    "empty": "아직 글이 없어요 — 곧 다시 찾아와 주세요.",
+    "footer": "곧 더 올릴게요. 읽어주셔서 감사합니다.",
+    "likePrompt": "이 글이 마음에 드셨나요?",
+    "likedLabel": "사랑해 주셔서 감사해요!",
+    "brand": "서동완",
+    "author": "서동완",
+    "by": "글",
+    "chrome": {
+      "home": "Jamie's Website",
+      "blogHome": "Blog Home",
+      "subscribe": "구독",
+      "search": "검색",
+      "searchPlaceholder": "글 검색…",
+      "searchEmpty": "검색 결과가 없어요.",
+      "theme": "테마 전환"
+    },
+    "newsletter": {
+      "heading": "뉴스레터 구독하기",
+      "subtext": "소프트웨어, 음악, 그리고 만드는 것들에 대한 새 글을 메일로 받아보세요. 스팸 없이, 언제든 해지할 수 있어요.",
+      "placeholder": "you@example.com",
+      "cta": "구독",
+      "done": "Substack을 여는 중이에요 — 거기서 구독을 마쳐주세요. 감사합니다!"
+    },
+    "postNav": {
+      "newer": "최신 글",
+      "older": "이전 글"
+    }
+  },
   "bio1": "저는 캐나다 <uw>워털루 대학교</uw>에서 소프트웨어 공학을 전공하고 있고, 2019년 가을에 캐나다로 이주했습니다. 이번 여름에는 <cerebras>Cerebras Systems</cerebras>이라는 반도체 회사에서 AI 소프트웨어 엔지니어링 인턴으로 일하며, 추론(inference)을 위한 low-level C++ 인프라와 디버깅 도구를 개발하고 있습니다.",
   "bioMusic": "여가 시간에는 음악에 큰 열정을 쏟고 있습니다. 저는 다양한 역할들을 맡아왔습니다; 나는 <roles></roles>",
   "bioCommunity": "또한 커뮤니티 활동에도 적극적으로 참여하고 있습니다. 현재 <htn>Hack the North</htn>에서 Logistics Organizer (해커톤 주최측)으로 활동 중이며, 이전에는 Ignition Hacks 스폰서십 디렉터, 워털루 한인 학생회(행사 담당), Hack the Ridge 회장 등을 역임했습니다.",
