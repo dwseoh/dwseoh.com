@@ -2,10 +2,10 @@
 title: A Sustainable Momentum
 date: 2026-02-05
 summary: My thoughts & experiences on motivation
-tags: [engineering, meta, nextjs]
+tags: [engineering, mindset, wellness]
 lang: en
-thumbnail: /images/photos/delta-hacks.jpg
 ---
+<!-- todo: add thumbnail -->
 
 For most of us, every day is a push: a quiet sprint to be better versions of ourselves, or at least to try. Momentum carries us forwards. It shows up in a week-long hackathon grind, five-hour LeetCode sprints, or if you think about it more literally, a simple run outside! But like in physics, momentum isn’t eternal. Forces beyond our control like friction or air resistance (barriers, setbacks, storms) will slow us down or sometimes completely stop us. 
 
@@ -17,7 +17,7 @@ Remember the friends who laughed with you, the nights spent doing what you love,
 
 Once this clicks, you’ll have more than enough motivation to get you out of the loophole, back to your old self: the fruitful version of yourself that you enjoy being. You might perceive yourself as imperfect and full of flaws, but you’re just happy to be… you, and that is enough. 
 
-To keep this momentum, remember Newton: motion resists change. The hardest part is starting and overcoming the initial friction: the self-doubt, jumping to conclusions, or whatever it may be. Once you push past this, consistency carries you. In physics terms, you maintain your your  $F_{\text{net}}=0$, and you keep moving. Small, repeated actions—routines, journaling, calls to friends, fifteen minutes of reading—keep the cycle alive. And rest. Remember, momentum is not infinite. After all, we’re humans: moral, weak, but yet full of potential. You need to recharge so that your next sprint will be stronger than ever. 
+To keep this momentum, remember Newton: motion resists change. The hardest part is starting and overcoming the initial friction: the self-doubt, jumping to conclusions, or whatever it may be. Once you push past this, consistency carries you. In physics terms, you maintain your your Fnet=0, and you keep moving. Small, repeated actions—routines, journaling, calls to friends, fifteen minutes of reading—keep the cycle alive. And rest. Remember, momentum is not infinite. After all, we’re humans: moral, weak, but yet full of potential. You need to recharge so that your next sprint will be stronger than ever. 
 
 To end, consider this quote from the Ghibli film *The Wind Rises:*
 
