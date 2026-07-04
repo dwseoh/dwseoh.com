@@ -114,7 +114,7 @@ export default function BlogNav({
             <ThemeToggle label={labels.theme} />
 
             <a
-              href={substackUrl}
+              href={`${substackUrl.replace(/\/$/, '')}/subscribe`}
               target="_blank"
               rel="noopener noreferrer"
               className="blog-nav-subscribe"
