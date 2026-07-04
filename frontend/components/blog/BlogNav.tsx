@@ -23,11 +23,6 @@ interface Labels {
   theme: string
 }
 
-// The portfolio home lives at the site root (dwseoh.com); the blog is a
-// sub-directory of it. The nav reads as a breadcrumb trail so the two feel
-// like one site.
-const HOME_URL = 'https://dwseoh.com'
-
 export default function BlogNav({
   posts,
   labels,
@@ -83,11 +78,10 @@ export default function BlogNav({
       <header className="blog-nav">
         <div className="blog-nav-inner">
           <nav className="blog-crumbs" aria-label="Breadcrumb">
-            {/* dwseoh.com — the main site. Absolute href so it always points at
-                the portfolio root, even from a translated blog path. */}
-            <a href={HOME_URL} className="blog-crumb">
+            {/* dwseoh.com — the portfolio home is the site root. */}
+            <Link href="/" className="blog-crumb">
               {labels.home}
-            </a>
+            </Link>
             <span className="blog-crumb-sep" aria-hidden="true">/</span>
             <Link
               href="/blog"
