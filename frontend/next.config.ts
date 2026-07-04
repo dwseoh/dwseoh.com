@@ -4,6 +4,12 @@ import createNextIntlPlugin from 'next-intl/plugin'
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 const nextConfig: NextConfig = {
+  // The blog reads Markdown from content/blog/ via fs at request time. That
+  // dynamic read can't be traced automatically, so include the files explicitly
+  // to guarantee they ship with the serverless bundle.
+  outputFileTracingIncludes: {
+    '/*': ['./content/blog/**/*'],
+  },
   async redirects() {
     return [
       // Legacy v1 static-site URLs still indexed by Google. The old site served

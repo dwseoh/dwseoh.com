@@ -1,22 +1,43 @@
 import type { MetadataRoute } from 'next'
 import { routing, getPathname } from '@/i18n/routing'
+import { getAllPosts } from '@/lib/blog'
 
 const BASE_URL = 'https://dwseoh.com'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Language alternates for the homepage across both locales.
   // localePrefix is 'as-needed', so `en` -> '/' and `ko` -> '/ko'.
-  const languages = Object.fromEntries(
+  const homeLanguages = Object.fromEntries(
     routing.locales.map((locale) => [locale, BASE_URL + getPathname({ href: '/', locale })])
   )
 
-  // One <url> entry per locale, each advertising all language alternates
-  // (Google's recommended hreflang-in-sitemap structure).
-  return routing.locales.map((locale) => ({
+  // One <url> entry per locale for the homepage, each advertising all language
+  // alternates (Google's recommended hreflang-in-sitemap structure).
+  const home: MetadataRoute.Sitemap = routing.locales.map((locale) => ({
     url: BASE_URL + getPathname({ href: '/', locale }),
     lastModified: new Date(),
     changeFrequency: 'monthly',
     priority: 1,
-    alternates: { languages },
+    alternates: { languages: homeLanguages },
   }))
+
+  // Blog listing + one entry per post (single-language, default-locale URLs).
+  const blogListing: MetadataRoute.Sitemap = [
+    {
+      url: BASE_URL + getPathname({ href: '/blog', locale: routing.defaultLocale }),
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+  ]
+
+  const posts = await getAllPosts()
+  const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
+    url: BASE_URL + getPathname({ href: `/blog/${post.slug}`, locale: routing.defaultLocale }),
+    lastModified: new Date(post.date),
+    changeFrequency: 'yearly',
+    priority: 0.6,
+  }))
+
+  return [...home, ...blogListing, ...postEntries]
 }
