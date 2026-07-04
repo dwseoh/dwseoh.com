@@ -13,8 +13,9 @@ interface Labels {
 
 /**
  * Newsletter capture. There's no self-hosted list — the site already publishes
- * on Substack — so this hands off to the Substack subscribe flow (email carried
- * over as a query param) and shows a soft confirmation. Swap `substackUrl` for a
+ * on Substack — so this opens the publication's real subscribe page with the
+ * reader's email pre-filled (`/subscribe?email=`); they just confirm there.
+ * `substackUrl` is the publication domain; swap it (or the whole flow) for a
  * different provider and the markup stays the same.
  */
 export default function Newsletter({
@@ -29,9 +30,10 @@ export default function Newsletter({
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const subscribe = `${substackUrl.replace(/\/$/, '')}/subscribe`
     const url = email.trim()
-      ? `${substackUrl}?email=${encodeURIComponent(email.trim())}`
-      : substackUrl
+      ? `${subscribe}?email=${encodeURIComponent(email.trim())}`
+      : subscribe
     window.open(url, '_blank', 'noopener,noreferrer')
     setSent(true)
   }
