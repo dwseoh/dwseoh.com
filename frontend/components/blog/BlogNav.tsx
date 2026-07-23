@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, usePathname } from '@/i18n/routing'
-import ThemeToggle from './ThemeToggle'
+// Theme toggle is hidden for now (blog is light-only) but kept fully functional.
+// Re-enable by uncommenting this import and the <ThemeToggle /> below.
+// import ThemeToggle from './ThemeToggle'
 import { SearchIcon, CloseIcon, ArrowRightIcon } from './Icons'
 
 export interface NavPost {
@@ -26,11 +28,9 @@ interface Labels {
 export default function BlogNav({
   posts,
   labels,
-  substackUrl,
 }: {
   posts: NavPost[]
   labels: Labels
-  substackUrl: string
 }) {
   const pathname = usePathname()
 
@@ -78,8 +78,17 @@ export default function BlogNav({
       <header className="blog-nav">
         <div className="blog-nav-inner">
           <nav className="blog-crumbs" aria-label="Breadcrumb">
-            {/* dwseoh.com — the portfolio home is the site root. */}
-            <Link href="/" className="blog-crumb">
+            {/* dwseoh.com — the portfolio home is the site root. Logo + name are
+                a single clickable crumb back to the portfolio. */}
+            <Link href="/" className="blog-crumb blog-crumb-home">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/favicon.png"
+                alt=""
+                className="blog-crumb-logo"
+                width={18}
+                height={18}
+              />
               {labels.home}
             </Link>
             <span className="blog-crumb-sep" aria-hidden="true">/</span>
@@ -111,16 +120,9 @@ export default function BlogNav({
               <SearchIcon size={17} />
             </button>
 
-            <ThemeToggle label={labels.theme} />
-
-            <a
-              href={`${substackUrl.replace(/\/$/, '')}/subscribe`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="blog-nav-subscribe"
-            >
-              {labels.subscribe}
-            </a>
+            {/* Theme toggle hidden for now — blog is light-only. It still works;
+                restore it (and the import above) to bring the switch back:
+                <ThemeToggle label={labels.theme} /> */}
           </div>
         </div>
       </header>

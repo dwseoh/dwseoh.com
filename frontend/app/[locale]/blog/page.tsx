@@ -1,10 +1,7 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import PostList from '@/components/blog/PostList'
-import Newsletter from '@/components/blog/Newsletter'
-import CoffeeCup from '@/components/blog/CoffeeCup'
 import { getAllPosts } from '@/lib/blog'
-import { SUBSTACK_URL } from './layout'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('blog')
@@ -29,26 +26,32 @@ export default async function BlogIndex() {
   return (
     <main className="blog-main">
       <header className="blog-header">
-        <h1 className="blog-title">
-          {t('title')}
-          <CoffeeCup />
-        </h1>
+        <h1 className="blog-title">{t('title')}</h1>
         <p className="blog-intro">{t('intro')}</p>
       </header>
+
+      {/* Notion-style section label, mirroring the homepage's section headings. */}
+      <div className="blog-eyebrow">
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+        </svg>
+        {t('latest')}
+      </div>
 
       <PostList posts={posts} labels={{ minRead: t('minRead'), empty: t('empty') }} />
 
       <footer className="blog-footer">
-        <Newsletter
-          substackUrl={SUBSTACK_URL}
-          labels={{
-            heading: t('newsletter.heading'),
-            subtext: t('newsletter.subtext'),
-            placeholder: t('newsletter.placeholder'),
-            cta: t('newsletter.cta'),
-            done: t('newsletter.done'),
-          }}
-        />
         <p className="blog-copyright">© {year} {t('brand')}</p>
       </footer>
     </main>

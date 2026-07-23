@@ -1005,7 +1005,11 @@ body {
 
   --blog-width: 44rem;        /* ~704px reading measure */
   --blog-nav-h: 58px;
-  --blog-serif: var(--font-serif), 'Iowan Old Style', 'Palatino', Georgia, serif;
+  /* Display type matches the rest of the site. Every element that reads
+     var(--blog-serif) resolves to `font-family: inherit`, falling back to the
+     sans on <body> (Inter on EN, Gowun Dodum on KO) — the same face the
+     portfolio uses. Swap back to a serif stack here to restore editorial type. */
+  --blog-serif: inherit;
   --blog-code-bg: #1e1d1b;    /* code cards stay dark in both themes */
 
   min-height: 100dvh;
@@ -1066,7 +1070,9 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   border-bottom: 1px solid var(--n-border);
 }
 .blog-nav-inner {
-  max-width: 60rem;
+  /* Match the reading column so the breadcrumb lines up with the content below
+     and the search action sits over the column's right edge (not stranded). */
+  max-width: var(--blog-width);
   margin: 0 auto;
   height: var(--blog-nav-h);
   padding: 0 1.5rem;
@@ -1081,6 +1087,8 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   align-items: center;
   gap: 1px;
   min-width: 0;
+  margin-left: -7px;   /* cancel the first crumb's padding so the logo aligns
+                          with the content column's left edge below */
   font-size: 0.9rem;
   overflow: hidden;
 }
@@ -1094,11 +1102,20 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   transition: color 0.15s ease, background 0.15s ease;
 }
 .blog-crumb:hover { color: var(--n-accent); background: var(--n-hover); }
+/* portfolio home crumb: favicon mark + name, one clickable unit */
+.blog-crumb-home { display: inline-flex; align-items: center; gap: 7px; }
+.blog-crumb-logo {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  display: block;
+  flex-shrink: 0;
+}
 .blog-crumb-blog {
-  font-family: var(--blog-serif);
-  font-size: 1.02rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  /* Current section: same size as its neighbours, distinguished only by ink
+     colour + a touch more weight — no longer an oversized serif heading. */
+  font-size: 0.9rem;
+  font-weight: 550;
   color: var(--n-text);
 }
 .blog-crumb-sep { flex-shrink: 0; color: var(--n-light); opacity: 0.5; }
@@ -1128,27 +1145,14 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 }
 .blog-nav-icon:hover { color: var(--n-text); background: var(--n-hover); }
 .blog-nav-icon img { display: block; border-radius: 2px; object-fit: cover; }
-.blog-nav-subscribe {
-  margin-left: 0.2rem;
-  padding: 7px 15px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--n-bg);
-  background: var(--n-text);
-  border-radius: 999px;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-.blog-nav-subscribe:hover { opacity: 0.85; transform: translateY(-1px); }
 
 /* back-to-list link at the top of a post */
 .blog-back {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin: 0 0 2rem -8px;   /* negative left optically aligns text to the column */
-  padding: 5px 10px 5px 8px;
+  margin: 0 0 0.9rem -8px;   /* negative left optically aligns text to the column */
+  padding: 4px 8px;          /* compact — sits just above the post, minimal gap */
   font-size: 0.85rem;
   color: var(--n-secondary);
   text-decoration: none;
@@ -1239,7 +1243,7 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 .blog-main {
   max-width: var(--blog-width);
   margin: 0 auto;
-  padding: 3.5rem 1.5rem 5rem;
+  padding: 3rem 1.5rem 5rem;
   animation: blogFade 0.5s ease both;
 }
 
@@ -1252,81 +1256,60 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   color: var(--n-light);
 }
 
-/* listing header */
-.blog-header { margin-bottom: 3rem; }
+/* listing header — matches the homepage h1 scale (2.5rem/700), not an oversized
+   editorial title. Compact intro sits right under it. */
+.blog-header { margin-bottom: 1.75rem; }
 .blog-title {
-  font-family: var(--blog-serif);
-  font-size: clamp(2.4rem, 6vw, 3.25rem);
-  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.08;
-  margin: 0 0 1rem;
+  line-height: 1.2;
+  margin: 0 0 0.6rem;
 }
 .blog-intro {
   margin: 0;
   max-width: 34rem;
   color: var(--n-secondary);
-  font-size: 1.15rem;
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.65;
 }
 
-/* animated coffee cup beside the title — sized in em so it tracks the type */
-.blog-coffee {
-  position: relative;
-  display: inline-block;
-  width: 0.82em;
-  height: 0.82em;
-  margin-left: 0.34em;
-  vertical-align: -0.04em;
-}
-.blog-coffee-cup { display: block; width: 100%; height: 100%; overflow: visible; }
-.blog-coffee-steam {
-  position: absolute;
-  left: 46%;
-  top: -0.3em;
-  transform: translateX(-50%);
+/* Notion-style section label: tiny uppercase eyebrow + optional icon, straight
+   from the homepage's section headings (0.75rem / 0.06em / secondary ink). */
+.blog-eyebrow {
   display: flex;
-  gap: 0.12em;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--n-secondary);
 }
-.blog-coffee-steam span {
-  width: 0.085em;
-  height: 0.34em;
-  border-radius: 1em;
-  background: currentColor;
-  opacity: 0;
-  transform-origin: bottom;
-  animation: coffeeSteam 2.8s ease-in-out infinite;
-}
-.blog-coffee-steam span:nth-child(2) { animation-delay: 0.6s; }
-.blog-coffee-steam span:nth-child(3) { animation-delay: 1.2s; }
-@keyframes coffeeSteam {
-  0%   { opacity: 0; transform: translateY(0.12em) scaleY(0.5); }
-  30%  { opacity: 0.45; }
-  70%  { opacity: 0.3; }
-  100% { opacity: 0; transform: translateY(-0.5em) scaleY(1.1); }
-}
+.blog-eyebrow svg { color: var(--n-light); flex-shrink: 0; }
 
 /* archive list */
 .blog-list-wrap { scroll-margin-top: calc(var(--blog-nav-h) + 1rem); }
 .blog-list { display: flex; flex-direction: column; }
 .blog-card {
   display: block;
-  padding: 2rem 0;
+  padding: 1.15rem 0;
   border-top: 1px solid var(--n-border);
   text-decoration: none;
   color: inherit;
 }
-.blog-card:first-child { border-top: none; padding-top: 0.5rem; }
-.blog-card-body { display: flex; align-items: flex-start; gap: 1.75rem; }
+.blog-card:first-child { border-top: none; padding-top: 0; }
+.blog-card-body { display: flex; align-items: center; gap: 1.25rem; }
 .blog-card-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 .blog-card-thumb {
   flex-shrink: 0;
-  width: 148px;
+  width: 156px;
   aspect-ratio: 3 / 2;
   align-self: center;
   overflow: hidden;
   border: 1px solid var(--n-border);
-  border-radius: 10px;
+  border-radius: 9px;
 }
 .blog-card-thumb img {
   width: 100%;
@@ -1336,34 +1319,42 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   transition: transform 0.35s ease;
 }
 .blog-card:hover .blog-card-thumb img { transform: scale(1.04); }
+/* category as a subtle Notion "select" tag rather than loud tracked caps */
 .blog-card-kicker {
-  margin-bottom: 0.55rem;
-  font-size: 0.7rem;
+  align-self: flex-start;
+  margin-bottom: 0.4rem;
+  padding: 1px 7px;
+  font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: var(--n-light);
+  color: var(--n-secondary);
+  background: var(--n-hover-strong);
+  border-radius: 5px;
 }
 .blog-card-title {
   margin: 0;
-  font-family: var(--blog-serif);
-  font-size: 1.65rem;
+  font-size: 1.15rem;
   font-weight: 600;
-  letter-spacing: -0.012em;
-  line-height: 1.2;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
   color: var(--n-text);
   text-decoration: underline;
   text-decoration-color: transparent;
-  text-underline-offset: 4px;
+  text-underline-offset: 3px;
   text-decoration-thickness: 1px;
   transition: text-decoration-color 0.16s ease;
 }
 .blog-card:hover .blog-card-title { text-decoration-color: var(--n-light); }
 .blog-card-summary {
-  margin: 0.7rem 0 0;
+  margin: 0.3rem 0 0;
   color: var(--n-secondary);
-  font-size: 1.02rem;
-  line-height: 1.6;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* numbered pager (appears once the archive overflows one page) */
@@ -1427,16 +1418,16 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 /* post header + byline */
 .blog-post-header { margin-bottom: 2.75rem; }
 .blog-post-title {
-  margin: 0.4rem 0 1.1rem;
+  margin: 0.4rem 0 1rem;
   font-family: var(--blog-serif);
-  font-size: clamp(2.3rem, 5.6vw, 3.4rem);
-  font-weight: 600;
-  letter-spacing: -0.022em;
-  line-height: 1.1;
+  font-size: clamp(1.9rem, 4.4vw, 2.55rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 .blog-post-sub {
-  margin: 0 0 1.9rem;
-  font-size: 1.2rem;
+  margin: 0 0 1.75rem;
+  font-size: 1.05rem;
   line-height: 1.55;
   color: var(--n-secondary);
   font-weight: 400;
@@ -1467,8 +1458,8 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 
 /* ---- prose: rendered Markdown body (see lib/markdown.tsx) ---- */
 .prose {
-  font-size: 1.1875rem;   /* 19px desktop, ~16px mobile */
-  line-height: 1.8;
+  font-size: 1.0625rem;   /* 17px desktop, ~15.5px mobile */
+  line-height: 1.75;
   color: var(--n-text);
   letter-spacing: -0.003em;
 }
@@ -1664,66 +1655,9 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 }
 .blog-postnav-spacer { display: block; }
 
-/* newsletter */
-.blog-news {
-  margin-top: 3rem;
-  padding: 2.5rem 2rem;
-  border: 1px solid var(--n-border);
-  border-radius: 16px;
-  background: var(--n-hover);
-  text-align: center;
-}
-.blog-news-heading {
-  margin: 0 0 0.5rem;
-  font-family: var(--blog-serif);
-  font-size: 1.55rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.blog-news-sub {
-  margin: 0 auto 1.5rem;
-  max-width: 30rem;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--n-secondary);
-}
-.blog-news-form { display: flex; gap: 0.5rem; max-width: 26rem; margin: 0 auto; }
-.blog-news-input {
-  flex: 1;
-  min-width: 0;
-  padding: 10px 14px;
-  font: inherit;
-  font-size: 0.9rem;
-  color: var(--n-text);
-  background: var(--n-bg);
-  border: 1px solid var(--n-border);
-  border-radius: 10px;
-  outline: none;
-  transition: border-color 0.15s ease;
-}
-.blog-news-input:focus { border-color: var(--n-light); }
-.blog-news-input::placeholder { color: var(--n-light); }
-.blog-news-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 18px;
-  font: inherit;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--n-bg);
-  background: var(--n-text);
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-.blog-news-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-
 /* footer */
-.blog-footer { margin-top: 3.5rem; }
-.blog-copyright { margin: 2.5rem 0 0; text-align: center; font-size: 0.8rem; color: var(--n-light); }
+.blog-footer { margin-top: 2.75rem; }
+.blog-copyright { margin: 1.75rem 0 0; text-align: left; font-size: 0.75rem; color: var(--n-light); }
 .blog-empty { color: var(--n-light); font-size: 1rem; padding: 2rem 0; }
 
 @keyframes blogFade {
@@ -1741,21 +1675,17 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   .blog-nav-inner { padding: 0 1rem; gap: 0.4rem; }
   .blog-nav-actions { gap: 0.1rem; }
   .blog-crumb { padding: 4px 5px; }
-  .blog-crumb-blog { font-size: 0.98rem; }
+  .blog-crumb-blog { font-size: 0.9rem; }
   .blog-crumb-tail { display: none; }   /* drop the post title — keep the trail short */
-  .blog-nav-subscribe { padding: 6px 12px; }
-  .blog-main { padding: 2.5rem 1.25rem 4rem; }
-  .blog-header { margin-bottom: 2.25rem; }
-  .blog-card { padding: 1.6rem 0; }
+  .blog-main { padding: 2.25rem 1.25rem 4rem; }
+  .blog-header { margin-bottom: 1.5rem; }
+  .blog-card { padding: 1.1rem 0; }
   .blog-card-body { gap: 1rem; }
-  .blog-card-thumb { width: 92px; border-radius: 8px; }
-  .blog-card-title { font-size: 1.45rem; }
+  .blog-card-thumb { width: 116px; border-radius: 8px; }
+  .blog-card-title { font-size: 1.1rem; }
   .blog-cover { margin-bottom: 2rem; }
   .blog-postnav { grid-template-columns: 1fr; }
   .blog-postnav-spacer { display: none; }
-  .blog-news { padding: 1.75rem 1.25rem; }
-  .blog-news-form { flex-direction: column; }
-  .blog-news-btn { justify-content: center; }
   .blog-search { padding: 8vh 0.75rem 0.75rem; }
 }
 
@@ -1764,6 +1694,5 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   .blog-root *, .blog-progress-bar { transition: none !important; }
   .blog-main, .blog-search-panel { animation: none; }
   .blog-like-btn.is-pop svg { animation: none; }
-  .blog-coffee-steam span { animation: none; opacity: 0.28; }
-  .blog-nav-subscribe:hover, .blog-news-btn:hover, .blog-postnav-card:hover { transform: none; }
+  .blog-postnav-card:hover { transform: none; }
 }
