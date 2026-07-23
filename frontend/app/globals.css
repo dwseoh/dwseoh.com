@@ -1274,20 +1274,6 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   line-height: 1.65;
 }
 
-/* Notion-style section label: tiny uppercase eyebrow + optional icon, straight
-   from the homepage's section headings (0.75rem / 0.06em / secondary ink). */
-.blog-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin: 0 0 1rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--n-secondary);
-}
-.blog-eyebrow svg { color: var(--n-light); flex-shrink: 0; }
 
 /* archive list */
 .blog-list-wrap { scroll-margin-top: calc(var(--blog-nav-h) + 1rem); }

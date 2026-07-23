@@ -9,7 +9,6 @@
   "blog": {
     "title": "Jamie's Blog",
     "intro": "Hear me yap — it might come in handy someday.",
-  "latest": "최근 글",
     "seo": {
       "title": "블로그 — 서동완",
       "description": "워털루 소프트웨어 공학과 서동완(Jamie Seoh)이 소프트웨어, 음악, 커뮤니티에 대해 쓰는 글."
