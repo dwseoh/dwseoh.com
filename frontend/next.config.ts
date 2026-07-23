@@ -12,6 +12,19 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // The blog used to live under the [locale] segment, so `/ko/blog` was a
+      // real URL. It's English-only now and lives at `/blog`; send the old
+      // Korean URLs there rather than 404ing.
+      {
+        source: '/ko/blog',
+        destination: '/blog',
+        permanent: true,
+      },
+      {
+        source: '/ko/blog/:path*',
+        destination: '/blog/:path*',
+        permanent: true,
+      },
       // Legacy v1 static-site URLs still indexed by Google. The old site served
       // raw files (resume/index.html, index.html); the Next.js app has no such
       // routes, so these 404. Redirect them permanently (308) to consolidate.

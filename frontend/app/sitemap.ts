@@ -21,10 +21,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     alternates: { languages: homeLanguages },
   }))
 
-  // Blog listing + one entry per post (single-language, default-locale URLs).
+  // Blog listing + one entry per post. The blog is English-only and lives
+  // outside [locale], so these are plain, unprefixed URLs.
   const blogListing: MetadataRoute.Sitemap = [
     {
-      url: BASE_URL + getPathname({ href: '/blog', locale: routing.defaultLocale }),
+      url: `${BASE_URL}/blog`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
@@ -33,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const posts = await getAllPosts()
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: BASE_URL + getPathname({ href: `/blog/${post.slug}`, locale: routing.defaultLocale }),
+    url: `${BASE_URL}/blog/${post.slug}`,
     lastModified: new Date(post.date),
     changeFrequency: 'yearly',
     priority: 0.6,

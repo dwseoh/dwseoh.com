@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, usePathname } from '@/i18n/routing'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 // Theme toggle is hidden for now (blog is light-only) but kept fully functional.
 // Re-enable by uncommenting this import and the <ThemeToggle /> below.
 // import ThemeToggle from './ThemeToggle'
@@ -18,7 +19,6 @@ export interface NavPost {
 interface Labels {
   home: string
   blogHome: string
-  subscribe: string
   search: string
   searchPlaceholder: string
   searchEmpty: string
@@ -39,7 +39,8 @@ export default function BlogNav({
   const inputRef = useRef<HTMLInputElement>(null)
 
   // If we're on an individual post (`/blog/<slug>`), surface its title as the
-  // trailing, current crumb. usePathname() from next-intl is locale-stripped.
+  // trailing, current crumb. The blog is English-only and lives outside
+  // [locale], so the pathname is already a plain /blog/... path.
   const currentPost = useMemo(() => {
     const m = /^\/blog\/([^/]+)\/?$/.exec(pathname)
     if (!m) return null

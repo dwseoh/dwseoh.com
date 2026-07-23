@@ -1,15 +1,17 @@
-import { getTranslations } from 'next-intl/server'
 import { newsreader } from '@/app/fonts'
 import BlogNav from '@/components/blog/BlogNav'
 import { getAllPosts } from '@/lib/blog'
+import { copy } from './copy'
 
 /**
  * Standalone chrome for the blog: a sticky publication nav sits above every
- * blog page, and `.blog-root` scopes the editorial theme (serif display type +
- * light/dark palette) so the light-only portfolio is never affected.
+ * blog page, and `.blog-root` scopes the editorial theme so the light-only
+ * portfolio is never affected.
+ *
+ * The blog sits outside `[locale]` and is English-only — copy comes from
+ * ./copy.ts rather than next-intl.
  */
 export default async function BlogLayout({ children }: { children: React.ReactNode }) {
-  const t = await getTranslations('blog')
   const posts = await getAllPosts()
   const navPosts = posts.map((p) => ({
     slug: p.slug,
@@ -24,13 +26,12 @@ export default async function BlogLayout({ children }: { children: React.ReactNo
       <BlogNav
         posts={navPosts}
         labels={{
-          home: t('chrome.home'),
-          blogHome: t('chrome.blogHome'),
-          subscribe: t('chrome.subscribe'),
-          search: t('chrome.search'),
-          searchPlaceholder: t('chrome.searchPlaceholder'),
-          searchEmpty: t('chrome.searchEmpty'),
-          theme: t('chrome.theme'),
+          home: copy.chrome.home,
+          blogHome: copy.chrome.blogHome,
+          search: copy.chrome.search,
+          searchPlaceholder: copy.chrome.searchPlaceholder,
+          searchEmpty: copy.chrome.searchEmpty,
+          theme: copy.chrome.theme,
         }}
       />
       {children}

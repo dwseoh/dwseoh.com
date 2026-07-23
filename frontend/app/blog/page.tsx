@@ -1,17 +1,16 @@
 import type { Metadata } from 'next'
-import { getTranslations } from 'next-intl/server'
 import PostList from '@/components/blog/PostList'
 import { getAllPosts } from '@/lib/blog'
+import { copy } from './copy'
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('blog')
+export function generateMetadata(): Metadata {
   return {
-    title: t('seo.title'),
-    description: t('seo.description'),
+    title: copy.seo.title,
+    description: copy.seo.description,
     alternates: { canonical: '/blog' },
     openGraph: {
-      title: t('seo.title'),
-      description: t('seo.description'),
+      title: copy.seo.title,
+      description: copy.seo.description,
       url: '/blog',
       type: 'website',
     },
@@ -19,18 +18,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function BlogIndex() {
-  const t = await getTranslations('blog')
   const posts = await getAllPosts()
   const year = new Date().getFullYear()
 
   return (
     <main className="blog-main">
       <header className="blog-header">
-        <h1 className="blog-title">{t('title')}</h1>
-        <p className="blog-intro">{t('intro')}</p>
+        <h1 className="blog-title">{copy.title}</h1>
+        <p className="blog-intro">{copy.intro}</p>
       </header>
 
-      <PostList posts={posts} labels={{ minRead: t('minRead'), empty: t('empty') }} />
+      <PostList posts={posts} labels={{ minRead: copy.minRead, empty: copy.empty }} />
 
       <footer className="blog-footer">
         <a
@@ -49,7 +47,7 @@ export default async function BlogIndex() {
             transition: 'color 0.15s ease',
           }}
         >
-          {t('substack')}
+          {copy.substack}
           <svg
             width="12"
             height="12"
@@ -65,7 +63,7 @@ export default async function BlogIndex() {
             <path d="M8 7h9v9" />
           </svg>
         </a>
-        <p className="blog-copyright">© {year} {t('brand')}</p>
+        <p className="blog-copyright">© {year} {copy.brand}</p>
       </footer>
     </main>
   )

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getTranslations, getLocale } from 'next-intl/server'
-import { Link } from '@/i18n/routing'
+import Link from 'next/link'
 import Markdown from '@/lib/markdown'
 import { getPost, getAllPosts } from '@/lib/blog'
 import { inter, gowunDodum } from '@/app/fonts'
@@ -10,14 +9,15 @@ import LikeButton from '@/components/blog/LikeButton'
 import ReadingProgress from '@/components/blog/ReadingProgress'
 import PostNav from '@/components/blog/PostNav'
 import { ClockIcon, ArrowLeftIcon } from '@/components/blog/Icons'
+import { copy } from '../copy'
 
 interface PageParams {
-  params: Promise<{ locale: string; slug: string }>
+  params: Promise<{ slug: string }>
 }
 
-function formatDate(date: string, locale: string): string {
+function formatDate(date: string, lang: string): string {
   const d = new Date(`${date}T12:00:00`)
-  return new Intl.DateTimeFormat(locale === 'ko' ? 'ko-KR' : 'en-US', {
+  return new Intl.DateTimeFormat(lang === 'ko' ? 'ko-KR' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -48,8 +48,6 @@ export default async function BlogPost({ params }: PageParams) {
   const post = await getPost(slug)
   if (!post) notFound()
 
-  const t = await getTranslations('blog')
-  const uiLocale = await getLocale()
   const fontClass = post.lang === 'ko' ? gowunDodum.className : inter.className
 
   // Newest-first archive → the newer neighbour is the previous index, older next.
@@ -80,7 +78,7 @@ export default async function BlogPost({ params }: PageParams) {
       <main className="blog-main">
         <Link href="/blog" className="blog-back">
           <ArrowLeftIcon size={15} />
-          {t('backToList')}
+          {copy.backToList}
         </Link>
 
         <article className={`blog-article ${fontClass}`} lang={post.lang}>
@@ -105,17 +103,17 @@ export default async function BlogPost({ params }: PageParams) {
               />
               <div className="blog-byline-text">
                 <span className="blog-byline-author">
-                  {t('by')} {t('author')}
+                  {copy.by} {copy.author}
                 </span>
                 <div className="blog-meta">
                   <time className="blog-meta-item" dateTime={post.date}>
-                    {formatDate(post.date, uiLocale)}
+                    {formatDate(post.date, post.lang)}
                   </time>
                   <span className="blog-meta-item">
                     <ClockIcon />
-                    {post.readingMinutes} {t('minRead')}
+                    {post.readingMinutes} {copy.minRead}
                   </span>
-                  <ViewCounter slug={slug} label={t('views')} />
+                  <ViewCounter slug={slug} label={copy.views} />
                 </div>
               </div>
             </div>
@@ -142,13 +140,13 @@ export default async function BlogPost({ params }: PageParams) {
             </div>
           )}
 
-          <LikeButton slug={slug} prompt={t('likePrompt')} likedLabel={t('likedLabel')} />
+          <LikeButton slug={slug} prompt={copy.likePrompt} likedLabel={copy.likedLabel} />
         </article>
 
         <PostNav
           newer={newer}
           older={older}
-          labels={{ newer: t('postNav.newer'), older: t('postNav.older') }}
+          labels={{ newer: copy.postNav.newer, older: copy.postNav.older }}
         />
 
         <footer className="blog-footer">
@@ -168,7 +166,7 @@ export default async function BlogPost({ params }: PageParams) {
               transition: 'color 0.15s ease',
             }}
           >
-            {t('substack')}
+            {copy.substack}
             <svg
               width="12"
               height="12"
@@ -184,7 +182,7 @@ export default async function BlogPost({ params }: PageParams) {
               <path d="M8 7h9v9" />
             </svg>
           </a>
-          <p className="blog-copyright">© {year} {t('brand')}</p>
+          <p className="blog-copyright">© {year} {copy.brand}</p>
         </footer>
       </main>
     </>

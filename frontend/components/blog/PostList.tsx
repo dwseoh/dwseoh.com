@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useLocale } from 'next-intl'
-import { Link } from '@/i18n/routing'
+import Link from 'next/link'
 import { fetchStats, statsEnabled, formatCount, type Stat } from '@/lib/stats'
 import { EyeIcon, HeartIcon, ClockIcon } from './Icons'
 import type { PostMeta } from '@/lib/blog'
@@ -15,10 +14,10 @@ interface Labels {
 // Max posts per page — a new page starts every 5 posts.
 const PAGE_SIZE = 5
 
-function formatDate(date: string, locale: string): string {
+function formatDate(date: string): string {
   // Anchor at midday so the UTC date never slips a day when localized.
   const d = new Date(`${date}T12:00:00`)
-  return new Intl.DateTimeFormat(locale === 'ko' ? 'ko-KR' : 'en-US', {
+  return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -26,7 +25,6 @@ function formatDate(date: string, locale: string): string {
 }
 
 export default function PostList({ posts, labels }: { posts: PostMeta[]; labels: Labels }) {
-  const locale = useLocale()
   const [stats, setStats] = useState<Record<string, Stat> | null>(null)
   const [page, setPage] = useState(1)
   const topRef = useRef<HTMLDivElement>(null)
@@ -73,7 +71,7 @@ export default function PostList({ posts, labels }: { posts: PostMeta[]; labels:
 
                   <div className="blog-meta blog-card-meta">
                     <time className="blog-meta-item" dateTime={post.date}>
-                      {formatDate(post.date, locale)}
+                      {formatDate(post.date)}
                     </time>
                     <span className="blog-meta-item">
                       <ClockIcon />
