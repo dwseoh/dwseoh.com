@@ -9,7 +9,6 @@
   "blog": {
     "title": "Jamie's Blog",
     "intro": "Hear me yap -- it might come in handy someday!",
-  "latest": "Latest",
     "seo": {
       "title": "Blog — Jamie Seoh",
       "description": "Essays and short notes on software, music, and community by Jamie (Dongwan) Seoh, Software Engineering @ Waterloo."

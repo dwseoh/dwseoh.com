@@ -1,0 +1,56 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - navigation "Breadcrumb" [ref=e6]:
+          - link "Jamie's Website" [ref=e7] [cursor=pointer]:
+            - /url: /
+          - generic [ref=e8]: /
+          - link "Blog Home" [ref=e9] [cursor=pointer]:
+            - /url: /blog
+        - button "Search" [ref=e11] [cursor=pointer]
+    - main [ref=e15]:
+      - generic [ref=e16]:
+        - heading "Jamie's Blog" [level=1] [ref=e17]
+        - paragraph [ref=e18]: Hear me yap -- it might come in handy someday!
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - link [ref=e21] [cursor=pointer]:
+            - /url: /blog/building-this-blog
+            - article [ref=e22]:
+              - generic [ref=e23]:
+                - generic [ref=e24]: engineering
+                - heading "How this blog is put together" [level=2] [ref=e25]
+                - paragraph [ref=e26]: A zero-dependency Markdown blog bolted onto a Next.js site, with view counts and likes running on a tiny Cloudflare Worker.
+                - generic [ref=e27]:
+                  - time [ref=e28]: July 1, 2026
+                  - generic [ref=e29]: · 2 min read
+          - link [ref=e34] [cursor=pointer]:
+            - /url: /blog/hello-world
+            - article [ref=e35]:
+              - generic [ref=e36]:
+                - generic [ref=e37]: meta
+                - heading "Hello, world" [level=2] [ref=e38]
+                - paragraph [ref=e39]: Why I'm starting to write in public — a small room on the internet for the things that don't fit anywhere else.
+                - generic [ref=e40]:
+                  - time [ref=e41]: June 15, 2026
+                  - generic [ref=e42]: · 1 min read
+          - link [ref=e47] [cursor=pointer]:
+            - /url: /blog/a-sustainable-motivation
+            - article [ref=e48]:
+              - generic [ref=e49]:
+                - generic [ref=e50]: engineering
+                - heading "A Sustainable Momentum" [level=2] [ref=e51]
+                - paragraph [ref=e52]: My thoughts & experiences on motivation
+                - generic [ref=e53]:
+                  - time [ref=e54]: February 5, 2026
+                  - generic [ref=e55]: · 3 min read
+        - navigation "Pagination" [ref=e59]:
+          - button "Previous page" [disabled] [ref=e60]: ‹
+          - button "1" [ref=e61] [cursor=pointer]
+          - button "Next page" [disabled] [ref=e62]: ›
+      - generic [ref=e63]:
+        - link "Read on Substack if you want" [ref=e64] [cursor=pointer]:
+          - /url: https://substack.com/@dwseoh
+        - paragraph [ref=e68]: © 2026 Jamie Seoh
+  - button "Open Next.js Dev Tools" [ref=e74] [cursor=pointer]
