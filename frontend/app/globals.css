@@ -1364,9 +1364,7 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   justify-content: center;
   flex-wrap: wrap;
   gap: 0.3rem;
-  margin-top: 2.5rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--n-border);
+  margin-top: 2rem;
 }
 .blog-pager-num,
 .blog-pager-arrow {
@@ -1657,9 +1655,7 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 
 /* footer */
 .blog-footer {
-  margin-top: 3rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--n-border);
+  margin-top: 2.5rem;
 }
 /* Layout/base live as inline styles on the <a> (homepage LinkRow pattern);
    these just add the hover affordance. */
