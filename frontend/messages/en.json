@@ -8,7 +8,8 @@
   },
   "blog": {
     "title": "Jamie's Blog",
-    "intro": "I talk about everything and anything that interests me or think other people should know about.",
+    "intro": "Hear me yap -- it might come in handy someday!",
+  "latest": "Latest",
     "seo": {
       "title": "Blog — Jamie Seoh",
       "description": "Essays and short notes on software, music, and community by Jamie (Dongwan) Seoh, Software Engineering @ Waterloo."
@@ -34,13 +35,6 @@
       "searchPlaceholder": "Search posts…",
       "searchEmpty": "Nothing matches that search yet.",
       "theme": "Toggle theme"
-    },
-    "newsletter": {
-      "heading": "Subscribe to the newsletter",
-      "subtext": "New essays on software, music, and building things — straight to your inbox. No spam, unsubscribe anytime.",
-      "placeholder": "you@example.com",
-      "cta": "Subscribe",
-      "done": "Opening Substack — finish subscribing there. Thanks!"
     },
     "postNav": {
       "newer": "Newer",
