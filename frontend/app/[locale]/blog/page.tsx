@@ -63,7 +63,8 @@ export default async function BlogIndex() {
             gap: '5px',
             fontSize: '0.85rem',
             color: 'var(--n-secondary)',
-            textDecoration: 'none',
+            textDecoration: 'underline',
+            textUnderlineOffset: '2.5px',
             transition: 'color 0.15s ease',
           }}
         >
