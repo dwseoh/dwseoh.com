@@ -9,9 +9,7 @@ import ViewCounter from '@/components/blog/ViewCounter'
 import LikeButton from '@/components/blog/LikeButton'
 import ReadingProgress from '@/components/blog/ReadingProgress'
 import PostNav from '@/components/blog/PostNav'
-import Newsletter from '@/components/blog/Newsletter'
 import { ClockIcon, ArrowLeftIcon } from '@/components/blog/Icons'
-import { SUBSTACK_URL } from '../layout'
 
 interface PageParams {
   params: Promise<{ locale: string; slug: string }>
@@ -154,16 +152,6 @@ export default async function BlogPost({ params }: PageParams) {
         />
 
         <footer className="blog-footer">
-          <Newsletter
-            substackUrl={SUBSTACK_URL}
-            labels={{
-              heading: t('newsletter.heading'),
-              subtext: t('newsletter.subtext'),
-              placeholder: t('newsletter.placeholder'),
-              cta: t('newsletter.cta'),
-              done: t('newsletter.done'),
-            }}
-          />
           <p className="blog-copyright">© {year} {t('brand')}</p>
         </footer>
       </main>

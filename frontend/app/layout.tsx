@@ -23,12 +23,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     // hydrates, so suppress the expected attribute mismatch on this element.
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {/* Set the theme before first paint so the blog never flashes the wrong
-            palette. Only the blog surface (.blog-root) reacts to [data-theme],
-            so this leaves the light-only portfolio untouched. */}
+        {/* Blog is light-only for now: force the light palette before first paint.
+            The ThemeToggle component still works — to bring dark mode back, restore
+            the detection script below and un-hide the toggle in BlogNav.
+            Detection version:
+              var t=localStorage.getItem('blog-theme');
+              if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+              document.documentElement.setAttribute('data-theme',t); */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('blog-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+            __html: `(function(){try{document.documentElement.setAttribute('data-theme','light');}catch(e){}})();`,
           }}
         />
       </head>
