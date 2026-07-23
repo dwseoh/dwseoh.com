@@ -8,7 +8,8 @@
   },
   "blog": {
     "title": "Jamie's Blog",
-    "intro": "I talk about everything and anything that interests me or think other people should know about.",
+    "intro": "Hear me yap — it might come in handy someday.",
+  "latest": "최근 글",
     "seo": {
       "title": "블로그 — 서동완",
       "description": "워털루 소프트웨어 공학과 서동완(Jamie Seoh)이 소프트웨어, 음악, 커뮤니티에 대해 쓰는 글."
@@ -34,13 +35,6 @@
       "searchPlaceholder": "글 검색…",
       "searchEmpty": "검색 결과가 없어요.",
       "theme": "테마 전환"
-    },
-    "newsletter": {
-      "heading": "뉴스레터 구독하기",
-      "subtext": "소프트웨어, 음악, 그리고 만드는 것들에 대한 새 글을 메일로 받아보세요. 스팸 없이, 언제든 해지할 수 있어요.",
-      "placeholder": "you@example.com",
-      "cta": "구독",
-      "done": "Substack을 여는 중이에요 — 거기서 구독을 마쳐주세요. 감사합니다!"
     },
     "postNav": {
       "newer": "최신 글",
