@@ -1656,8 +1656,17 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 .blog-postnav-spacer { display: block; }
 
 /* footer */
-.blog-footer { margin-top: 2.75rem; }
-.blog-copyright { margin: 1.75rem 0 0; text-align: left; font-size: 0.75rem; color: var(--n-light); }
+.blog-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--n-border);
+}
+/* Layout/base live as inline styles on the <a> (homepage LinkRow pattern);
+   these just add the hover affordance. */
+.blog-substack:hover { color: var(--n-accent); }
+.blog-substack svg { transition: transform 0.16s ease; }
+.blog-substack:hover svg { transform: translate(1px, -1px); }
+.blog-copyright { margin: 0.6rem 0 0; text-align: left; font-size: 0.75rem; color: var(--n-light); }
 .blog-empty { color: var(--n-light); font-size: 1rem; padding: 2rem 0; }
 
 @keyframes blogFade {
