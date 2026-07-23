@@ -12,8 +12,9 @@ interface Labels {
   empty: string
 }
 
-// How many posts per page before the numbered pager kicks in.
-const PAGE_SIZE = 6
+// Max posts shown per page. Short pages are padded with filler slots (below) so
+// every page reserves the same height, and the pager stays put between pages.
+const PAGE_SIZE = 4
 
 function formatDate(date: string, locale: string): string {
   // Anchor at midday so the UTC date never slips a day when localized.
@@ -104,9 +105,20 @@ export default function PostList({ posts, labels }: { posts: PostMeta[]; labels:
             </Link>
           )
         })}
+
+        {/* Pad a short page up to PAGE_SIZE so its height matches a full page and
+            the pager doesn't jump between pages. Empty, non-interactive slots. */}
+        {Array.from({ length: Math.max(0, PAGE_SIZE - visible.length) }).map((_, i) => (
+          <div
+            key={`filler-${i}`}
+            className="blog-card-filler"
+            aria-hidden="true"
+            style={{ borderTop: '1px solid var(--n-border)', minHeight: '9.5rem' }}
+          />
+        ))}
       </div>
 
-      {pageCount > 1 && (
+      {pageCount >= 1 && (
         <nav className="blog-pager" aria-label="Pagination">
           <button
             type="button"
