@@ -37,7 +37,7 @@
     { "label": "LinkedIn", "href": "https://www.linkedin.com/in/jamie-seoh", "desc": "connect with me!",       "icon": "linkedin" },
     { "label": "GitHub",   "href": "https://github.com/dwseoh",               "desc": "check out my projects!", "icon": "github"   },
     { "label": "Resume",   "href": "/static/resume.pdf",                      "desc": "view my resume",         "icon": "file"     },
-    { "label": "Substack", "href": "https://substack.com/@dwseoh",            "desc": "read my blog",           "icon": "substack" }
+    { "label": "Blog",     "href": "/blog",                                   "desc": "read my writing",        "icon": "blog"     }
   ],
   "projects": [
     {
