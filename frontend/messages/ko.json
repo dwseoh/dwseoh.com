@@ -35,7 +35,7 @@
     { "label": "LinkedIn", "href": "https://www.linkedin.com/in/jamie-seoh", "desc": "저와 연결해요!",        "icon": "linkedin" },
     { "label": "GitHub",   "href": "https://github.com/dwseoh",               "desc": "제 프로젝트 구경하기!", "icon": "github"   },
     { "label": "이력서",    "href": "/static/resume.pdf",                      "desc": "이력서 보기",           "icon": "file"     },
-    { "label": "Substack", "href": "https://substack.com/@dwseoh",            "desc": "블로그 읽기",           "icon": "substack" }
+    { "label": "블로그",    "href": "/blog",                                   "desc": "제 글 읽기",            "icon": "blog"     }
   ],
   "projects": [
     {
