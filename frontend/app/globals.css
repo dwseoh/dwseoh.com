@@ -1400,6 +1400,8 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   color: var(--n-light);
 }
 .blog-meta-item svg { opacity: 0.85; }
+/* "7 min read" on desktop, "7 min" on phones — see the mobile block below */
+.blog-meta-label-short { display: none; }
 .blog-meta .blog-meta-item + .blog-meta-item::before {
   content: '·';
   margin-right: 8px;
@@ -1687,6 +1689,9 @@ html:has(.blog-root) { scroll-behavior: smooth; }
      start of every wrapped line. Separate with space instead of dots there. */
   .blog-meta { gap: 3px 12px; }
   .blog-meta .blog-meta-item + .blog-meta-item::before { content: none; }
+  /* reading time sheds the word "read" — "7 min" next to a clock is unambiguous */
+  .blog-meta-label { display: none; }
+  .blog-meta-label-short { display: inline; }
   .blog-header { margin-bottom: 1.5rem; }
   .blog-card { padding: 1.1rem 0; }
   .blog-card-body { gap: 1rem; }

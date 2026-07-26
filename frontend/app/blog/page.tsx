@@ -28,7 +28,10 @@ export default async function BlogIndex() {
         <p className="blog-intro">{copy.intro}</p>
       </header>
 
-      <PostList posts={posts} labels={{ minRead: copy.minRead, empty: copy.empty }} />
+      <PostList
+        posts={posts}
+        labels={{ minRead: copy.minRead, minReadShort: copy.minReadShort, empty: copy.empty }}
+      />
 
       <footer className="blog-footer">
         <a
