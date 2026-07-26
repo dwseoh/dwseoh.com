@@ -13,9 +13,9 @@ export const copy = {
   title: "Jamie's Blog",
   intro: 'Hear me yap -- it might come in handy someday!',
   seo: {
-    title: 'Blog — Jamie Seoh',
+    title: 'Jamie\'s Blog',
     description:
-      'Essays and short notes on software, music, and community by Jamie (Dongwan) Seoh, Software Engineering @ Waterloo.',
+      'Hear a Software Engineering student yap about tech, music, photography, community, and more.',
   },
   backToList: 'All posts',
   minRead: 'min read',
