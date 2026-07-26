@@ -8,6 +8,7 @@ import type { PostMeta } from '@/lib/blog'
 
 interface Labels {
   minRead: string
+  minReadShort: string
   empty: string
 }
 
@@ -75,7 +76,15 @@ export default function PostList({ posts, labels }: { posts: PostMeta[]; labels:
                     </time>
                     <span className="blog-meta-item">
                       <ClockIcon />
-                      {post.readingMinutes} {labels.minRead}
+                      {/* Number + unit must stay ONE flex item: .blog-meta-item is
+                          inline-flex, and a whitespace-only text node between two
+                          flex items is dropped, so the space would become the 5px
+                          gap instead. */}
+                      <span className="blog-meta-read">
+                        {post.readingMinutes}{' '}
+                        <span className="blog-meta-label">{labels.minRead}</span>
+                        <span className="blog-meta-label-short">{labels.minReadShort}</span>
+                      </span>
                     </span>
                     {s && (
                       <span className="blog-meta-item">
