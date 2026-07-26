@@ -19,6 +19,7 @@ export const copy = {
   },
   backToList: 'All posts',
   minRead: 'min read',
+  minReadShort: 'min',   // phones drop "read" — the clock icon already says it
   views: 'views',
   likes: 'likes',
   empty: 'No posts yet — check back soon.',
