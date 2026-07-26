@@ -13,8 +13,8 @@ ALLOWED_ORIGINS = "https://dwseoh.com,http://localhost:3000"
 # then paste the ids below.
 [[kv_namespaces]]
 binding = "STATS"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
-preview_id = "REPLACE_WITH_PREVIEW_KV_NAMESPACE_ID"
+id = "34e42733fe2648fd9a43852d48504cc2"
+preview_id = "3cc4f91320b24936b188f1ac8de53631"
 
 # SALT (for hashing IPs on view-dedupe) is a secret, not a var:
 #   npx wrangler secret put SALT
