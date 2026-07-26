@@ -111,7 +111,12 @@ export default async function BlogPost({ params }: PageParams) {
                   </time>
                   <span className="blog-meta-item">
                     <ClockIcon />
-                    {post.readingMinutes} {copy.minRead}
+                    {/* single flex item on purpose — see PostList for why */}
+                    <span className="blog-meta-read">
+                      {post.readingMinutes}{' '}
+                      <span className="blog-meta-label">{copy.minRead}</span>
+                      <span className="blog-meta-label-short">{copy.minReadShort}</span>
+                    </span>
                   </span>
                   <ViewCounter slug={slug} label={copy.views} />
                 </div>
