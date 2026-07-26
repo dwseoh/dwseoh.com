@@ -78,7 +78,10 @@ export default function BlogNav({
     <>
       <header className="blog-nav">
         <div className="blog-nav-inner">
-          <nav className="blog-crumbs" aria-label="Breadcrumb">
+          <nav
+            className={`blog-crumbs${currentPost ? ' is-post' : ''}`}
+            aria-label="Breadcrumb"
+          >
             {/* dwseoh.com — the portfolio home is the site root. Logo + name are
                 a single clickable crumb back to the portfolio. */}
             <Link href="/" className="blog-crumb blog-crumb-home">
@@ -97,8 +100,13 @@ export default function BlogNav({
               href="/blog"
               className="blog-crumb blog-crumb-blog"
               aria-current={currentPost ? undefined : 'page'}
+              aria-label={labels.blogHome}
             >
-              {labels.blogHome}
+              {/* On a post, phones collapse this middle crumb to ".." so the
+                  post title still fits: Jamie's Website / .. / <title>.
+                  Both labels ship; CSS picks one. */}
+              <span className="blog-crumb-label">{labels.blogHome}</span>
+              <span className="blog-crumb-label-short" aria-hidden="true">..</span>
             </Link>
             {currentPost && (
               <span className="blog-crumb-tail">

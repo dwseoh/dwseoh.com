@@ -1041,6 +1041,10 @@ html[data-theme='dark'] .blog-root ::selection { background: rgba(220, 205, 165,
   outline-offset: 2px;
   border-radius: 6px;
 }
+/* …except the search field. It is autofocused the moment the palette opens, so
+   the ring is never news — it just draws a black box around the input. The
+   panel border + tinted leading icon are affordance enough. */
+.blog-root .blog-search-input:focus-visible { outline: none; }
 
 html:has(.blog-root) { scroll-behavior: smooth; }
 
@@ -1118,6 +1122,8 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   font-weight: 550;
   color: var(--n-text);
 }
+/* the ".." stand-in for "Blog Home" — phones only, and only on a post */
+.blog-crumb-label-short { display: none; }
 .blog-crumb-sep { flex-shrink: 0; color: var(--n-light); opacity: 0.5; }
 .blog-crumb-tail { display: flex; align-items: center; gap: 1px; min-width: 0; }
 .blog-crumb-current {
@@ -1170,6 +1176,7 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   z-index: 2000;
   display: flex;
   justify-content: center;
+  align-items: flex-start;   /* hug the results — never stretch to a tall empty box */
   padding: 12vh 1rem 1rem;
 }
 .blog-search-backdrop { position: absolute; inset: 0; background: rgba(15, 14, 12, 0.42); }
@@ -1195,7 +1202,8 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   padding: 12px 14px;
   border-bottom: 1px solid var(--n-border);
 }
-.blog-search-lead { color: var(--n-light); flex-shrink: 0; }
+.blog-search-lead { color: var(--n-light); flex-shrink: 0; transition: color 0.15s ease; }
+.blog-search-field:focus-within .blog-search-lead { color: var(--n-text); }
 .blog-search-input {
   flex: 1;
   min-width: 0;
@@ -1667,8 +1675,18 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   .blog-nav-actions { gap: 0.1rem; }
   .blog-crumb { padding: 4px 5px; }
   .blog-crumb-blog { font-size: 0.9rem; }
-  .blog-crumb-tail { display: none; }   /* drop the post title — keep the trail short */
+  /* On a post, the middle crumb collapses to ".." and the title stays visible,
+     truncating into whatever room is left: Jamie's Website / .. / <title>. */
+  .blog-crumbs.is-post .blog-crumb-label { display: none; }
+  .blog-crumbs.is-post .blog-crumb-label-short { display: inline; }
+  .blog-crumb-tail { flex: 1; min-width: 0; }
+  .blog-crumb-current { padding: 4px 5px; }
   .blog-main { padding: 2.25rem 1.25rem 4rem; }
+
+  /* Meta rows wrap on phones, and a leading "·" used to strand itself at the
+     start of every wrapped line. Separate with space instead of dots there. */
+  .blog-meta { gap: 3px 12px; }
+  .blog-meta .blog-meta-item + .blog-meta-item::before { content: none; }
   .blog-header { margin-bottom: 1.5rem; }
   .blog-card { padding: 1.1rem 0; }
   .blog-card-body { gap: 1rem; }
