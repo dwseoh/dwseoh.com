@@ -5,6 +5,13 @@
 frontend/.next
 frontend/next-env.d.ts
 
+# Playwright (local browser-driving runs; the browser binaries themselves live
+# in ~/Library/Caches/ms-playwright, outside the repo)
+.playwright-cli/
+playwright-report/
+test-results/
+output/playwright/
+
 # misc
 *.DS_Store
 .venv
