@@ -28,9 +28,9 @@ export interface LikeState {
 }
 
 export interface Visit {
-  /** This visitor's place in line — the "N" in "you are the Nth visitor". */
+  /** This browser's permanent place in line. Returned by the worker; unused by the UI. */
   ordinal: number
-  /** Total unique visitors counted so far. */
+  /** Total unique visitors counted so far — the number the footer shows. */
   total: number
   /** Set when the IP's hourly budget was spent: shown, but not persisted. */
   throttled?: boolean
@@ -102,12 +102,13 @@ export async function registerView(slug: string): Promise<number | null> {
 const VISIT_KEY = 'site:visit'
 
 /**
- * Claim this visitor's place in line for the site-wide counter.
+ * Register this browser with the site-wide counter and read back the total.
  *
  * Identity is the same per-browser uuid the like button uses, so people sharing
- * a public IP are counted separately and a returning browser keeps its original
- * ordinal. We also cache the answer in sessionStorage so navigating around the
- * site neither re-requests it nor lets the number drift while someone reads.
+ * a public IP are counted separately, and a browser the worker has already seen
+ * bumps nothing — it just gets the current total. We cache the answer in
+ * sessionStorage so navigating around the site neither re-requests it nor lets
+ * the number tick upward while someone is reading.
  */
 export async function registerVisit(): Promise<Visit | null> {
   if (!statsEnabled) return null
@@ -174,10 +175,18 @@ export async function toggleLike(slug: string): Promise<LikeState | null> {
   }
 }
 
-/** 1234 -> "1.2k" for compact display. */
+/**
+ * Compact display: 1234 -> "1.2k", 999999 -> "999k", 1234567 -> "1.2m".
+ *
+ * One decimal under 10 of a unit, whole numbers above. Truncates rather than
+ * rounds, so a count never overflows its own unit — 9,999 reads "9.9k", not
+ * "10k", and 999,999 reads "999k", not "1000k". The integer arithmetic (÷100
+ * then ÷10) keeps the decimal exact instead of leaning on toFixed.
+ */
 export function formatCount(n: number): string {
   if (n < 1000) return String(n)
-  if (n < 10000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k'
-  if (n < 1_000_000) return Math.round(n / 1000) + 'k'
-  return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'm'
+  if (n < 1_000_000) {
+    return (n < 10_000 ? Math.floor(n / 100) / 10 : Math.floor(n / 1000)) + 'k'
+  }
+  return (n < 10_000_000 ? Math.floor(n / 100_000) / 10 : Math.floor(n / 1_000_000)) + 'm'
 }

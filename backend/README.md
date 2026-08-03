@@ -20,8 +20,9 @@ it isn't configured, the site simply hides its counters.
   doesn't inflate the number. The client also guards once per session.
 - **Likes** toggle against a per-visitor id (a UUID the browser keeps in
   `localStorage`), so the heart stays filled when a reader returns.
-- **Visits** back the "you are the Nth visitor" line in the site footer, and use
-  that same per-browser UUID as identity — see below.
+- **Visits** back the "342 people have visited this website." line in the site
+  footer, and use that same per-browser UUID as identity — see below. The footer
+  shows `total`; `ordinal` is returned too, but nothing renders it today.
 - `slug` must match `^[a-z0-9-]{1,100}$`; `visitor` is 8–100 chars.
 
 ### Why visits are keyed by browser, not IP
