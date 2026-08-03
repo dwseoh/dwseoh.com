@@ -27,7 +27,7 @@
   },
   "footer": "",
   "copyright": "© 2026 Jamie Seoh.",
-  "visitorCount": "당신은 {count}번째 방문자입니다.",
+  "visitorCount": "{display}명이 이 웹사이트를 방문했습니다.",
   "visitorSince": "2026년 8월 3일부터 집계된 방문자 수입니다",
   "lang": {
     "en": "English",
