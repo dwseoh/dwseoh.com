@@ -29,7 +29,7 @@
   },
   "footer": "",
   "copyright": "© 2026 Jamie Seoh.",
-  "visitorCount": "You are the {count, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} visitor.",
+  "visitorCount": "{display} {count, plural, one {person has} other {people have}} visited this website.",
   "visitorSince": "View counter since August 3rd, 2026",
   "lang": {
     "en": "English",
