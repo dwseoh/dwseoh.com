@@ -28,7 +28,9 @@
     "htn": "Canada's biggest and most prestigious hackathon, bringing 1,000+ hackers from around the world to the University of Waterloo every year."
   },
   "footer": "",
-  "copyright": "© 2026 Jamie Seoh. Redesign coming Summer 2026.",
+  "copyright": "© 2026 Jamie Seoh.",
+  "visitorCount": "You are the {count, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} visitor.",
+  "visitorSince": "View counter since August 3rd, 2026",
   "lang": {
     "en": "English",
     "ko": "한국어"
