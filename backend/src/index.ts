@@ -1,19 +1,26 @@
 /**
- * dwseoh.com — blog stats worker
+ * dwseoh.com — stats worker
  *
- * A tiny Cloudflare Worker that tracks per-post view and like counts in a KV
- * namespace. It backs the counters on the blog (see frontend/lib/stats.ts).
+ * A tiny Cloudflare Worker that tracks per-post view and like counts, plus a
+ * site-wide unique-visitor counter, in a KV namespace. It backs the counters on
+ * the blog and the "you are the Nth visitor" line in the site footer (see
+ * frontend/lib/stats.ts).
  *
  *   GET  /api/stats?slugs=a,b,c        -> { stats: { a: {views,likes}, ... } }
  *   POST /api/view    { slug }         -> { views }          (deduped per IP/12h)
  *   GET  /api/like?slug=x&visitor=v    -> { likes, liked }
  *   POST /api/like    { slug, visitor} -> { likes, liked }   (toggles)
+ *   POST /api/visit   { visitor }      -> { ordinal, total } (one per browser)
+ *   GET  /api/visits                   -> { total }          (read-only)
  *
  * KV keys:
  *   views:<slug>            running view count
  *   likes:<slug>            running like count
  *   viewed:<iphash>:<slug>  presence = this IP already counted (TTL'd)
  *   like:<visitor>:<slug>   presence = this visitor currently likes the post
+ *   site:visits             running count of unique site visitors
+ *   visit:<visitor>         the ordinal this browser was assigned (permanent)
+ *   visitrate:<iphash>:<h>  new ordinals minted from this IP this hour (TTL'd)
  *
  * Counts are read-modify-write and thus not strictly atomic. That's fine for a
  * personal blog; for high-concurrency accuracy, move counters to a Durable
@@ -29,6 +36,14 @@ export interface Env {
 }
 
 const VIEW_DEDUPE_TTL = 60 * 60 * 12 // 12 hours
+const VISITS_KEY = 'site:visits'
+// Site visitors are identified by the browser's localStorage uuid, not by IP —
+// otherwise everyone behind one NAT (café wifi, campus, carrier CGNAT) collapses
+// into a single visitor. The IP is kept only as an anti-farming budget: at most
+// this many *new* ordinals may be minted from one IP per window, so someone
+// clearing storage in a loop can't run the number up.
+const VISIT_RATE_WINDOW = 60 * 60 // 1 hour
+const VISIT_RATE_MAX = 20 // new ordinals per IP per window
 const MAX_SLUGS = 50
 const SLUG_RE = /^[a-z0-9-]{1,100}$/i
 
@@ -79,6 +94,11 @@ async function hashIp(ip: string, salt: string): Promise<string> {
 
 function validSlug(slug: unknown): slug is string {
   return typeof slug === 'string' && SLUG_RE.test(slug)
+}
+
+/** A browser-generated uuid from localStorage (see frontend visitorId()). */
+function validVisitor(visitor: unknown): visitor is string {
+  return typeof visitor === 'string' && visitor.length >= 8 && visitor.length <= 100
 }
 
 async function readBody(req: Request): Promise<Record<string, unknown>> {
@@ -147,9 +167,7 @@ async function handleLikeGet(url: URL, env: Env, origin: string): Promise<Respon
 async function handleLikeToggle(req: Request, env: Env, origin: string): Promise<Response> {
   const { slug, visitor } = await readBody(req)
   if (!validSlug(slug)) return json({ error: 'invalid slug' }, origin, 400)
-  if (typeof visitor !== 'string' || visitor.length < 8 || visitor.length > 100) {
-    return json({ error: 'invalid visitor' }, origin, 400)
-  }
+  if (!validVisitor(visitor)) return json({ error: 'invalid visitor' }, origin, 400)
 
   const likesKey = `likes:${slug}`
   const likeKey = `like:${visitor}:${slug}`
@@ -168,6 +186,59 @@ async function handleLikeToggle(req: Request, env: Env, origin: string): Promise
     await Promise.all([env.STATS.put(likesKey, String(likes)), env.STATS.put(likeKey, '1')])
   }
   return json({ likes, liked }, origin)
+}
+
+/**
+ * Site-wide unique-visitor counter.
+ *
+ * Identity is the browser's localStorage uuid, so devices sharing one public IP
+ * each get counted, and a given browser keeps its place in line forever — come
+ * back next year and you're still the 42nd visitor.
+ *
+ * The IP is used only as a budget on *minting*: a browser we've never seen
+ * before can only claim a new ordinal if its IP hasn't already minted
+ * VISIT_RATE_MAX of them this hour. Over budget, we hand back the current total
+ * as a plausible ordinal but neither persist it nor bump the counter — so
+ * clearing localStorage in a loop gets you nothing.
+ */
+async function handleVisit(req: Request, env: Env, origin: string): Promise<Response> {
+  const { visitor } = await readBody(req)
+  if (!validVisitor(visitor)) return json({ error: 'invalid visitor' }, origin, 400)
+
+  const visitKey = `visit:${visitor}`
+  const seen = await env.STATS.get(visitKey)
+  if (seen) {
+    const ordinal = parseInt(seen, 10)
+    if (Number.isFinite(ordinal) && ordinal > 0) {
+      return json({ ordinal, total: await count(env, VISITS_KEY) }, origin)
+    }
+  }
+
+  // New browser — check this IP's hourly minting budget before issuing one.
+  const ip = req.headers.get('CF-Connecting-IP') ?? '0.0.0.0'
+  const iphash = await hashIp(ip, env.SALT ?? 'dwseoh')
+  const window = Math.floor(Date.now() / (VISIT_RATE_WINDOW * 1000))
+  const rateKey = `visitrate:${iphash}:${window}`
+  const minted = await count(env, rateKey)
+
+  if (minted >= VISIT_RATE_MAX) {
+    const total = await count(env, VISITS_KEY)
+    return json({ ordinal: total, total, throttled: true }, origin)
+  }
+
+  const total = (await count(env, VISITS_KEY)) + 1
+  await Promise.all([
+    env.STATS.put(VISITS_KEY, String(total)),
+    env.STATS.put(visitKey, String(total)), // no TTL: your place in line is permanent
+    // 2x the window so an entry can't lapse mid-window and reset the budget
+    env.STATS.put(rateKey, String(minted + 1), { expirationTtl: VISIT_RATE_WINDOW * 2 }),
+  ])
+  return json({ ordinal: total, total }, origin)
+}
+
+/** Read the visitor total without claiming an ordinal. */
+async function handleVisits(env: Env, origin: string): Promise<Response> {
+  return json({ total: await count(env, VISITS_KEY) }, origin)
 }
 
 // ----------------------------------------------------------------- entry ----
@@ -193,6 +264,12 @@ export default {
       }
       if (url.pathname === '/api/like' && req.method === 'POST') {
         return await handleLikeToggle(req, env, origin)
+      }
+      if (url.pathname === '/api/visit' && req.method === 'POST') {
+        return await handleVisit(req, env, origin)
+      }
+      if (url.pathname === '/api/visits' && req.method === 'GET') {
+        return await handleVisits(env, origin)
       }
       if (url.pathname === '/' || url.pathname === '/health') {
         return json({ ok: true, service: 'dwseoh-blog-stats' }, origin)

@@ -73,6 +73,52 @@ body {
   }
 }
 
+/* The visitor count arrives after the page does (client fetch), so ease it in
+   rather than letting it pop into the footer mid-read. The left margin is a
+   tab-width gap off the copyright — the markup has no space between them, so
+   this is the whole separator. `inline-block` keeps the margin from collapsing
+   away if the line wraps. */
+.visitor-count {
+  position: relative;
+  display: inline-block;
+  margin-left: 2em;
+  /* dotted, not solid: this is an annotated term you can hover for detail,
+     not a link — same convention as <abbr>. */
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  /* plain arrow — not the text I-beam, and not the `help` question mark */
+  cursor: default;
+  animation: fadeIn 0.4s ease both;
+}
+/* Tooltip: same dark pill as the .inprogress affordance above. */
+.visitor-count::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%) translateY(3px);
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--n-text);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.visitor-count:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .visitor-count {
+    animation: none;
+  }
+}
+
 /* ---- Link hover states ---- */
 .link-row {
   transition: background 0.12s ease;

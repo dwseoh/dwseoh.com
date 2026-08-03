@@ -10,6 +10,7 @@ import PhotoStrip, { type Photo } from '@/components/PhotoStrip'
 import WebringCarousel, { type Webring } from '@/components/WebringCarousel'
 import SocialPill from '@/components/SocialPill'
 import LangSwitcher from '@/components/LangSwitcher'
+import VisitorCounter from '@/components/VisitorCounter'
 import Experience, { type Experience as ExperienceItem, type ExperienceLabels } from '@/components/Experience'
 import GolfCourse, { type Extracurricular, type ExtracurricularLabels } from '@/components/GolfCourse'
 
@@ -168,6 +169,7 @@ export default async function HomePage() {
         <div className="site-footer">
           <p style={{ color: 'var(--n-light)', fontSize: '0.75rem', margin: 0 }}>
             {t('copyright')}
+            <VisitorCounter />
           </p>
           <WebringCarousel webrings={webrings} />
         </div>
