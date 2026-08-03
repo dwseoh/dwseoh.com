@@ -1,78 +1,72 @@
 # dwseoh.com
 
-Personal portfolio website (Notion-style single page) with a bilingual (English/Korean) layout, an auto-scrolling photo strip, hobby cards, and a webring switcher.
+![GitHub repo size](https://img.shields.io/github/repo-size/dwseoh/dwseoh.com)
+![GitHub top language](https://img.shields.io/github/languages/top/dwseoh/dwseoh.com)
+![GitHub last commit](https://img.shields.io/github/last-commit/dwseoh/dwseoh.com?color=red)
 
-> [!NOTE]
-> This is a placeholder build ahead of a full redesign (Summer 2026). It's a
-> Next.js migration of the old static HTML site.
+Personal site: a single-page portfolio in English and Korean, plus a blog at `/blog`.
 
-## Run it locally
+- `frontend/`: Next.js app deployed on Vercel.
+- `backend/`: Cloudflare Worker behind the view, like, and visitor counters
+
+
+# Do it yourself!
+
+## Running locally
 
 ```bash
 cd frontend
 npm install
-npm run dev        # http://localhost:3000
+npm run dev      # http://localhost:3000
 ```
 
-`npm run build` for a production build.
+`npm run build` for a production build. The backend is optional; see Counters.
 
 ## Editing content
 
-All text, links, and media references live in **`frontend/messages/en.json`**
-(`ko.json` is a duplicate for the Korean translation). No code changes needed
-to update copy, portfolio links, hobby channels, photos, or webrings.
+Copy, links, and media paths live in `frontend/messages/en.json`, with `ko.json`
+as its Korean mirror. Changing text, portfolio links, hobby cards, photos, or
+webrings needs no code changes.
 
-## Theming
-
-Colors and the content width are CSS variables at the top of
-`frontend/app/globals.css` (`--n-bg`, `--n-text`, `--n-accent`, `--n-width`, …).
-Change them in one place to restyle the whole site.
-
-## Fonts
-
-- **Inter** — English content
-- **Gowun Dodum** — Korean content
+English is served at `/` and Korean at `/ko` (next-intl, `localePrefix:
+'as-needed'`). The blog sits outside the `[locale]` segment and is English-only.
 
 ## Blog
 
-A Notion-style blog lives at **`/blog`**. Posts are Markdown files in
-**`frontend/content/blog/<slug>.md`** with a small frontmatter block:
+Posts are Markdown files in `frontend/content/blog/<slug>.md`:
 
 ```markdown
 ---
 title: How this blog is put together
 date: 2026-07-01
-summary: One-line description — doubles as the article subtitle + share cards.
+summary: One line that doubles as the subtitle and share-card description.
 tags: [engineering, meta]
-category: Engineering   # optional kicker above the title (falls back to first tag)
-thumbnail: /images/photos/delta-hacks.jpg   # optional; shown on the card + as a post cover
-lang: en                # posts are English
+category: Engineering                        # optional; falls back to first tag
+thumbnail: /images/photos/delta-hacks.jpg    # optional card + cover image
+lang: en
 ---
 ```
 
-The body is rendered by a dependency-free Markdown renderer
-(`frontend/lib/markdown.tsx`) that supports headings, lists, quotes, code,
-links, images, pipe tables, and GitHub-style `> [!NOTE]` callouts (reusing the
-site's `Callout`). Prefix a filename with `_` to keep it as a draft.
+** Prefix a filename with `_` to keep it a draft.
 
-The blog is its own **standalone publication** that still reads as part of the
-main site (it shares the portfolio's white/ink/blue palette; the editorial serif
-and reading column are what set it apart). Chrome: a **breadcrumb nav**
-(Jamie's Website → Blog Home → post; "Jamie's Website" links to dwseoh.com),
-client-side **search**, a **light/dark** toggle, a reading-progress bar, a
-Medium-style byline, an optional cover image, a back-to-list link, prev/next
-articles, numbered **pagination** on the index, and a newsletter footer. The
-light/dark theme (persisted in `localStorage`, no-flash) is scoped to the blog
-surface — the portfolio stays light. **Subscribe** and the newsletter form hand
-off to Substack; repoint them via `SUBSTACK_URL` in
-`frontend/app/[locale]/blog/layout.tsx`.
+`frontend/lib/markdown.tsx` renders the body with no Markdown dependency:
+headings, lists, quotes, code, links, images, pipe tables, and GitHub-style
+`> [!NOTE]` callouts.
 
-**View counts + likes** are served by a Cloudflare Worker in **`backend/`**
-(see its README). Point the frontend at it with an env var:
+The blog shares the site's palette but reads as its own publication: serif type,
+a narrower column, client-side search, a light/dark toggle scoped to `/blog`, a
+reading-progress bar, pagination, and prev/next links. Subscribe links point at
+[Substack](https://substack.com/@dwseoh).
+
+## Counters
+
+Blog views, likes, and the "N people have visited this website" line in the
+footer come from the Worker in `backend/`. Point the frontend at it:
 
 ```bash
-# frontend/.env.local  (or Vercel env)
+# frontend/.env.local, or a Vercel environment variable
 NEXT_PUBLIC_STATS_API=https://dwseoh-blog-stats.<subdomain>.workers.dev
 ```
+Backend must also be deployed through wrangler; it is a cloudflare edge function. Read more in backend/README.md
 
-Leave it unset and the counters simply don't render — the blog still works.
+But even if you leave it unset and the counters don't render; everything else works the same.
