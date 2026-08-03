@@ -1,4 +1,4 @@
-# backend — stats worker
+# backend: stats worker
 
 A small [Cloudflare Worker](https://workers.cloudflare.com) that stores per-post
 **view** and **like** counts for the blog, plus a site-wide **unique visitor**
@@ -9,26 +9,26 @@ it isn't configured, the site simply hides its counters.
 
 | Method | Path                              | Body / Query              | Returns                                  |
 | ------ | --------------------------------- | ------------------------- | ---------------------------------------- |
-| `GET`  | `/api/stats?slugs=a,b,c`          | —                         | `{ stats: { a: {views,likes}, ... } }`   |
+| `GET`  | `/api/stats?slugs=a,b,c`          | -                         | `{ stats: { a: {views,likes}, ... } }`   |
 | `POST` | `/api/view`                       | `{ slug }`                | `{ views }` (deduped per IP for 12h)     |
-| `GET`  | `/api/like?slug=x&visitor=v`      | —                         | `{ likes, liked }`                       |
+| `GET`  | `/api/like?slug=x&visitor=v`      | -                         | `{ likes, liked }`                       |
 | `POST` | `/api/like`                       | `{ slug, visitor }`       | `{ likes, liked }` (toggles the like)    |
 | `POST` | `/api/visit`                      | `{ visitor }`             | `{ ordinal, total }` (one per browser)   |
-| `GET`  | `/api/visits`                     | —                         | `{ total }` (read-only)                  |
+| `GET`  | `/api/visits`                     | -                         | `{ total }` (read-only)                  |
 
 - **Views** are deduped by a salted hash of the caller's IP, so a refresh spree
   doesn't inflate the number. The client also guards once per session.
 - **Likes** toggle against a per-visitor id (a UUID the browser keeps in
   `localStorage`), so the heart stays filled when a reader returns.
 - **Visits** back the "342 people have visited this website." line in the site
-  footer, and use that same per-browser UUID as identity — see below. The footer
+  footer, and use that same per-browser UUID as identity (see below). The footer
   shows `total`; `ordinal` is returned too, but nothing renders it today.
 - `slug` must match `^[a-z0-9-]{1,100}$`; `visitor` is 8–100 chars.
 
 ### Why visits are keyed by browser, not IP
 
-Keying on IP looks tempting but collapses everyone behind a single NAT — café
-wifi, campus networks, carrier CGNAT — into one visitor. So identity is the
+Keying on IP looks tempting but collapses everyone behind a single NAT (café
+wifi, campus networks, carrier CGNAT) into one visitor. So identity is the
 browser's `localStorage` UUID instead. A browser keeps its ordinal **forever**:
 come back next year and you're still the 42nd visitor.
 
@@ -36,7 +36,7 @@ The tradeoff is that clearing storage would let someone farm the number, so the
 IP is kept purely as a **minting budget**: at most `VISIT_RATE_MAX` (20) *new*
 ordinals per IP per hour. Over budget, the response hands back the current total
 as a plausible `ordinal` with `throttled: true`, but persists nothing and doesn't
-bump the counter. Returning visitors are never throttled — the budget is only
+bump the counter. Returning visitors are never throttled; the budget is only
 checked for browsers the worker has never seen.
 
 Both constants live at the top of `src/index.ts`. Raise `VISIT_RATE_MAX` if you
@@ -54,7 +54,7 @@ ever demo the site to a room full of people on one network.
 | `visit:<visitor>`        | the ordinal this browser was assigned (no TTL)      |
 | `visitrate:<iphash>:<h>` | new ordinals minted from this IP this hour (2h TTL) |
 
-No migration is needed to add the visitor counter — `site:visits` is absent
+No migration is needed to add the visitor counter: `site:visits` is absent
 until the first `POST /api/visit`, and a missing key reads as `0`.
 
 ## Setup
