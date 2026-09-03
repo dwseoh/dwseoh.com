@@ -6,7 +6,7 @@
     "title": "서동완 (소프트웨어 공학과 @ 워털루 대학교)",
     "description": "워털루 대학교 소프트웨어 공학과 재학; 해커톤 주최자, 작곡가, 클라리넷 연주자, 사진작가. 현재 캐나다에 거주중."
   },
-  "bio1": "저는 캐나다 <uw>워털루 대학교</uw>에서 소프트웨어 공학을 전공하고 있고, 2019년 가을에 캐나다로 이주했습니다. 이번 여름에는 <cerebras>Cerebras Systems</cerebras>이라는 반도체 회사에서 AI 소프트웨어 엔지니어링 인턴으로 일하며, 추론(inference)을 위한 low-level C++ 인프라와 디버깅 도구를 개발하고 있습니다.",
+  "bio1": "저는 캐나다 <uw>워털루 대학교</uw>에서 소프트웨어 공학을 전공하고 있고, 2019년 가을에 캐나다로 이주했습니다. 이번 여름에는 <cerebras>Cerebras Systems</cerebras>이라는 반도체 회사에서 AI 소프트웨어 엔지니어링 인턴으로 일했으며, 추론(inference)을 위한 low-level C++ 인프라와 디버깅 도구를 개발했습니다. 이제는 2027년 겨울 인턴십/코업을 찾고 있습니다.",
   "bioMusic": "여가 시간에는 음악에 큰 열정을 쏟고 있습니다. 저는 다양한 역할들을 맡아왔습니다; 나는 <roles></roles>",
   "bioCommunity": "또한 커뮤니티 활동에도 적극적으로 참여하고 있습니다. 현재 <htn>Hack the North</htn>에서 Logistics Organizer (해커톤 주최측)으로 활동 중이며, 이전에는 Ignition Hacks 스폰서십 디렉터, 워털루 한인 학생회(행사 담당), Hack the Ridge 회장 등을 역임했습니다.",
   "roles": ["클라리넷 연주자.", "지휘자.", "작곡가.", "음악 프로듀서.", "피아니스트.", "앙상블 디렉터."],
@@ -79,14 +79,13 @@
       "role": "AI 소프트웨어 엔지니어 인턴",
       "org": "Cerebras Systems",
       "logo": "/images/logos/cerebras.png",
-      "period": "2026년 5월 — 현재",
-      "duration": "2개월",
+      "period": "2026년 5월 — 2026년 8월",
+      "duration": "4개월",
       "location": "토론토, ON · 하이브리드",
       "type": "인턴십",
       "blurb": "Cerebras의 웨이퍼 스케일 AI 시스템(세계에서 가장 크고 빠른 칩)을 위한 로우레벨 C++ 인프라와 추론 디버깅 도구를 개발하고 있습니다.",
       "skills": ["C++", "Python", "Assembly"],
-      "href": "https://cerebras.ai",
-      "present": true
+      "href": "https://cerebras.ai"
     },
     {
       "id": "watonomous",
