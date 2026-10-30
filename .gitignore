@@ -19,3 +19,9 @@ save.txt
 AGENTS.md
 CLAUDE.md
 placeholder-v1/
+
+.superpowers/
+
+# photos pipeline: pre-optimize originals (npm run photos optimize)
+frontend/.photos-backup/
+docs/

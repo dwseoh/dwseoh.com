@@ -6,13 +6,14 @@ import LinkRow from '@/components/LinkRow'
 import HoverPreview from '@/components/HoverPreview'
 import ProjectCarousel, { type Project } from '@/components/ProjectCarousel'
 import HobbyCards, { type CarouselItem } from '@/components/HobbyCards'
-import PhotoStrip, { type Photo } from '@/components/PhotoStrip'
+import PhotoStrip from '@/components/PhotoStrip'
 import WebringCarousel, { type Webring } from '@/components/WebringCarousel'
 import SocialPill from '@/components/SocialPill'
 import LangSwitcher from '@/components/LangSwitcher'
 import VisitorCounter from '@/components/VisitorCounter'
 import Experience, { type Experience as ExperienceItem, type ExperienceLabels } from '@/components/Experience'
 import GolfCourse, { type Extracurricular, type ExtracurricularLabels } from '@/components/GolfCourse'
+import { carouselPhotos, type Locale } from '@/lib/photos'
 
 interface SimpleLink {
   label: string
@@ -55,7 +56,7 @@ export default async function HomePage() {
   const portfolioLinks   = t.raw('portfolioLinks') as SimpleLink[]
   const hobbyCategories  = t.raw('hobbyCategories') as CarouselItem[]
   const contactLinks     = t.raw('contactLinks') as SimpleLink[]
-  const photos           = t.raw('photos') as Photo[]
+  const photos           = carouselPhotos(locale as Locale)
   const webrings         = t.raw('webrings') as Webring[]
   const projects         = t.raw('projects') as Project[]
   const experiences      = t.raw('experiences') as ExperienceItem[]
