@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import Lightbox from './Lightbox'
+import { useMemo, useState } from 'react'
+import Lightbox, { type LightboxItem } from './Lightbox'
 import { isVideo, type Photo } from './photo'
 
 export type { Photo } from './photo'
@@ -32,7 +32,13 @@ export default function PhotoStrip({
   photos: Photo[]
   durationSec?: number
 }) {
-  const [lightbox, setLightbox] = useState<Photo | null>(null)
+  // Index into `photos` (not the doubled loop), so the lightbox counter and
+  // prev/next walk the real set.
+  const [lightbox, setLightbox] = useState<number | null>(null)
+  const items = useMemo<LightboxItem[]>(
+    () => photos.map((p) => ({ ...p, thumb: isVideo(p) ? p.poster : thumbOf(p.src) })),
+    [photos]
+  )
   const [loaded, setLoaded] = useState<Record<number, boolean>>({})
   const [errored, setErrored] = useState<Record<number, boolean>>({})
   const [fallback, setFallback] = useState<Record<number, boolean>>({})
@@ -54,7 +60,7 @@ export default function PhotoStrip({
           }}
         >
           <div
-            className={`photo-track${lightbox ? ' is-paused' : ''}`}
+            className={`photo-track${lightbox !== null ? ' is-paused' : ''}`}
             style={{
               display: 'flex',
               width: 'max-content',
@@ -78,7 +84,7 @@ export default function PhotoStrip({
                 <figure
                   key={i}
                   className="photo-figure"
-                  onClick={() => !isError && setLightbox(photo)}
+                  onClick={() => !isError && setLightbox(i % photos.length)}
                   style={{
                     position: 'relative',
                     margin: 0,
@@ -199,7 +205,12 @@ export default function PhotoStrip({
         </div>
       </div>
 
-      <Lightbox photo={lightbox} onClose={() => setLightbox(null)} />
+      <Lightbox
+        items={items}
+        index={lightbox}
+        onIndexChange={setLightbox}
+        onClose={() => setLightbox(null)}
+      />
     </>
   )
 }

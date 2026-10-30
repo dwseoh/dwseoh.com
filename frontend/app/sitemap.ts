@@ -32,6 +32,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
+  // Photo gallery: English-only, outside [locale] like the blog.
+  const photosPage: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/photos`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+  ]
+
   const posts = await getAllPosts()
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${BASE_URL}/blog/${post.slug}`,
@@ -40,5 +50,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  return [...home, ...blogListing, ...postEntries]
+  return [...home, ...photosPage, ...blogListing, ...postEntries]
 }

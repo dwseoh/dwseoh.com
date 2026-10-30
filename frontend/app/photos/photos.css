@@ -1,0 +1,227 @@
+/* ============================================================
+   /photos — a quiet, typography-first gallery. Colours come from the
+   site's --n-* tokens (globals.css), which also carry the dark palette
+   for this page. Lightbox styles are shared and live in globals.css.
+   ============================================================ */
+
+.photos-root {
+  --ph-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  min-height: 100dvh;
+  background: var(--n-bg);
+  color: var(--n-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.ph-wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 56px 24px 120px;
+}
+
+.ph-back {
+  display: inline-block;
+  margin-bottom: 40px;
+  font-size: 13px;
+  color: var(--n-light);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.ph-back:hover { color: var(--n-text); }
+
+/* ---- header: big light title on the left, controls on the right ---- */
+.ph-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 20px 24px;
+  margin-bottom: 28px;
+}
+.ph-title {
+  margin: 0;
+  font-weight: 300;
+  font-size: clamp(44px, 8vw, 88px);
+  letter-spacing: -0.045em;
+  line-height: 0.9;
+}
+.ph-title sup,
+.ph-tabs sup {
+  font-weight: 400;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.ph-title sup {
+  position: relative;
+  top: 0.5em;
+  margin-left: 0.2em;
+  font-size: 0.22em;
+  vertical-align: top;
+  color: var(--n-light);
+}
+
+.ph-controls { display: flex; align-items: center; gap: 28px; }
+.ph-tabs { display: flex; gap: 20px; }
+.ph-tabs a {
+  position: relative;
+  font-size: 14px;
+  color: var(--n-light);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+.ph-tabs sup { margin-left: 2px; font-size: 9.5px; }
+.ph-tabs a:hover,
+.ph-tabs a.is-on { color: var(--n-text); }
+.ph-tabs a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ph-ease);
+}
+.ph-tabs a.is-on::after { transform: scaleX(1); }
+
+.ph-density { display: flex; gap: 4px; }
+.ph-density button {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  color: var(--n-light);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.ph-density button:hover,
+.ph-density button[aria-pressed='true'] { color: var(--n-text); background: var(--n-tile); }
+
+.photos-root a:focus-visible,
+.photos-root button:focus-visible {
+  outline: 2px solid var(--n-text);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.photos-root .ph-tile:focus-visible { outline-offset: -2px; border-radius: 0; }
+
+/* ---- grid ---- */
+.ph-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.ph-gallery[data-cols='5'] .ph-grid { grid-template-columns: repeat(5, 1fr); gap: 3px; }
+
+.ph-tile {
+  all: unset;
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  cursor: zoom-in;
+  background-color: var(--n-tile);
+  background-size: cover;
+  background-position: center;
+  /* staggered rise-in */
+  opacity: 0;
+  transform: translateY(14px) scale(0.985);
+  animation: phRise 0.8s var(--ph-ease) forwards;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+@keyframes phRise { to { opacity: 1; transform: none; } }
+
+/* Desktop waits for hydration so a remembered 5-column grid never visibly
+   reflows; phones always use 3 columns and start right away. */
+@media (min-width: 641px) {
+  .ph-gallery:not([data-ready]) .ph-tile { animation-play-state: paused; }
+}
+
+.ph-tile picture { display: contents; }
+.ph-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.7s var(--ph-ease);
+}
+.ph-tile img.is-loaded { opacity: 1; }
+/* Hover: a slow zoom on this tile only. Nothing else on the page reacts. */
+@media (hover: hover) {
+  .ph-tile:hover img { transform: scale(1.035); }
+}
+
+.ph-play {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* ---- caption that trails the pointer (CursorCaption.tsx) ----
+   Difference-blended white reads on both light and dark photos. */
+.ph-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 50;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #fff;
+  mix-blend-mode: difference;
+  transform: translate(-200px, -200px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.ph-cursor.is-on { opacity: 1; }
+.ph-cursor b { display: block; font-weight: 500; }
+.ph-cursor span { opacity: 0.75; font-variant-numeric: tabular-nums; }
+.ph-cursor::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+}
+.ph-cursor.is-flipped { text-align: right; }
+.ph-cursor.is-flipped::before { left: auto; right: -14px; }
+
+/* ---- view transitions: a soft cross-fade for tab / density changes ---- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* ---- phones ---- */
+@media (max-width: 640px) {
+  .ph-wrap { padding: 32px 16px 80px; }
+  .ph-back { margin-bottom: 24px; }
+  .ph-head { margin-bottom: 20px; }
+  .ph-density, .ph-cursor { display: none; }
+  .ph-grid,
+  .ph-gallery[data-cols='5'] .ph-grid { grid-template-columns: repeat(3, 1fr); gap: 3px; }
+  .ph-tile { cursor: pointer; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ph-tile { animation: none; opacity: 1; transform: none; }
+  .ph-tile img { transition: none; }
+  .ph-tabs a::after { transition: none; }
+}

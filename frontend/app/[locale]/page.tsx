@@ -1,4 +1,5 @@
 import { getTranslations, getLocale } from 'next-intl/server'
+import Link from 'next/link'
 import InlineLink from '@/components/InlineLink'
 import RotatingText from '@/components/RotatingText'
 import ScrambleText from '@/components/ScrambleText'
@@ -120,6 +121,13 @@ export default async function HomePage() {
         </p>
 
         <PhotoStrip photos={photos} />
+        {/* /photos is English-only and outside [locale], so a plain Link (not
+            next-intl's) keeps it unprefixed from /ko too. */}
+        <p style={{ textAlign: 'right', margin: '-1.75rem 0 0', fontSize: '0.8125rem' }}>
+          <Link href="/photos" className="photos-more">
+            {t('photosMore')} →
+          </Link>
+        </p>
 
         {sectionHeading(t('sections.portfolio'))}
         <div className="portfolio-grid">

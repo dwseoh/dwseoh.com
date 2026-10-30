@@ -1,0 +1,262 @@
+{
+  "photos": [
+    {
+      "id": "presenting-microsoft",
+      "type": "image",
+      "src": "/images/photos/presenting-microsoft.jpg",
+      "thumb": "/images/photos/presenting-microsoft-thumb.jpg",
+      "width": 1066,
+      "height": 1600,
+      "category": "events",
+      "caption": {
+        "en": "Presenting at Microsoft",
+        "ko": "마이크로소프트에서 발표"
+      },
+      "alt": {
+        "en": "Presenting at Microsoft",
+        "ko": "Microsoft에서 발표"
+      },
+      "carousel": true
+    },
+    {
+      "id": "img-4093",
+      "type": "image",
+      "src": "/images/photos/img-4093.jpg",
+      "thumb": "/images/photos/img-4093-thumb.jpg",
+      "width": 1600,
+      "height": 1200,
+      "position": "50% 25%",
+      "category": "events",
+      "caption": {
+        "en": "Running a Half Marathon",
+        "ko": "하프 마라톤 완주"
+      },
+      "alt": {
+        "en": "Running a Half Marathon",
+        "ko": "하프 마라톤 완주"
+      },
+      "carousel": true
+    },
+    {
+      "id": "delta-hacks",
+      "type": "image",
+      "src": "/images/photos/delta-hacks.jpg",
+      "thumb": "/images/photos/delta-hacks-thumb.jpg",
+      "width": 1600,
+      "height": 1200,
+      "category": "events",
+      "caption": {
+        "en": "Winning DeltaHacks 12",
+        "ko": "DeltaHacks 12 우승"
+      },
+      "alt": {
+        "en": "Winning DeltaHacks",
+        "ko": "DeltaHacks 12 우승"
+      },
+      "carousel": true
+    },
+    {
+      "id": "orchestra-conducting",
+      "type": "video",
+      "src": "/videos/orchestra-conducting.mp4",
+      "poster": "/videos/orchestra-conducting-poster.jpg",
+      "width": 960,
+      "height": 540,
+      "category": "events",
+      "caption": {
+        "en": "Conducting My Orchestra at Live Concert",
+        "ko": "라이브 공연에서 오케스트라 지휘"
+      },
+      "alt": {
+        "en": "Conducting an Orchestra",
+        "ko": "오케스트라 지휘"
+      },
+      "carousel": true
+    },
+    {
+      "id": "img-6411",
+      "type": "image",
+      "src": "/images/photos/img-6411.jpg",
+      "thumb": "/images/photos/img-6411-thumb.jpg",
+      "width": 1600,
+      "height": 1200,
+      "position": "50% 100%",
+      "category": "events",
+      "caption": {
+        "en": "High School Grad!",
+        "ko": "고등학교 졸업!"
+      },
+      "alt": {
+        "en": "High School Graduation!",
+        "ko": "고등학교 졸업!"
+      },
+      "carousel": true
+    },
+    {
+      "id": "stem-fellowship",
+      "type": "image",
+      "src": "/images/photos/stem-fellowship.jpg",
+      "thumb": "/images/photos/stem-fellowship-thumb.jpg",
+      "width": 1600,
+      "height": 1200,
+      "category": "events",
+      "caption": {
+        "en": "STEM Fellowship",
+        "ko": "STEM Fellowship"
+      },
+      "alt": {
+        "en": "STEM Fellowship",
+        "ko": "STEM Fellowship"
+      },
+      "carousel": true
+    },
+    {
+      "id": "photography",
+      "type": "image",
+      "src": "/images/photos/photography.jpg",
+      "thumb": "/images/photos/photography-thumb.jpg",
+      "width": 1600,
+      "height": 900,
+      "category": "photography",
+      "caption": {
+        "en": "Photography",
+        "ko": "사진 촬영"
+      },
+      "alt": {
+        "en": "Photography",
+        "ko": "사진 촬영"
+      },
+      "carousel": true
+    },
+    {
+      "id": "woowoo-ensemble",
+      "type": "image",
+      "src": "/images/photos/woowoo-ensemble.jpg",
+      "thumb": "/images/photos/woowoo-ensemble-thumb.jpg",
+      "width": 1060,
+      "height": 1600,
+      "position": "50% 65%",
+      "category": "events",
+      "caption": {
+        "en": "WooWoo Ensemble Performance",
+        "ko": "WooWoo Ensemble 공연"
+      },
+      "alt": {
+        "en": "WooWoo Ensemble Performance",
+        "ko": "WooWoo Ensemble 공연"
+      },
+      "carousel": true
+    },
+    {
+      "id": "conducting-concert-band",
+      "type": "image",
+      "src": "/images/photos/conducting-concert-band.jpg",
+      "thumb": "/images/photos/conducting-concert-band-thumb.jpg",
+      "width": 1066,
+      "height": 1600,
+      "position": "50% 27%",
+      "category": "events",
+      "caption": {
+        "en": "Conducting Concert Band",
+        "ko": "콘서트 밴드 지휘"
+      },
+      "alt": {
+        "en": "Conducting concert band",
+        "ko": "콘서트 밴드 지휘"
+      },
+      "carousel": true
+    },
+    {
+      "id": "shad-dalhousie-24",
+      "type": "image",
+      "src": "/images/photos/shad-dalhousie-24.jpg",
+      "thumb": "/images/photos/shad-dalhousie-24-thumb.jpg",
+      "width": 1600,
+      "height": 1200,
+      "category": "events",
+      "caption": {
+        "en": "SHAD Dalhousie '24",
+        "ko": "SHAD Dalhousie '24"
+      },
+      "alt": {
+        "en": "SHAD Dalhousie 2024",
+        "ko": "SHAD Dalhousie 2024"
+      },
+      "carousel": true
+    },
+    {
+      "id": "world-sudoku-and-puzzle-championships",
+      "type": "image",
+      "src": "/images/photos/world-sudoku-and-puzzle-championships.jpg",
+      "thumb": "/images/photos/world-sudoku-and-puzzle-championships-thumb.jpg",
+      "width": 1600,
+      "height": 739,
+      "category": "events",
+      "caption": {
+        "en": "World Sudoku & Puzzle Championships",
+        "ko": "World Sudoku & Puzzle Championships"
+      },
+      "alt": {
+        "en": "World Sudoku and Puzzle Championships",
+        "ko": "World Sudoku and Puzzle Championships"
+      },
+      "carousel": true
+    },
+    {
+      "id": "best-pitch-eureka-hacks",
+      "type": "image",
+      "src": "/images/photos/best-pitch-eureka-hacks.jpg",
+      "thumb": "/images/photos/best-pitch-eureka-hacks-thumb.jpg",
+      "width": 1187,
+      "height": 1600,
+      "position": "50% 22%",
+      "category": "events",
+      "caption": {
+        "en": "Best Pitch at Eureka Hacks",
+        "ko": "Eureka Hacks 베스트 피치"
+      },
+      "alt": {
+        "en": "Winning Best Pitch at Eureka Hacks",
+        "ko": "Eureka Hacks 베스트 피치 수상"
+      },
+      "carousel": true
+    },
+    {
+      "id": "gold-utsc-oba-ensemble-festival",
+      "type": "image",
+      "src": "/images/photos/gold-utsc-oba-ensemble-festival.jpg",
+      "thumb": "/images/photos/gold-utsc-oba-ensemble-festival-thumb.jpg",
+      "width": 1200,
+      "height": 1600,
+      "position": "50% 28%",
+      "category": "events",
+      "caption": {
+        "en": "Gold at OBA Ensemble Festival",
+        "ko": "OBA 앙상블 페스티벌 금상"
+      },
+      "alt": {
+        "en": "Gold at the OBA Ensemble Festival",
+        "ko": "OBA 앙상블 페스티벌 금상"
+      },
+      "carousel": true
+    },
+    {
+      "id": "presenting-hack-the-ridge",
+      "type": "image",
+      "src": "/images/photos/presenting-hack-the-ridge.jpg",
+      "thumb": "/images/photos/presenting-hack-the-ridge-thumb.jpg",
+      "width": 1600,
+      "height": 1200,
+      "category": "events",
+      "caption": {
+        "en": "Presenting at Hack the Ridge",
+        "ko": "Hack the Ridge에서 발표"
+      },
+      "alt": {
+        "en": "Presenting at Hack the Ridge",
+        "ko": "Hack the Ridge에서 발표"
+      },
+      "carousel": true
+    }
+  ]
+}
