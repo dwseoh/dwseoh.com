@@ -314,22 +314,6 @@
       ]
     }
   ],
-  "photos": [
-    { "src": "/images/photos/presenting-microsoft.jpg", "alt": "Microsoft에서 발표", "caption": "마이크로소프트에서 발표" },
-    { "src": "/images/photos/img-4093.jpg", "alt": "하프 마라톤 완주", "caption": "하프 마라톤 완주", "position": "50% 25%"},
-    { "src": "/images/photos/delta-hacks.jpg", "alt": "DeltaHacks 12 우승", "caption": "DeltaHacks 12 우승"},
-    { "src": "/videos/orchestra-conducting.mp4", "poster": "/videos/orchestra-conducting-poster.jpg", "alt": "오케스트라 지휘", "caption": "라이브 공연에서 오케스트라 지휘" },
-    { "src": "/images/photos/img-6411.jpg", "alt": "고등학교 졸업!", "caption": "고등학교 졸업!", "position": "50% 100%"},
-    { "src": "/images/photos/stem-fellowship.jpg", "alt": "STEM Fellowship", "caption": "STEM Fellowship" },
-    { "src": "/images/photos/photography.jpg", "alt": "사진 촬영", "caption": "사진 촬영"},
-    { "src": "/images/photos/woowoo-ensemble.jpg", "alt": "WooWoo Ensemble 공연", "caption": "WooWoo Ensemble 공연", "position": "50% 65%" },
-    { "src": "/images/photos/conducting-concert-band.jpg", "alt": "콘서트 밴드 지휘", "caption": "콘서트 밴드 지휘", "position": "50% 27%"},
-    { "src": "/images/photos/shad-dalhousie-24.jpg", "alt": "SHAD Dalhousie 2024", "caption": "SHAD Dalhousie '24" },
-    { "src": "/images/photos/world-sudoku-and-puzzle-championships.jpg", "alt": "World Sudoku and Puzzle Championships", "caption": "World Sudoku & Puzzle Championships" },
-    { "src": "/images/photos/best-pitch-eureka-hacks.jpg", "alt": "Eureka Hacks 베스트 피치 수상", "caption": "Eureka Hacks 베스트 피치", "position": "50% 22%" },
-    { "src": "/images/photos/gold-utsc-oba-ensemble-festival.jpg", "alt": "OBA 앙상블 페스티벌 금상", "caption": "OBA 앙상블 페스티벌 금상", "position": "50% 28%" },
-    { "src": "/images/photos/presenting-hack-the-ridge.jpg", "alt": "Hack the Ridge에서 발표", "caption": "Hack the Ridge에서 발표" }
-  ],
   "contactLinks": [
     { "label": "Discord",   "href": "https://discord.com/users/891434702509060106", "icon": "discord"   },
     { "label": "Instagram", "href": "https://www.instagram.com/dongwan_seoh/",      "icon": "instagram" },

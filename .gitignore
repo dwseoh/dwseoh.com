@@ -22,4 +22,7 @@ placeholder-v1/
 
 # superpowers brainstorm mockups
 .superpowers/
+
+# photos pipeline: pre-optimize originals (npm run photos optimize)
+frontend/.photos-backup/
 docs/
