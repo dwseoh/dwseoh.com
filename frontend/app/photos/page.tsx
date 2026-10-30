@@ -1,19 +1,23 @@
 import Link from 'next/link'
 import PhotoGallery from '@/components/photos/PhotoGallery'
-import { pad, parseFilter } from '@/components/photos/format'
+import { pad } from '@/components/photos/format'
 import { photos } from '@/lib/photos'
 
 /**
- * Server shell: reads `?c=` so the first paint already shows the requested tab,
- * then hands the manifest to the client gallery. The title is passed in as
+ * Server shell: reads `?c=` (tab) and `?p=` (open photo) so the first paint
+ * already shows the requested tab, then hands the manifest to the client gallery. The title is passed in as
  * children so it stays server-rendered.
  */
 export default async function PhotosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ c?: string | string[] }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const { c } = await searchParams
+  const query = new URLSearchParams()
+  for (const [key, value] of Object.entries(await searchParams)) {
+    for (const v of [value ?? []].flat()) query.append(key, v)
+  }
+  const search = query.size ? `?${query}` : ''
 
   return (
     <main className="ph-wrap">
@@ -24,7 +28,7 @@ export default async function PhotosPage({
       <Link href="/" className="ph-back">
         ← dwseoh.com
       </Link>
-      <PhotoGallery photos={photos} initialFilter={parseFilter(c)}>
+      <PhotoGallery photos={photos} initialSearch={search}>
         <h1 className="ph-title">
           Photos<sup>{pad(photos.length)}</sup>
         </h1>

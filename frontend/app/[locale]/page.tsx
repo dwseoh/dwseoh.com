@@ -125,7 +125,7 @@ export default async function HomePage() {
         {/* /photos is English-only and outside [locale], so a plain Link (not
             next-intl's) keeps it unprefixed from /ko too. */}
         <p style={{ textAlign: 'right', margin: '-1.75rem 0 0', fontSize: '0.8125rem' }}>
-          <Link href="/photos" className="photos-more">
+          <Link href="/photos?c=events" className="photos-more">
             {t('photosMore')} →
           </Link>
         </p>

@@ -48,16 +48,28 @@ export function photosIn(category?: PhotoCategory): PhotoEntry[] {
   return category ? photos.filter((p) => p.category === category) : photos
 }
 
-/** Carousel entries in the shape PhotoStrip already takes; Korean falls back to English. */
+/** The /photos URL that opens `entry` in the lightbox, on its category's tab. */
+export function photoHref(entry: Pick<PhotoEntry, 'id' | 'category'>): string {
+  return `/photos?c=${entry.category}&p=${encodeURIComponent(entry.id)}`
+}
+
+/**
+ * Carousel entries in the shape PhotoStrip takes; Korean falls back to English.
+ * Each tile links to the photo on /photos rather than opening its own viewer.
+ */
 export function carouselPhotos(locale: Locale): Photo[] {
   return photos
     .filter((p) => p.carousel)
     .map((p) => ({
+      id: p.id,
       src: p.src,
       alt: p.alt[locale] ?? p.alt.en,
       caption: p.caption[locale] ?? p.caption.en,
       type: p.type,
       poster: p.poster,
       position: p.position,
+      thumb: p.thumb,
+      thumbWebp: p.thumbWebp,
+      href: photoHref(p),
     }))
 }

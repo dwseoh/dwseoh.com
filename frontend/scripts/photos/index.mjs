@@ -16,7 +16,7 @@ const USAGE = `usage: npm run photos -- <command> [flags]
       --caption <en>  --caption-ko <ko>  --alt <en>  --alt-ko <ko>
       --position "50% 25%"  --no-carousel  --first  --keep-audio
   optimize        backfill webp twins, thumbs, blur, dimensions; shrink big files
-      --blog  --dry-run
+      --blog  --dry-run  --thumbs (regenerate every thumbnail)
   check           report problems (exit 1 on errors)
 
 Note the \`--\` after \`npm run photos\`: without it npm eats the flags.`
@@ -35,6 +35,7 @@ const options = {
   'keep-audio': { type: 'boolean' },
   blog: { type: 'boolean' },
   'dry-run': { type: 'boolean' },
+  thumbs: { type: 'boolean' },
   help: { type: 'boolean', short: 'h' },
 }
 
@@ -64,7 +65,7 @@ async function main() {
 
   if (values.help || !command) return console.log(USAGE)
   if (command === 'add') return add(rest, values)
-  if (command === 'optimize') return optimize({ blog: values.blog, dryRun: values['dry-run'] })
+  if (command === 'optimize') return optimize({ blog: values.blog, dryRun: values['dry-run'], thumbs: values.thumbs })
   if (command === 'check') return check()
   throw new Error(`unknown command "${command}"\n\n${USAGE}`)
 }

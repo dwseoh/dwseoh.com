@@ -10,7 +10,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import {
-  CATEGORIES, FULL_MAX, HEIC_EXT, IMAGE_EXT, JPEG, PHOTOS_DIR, THUMB_JPEG, THUMB_MAX,
+  CATEGORIES, FULL_MAX, HEIC_EXT, IMAGE_EXT, JPEG, PHOTOS_DIR, encodeThumbJpeg, encodeThumbWebp,
   VIDEOS_DIR, VIDEO_EXT, blurOf, dimsOf, encodeJpeg, encodeWebp, exists, fmtBytes,
   heicToJpeg, readManifest, rel, requireTool, run, sizeOf, slugify, urlOf, writeManifest,
 } from './lib.mjs'
@@ -97,9 +97,9 @@ async function addImage({ file, outs }) {
     fs.mkdirSync(PHOTOS_DIR, { recursive: true })
     const full = await encodeJpeg(input, FULL_MAX, JPEG)
     fs.writeFileSync(outs.src, full.data)
-    fs.writeFileSync(outs.thumb, (await encodeJpeg(input, THUMB_MAX, THUMB_JPEG)).data)
+    fs.writeFileSync(outs.thumb, (await encodeThumbJpeg(input)).data)
     fs.writeFileSync(outs.srcWebp, (await encodeWebp(input, FULL_MAX)).data)
-    fs.writeFileSync(outs.thumbWebp, (await encodeWebp(input, THUMB_MAX)).data)
+    fs.writeFileSync(outs.thumbWebp, (await encodeThumbWebp(input)).data)
     return {
       src: urlOf(outs.src),
       thumb: urlOf(outs.thumb),

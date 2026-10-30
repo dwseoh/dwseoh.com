@@ -11,8 +11,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
 import {
-  BLOG_DIR, BLOG_IMAGES_DIR, FULL_MAX, JPEG, PHOTOS_DIR, REENCODE_BYTES, THUMB_JPEG, THUMB_MAX,
-  backup, blurOf, dimsOf, encodeJpeg, encodeSameFormat, encodeWebp, exists, fileOf, fmtBytes,
+  BLOG_DIR, BLOG_IMAGES_DIR, FULL_MAX, JPEG, PHOTOS_DIR, REENCODE_BYTES,
+  backup, blurOf, dimsOf, encodeJpeg, encodeSameFormat, encodeThumbJpeg, encodeThumbWebp, encodeWebp,
+  exists, fileOf, fmtBytes, pristineOf, thumbSize,
   isFresh, isRotated, longestEdge, readManifest, rel, sizeOf, stripJpegMetadata, thumbOf,
   urlOf, walk, withExt, writeManifest,
 } from './lib.mjs'
@@ -20,7 +21,7 @@ import {
 // A re-encode must save at least this much, or it's just generational loss.
 const MIN_SAVING = 0.9
 
-export async function optimize({ blog = false, dryRun = false }) {
+export async function optimize({ blog = false, dryRun = false, thumbs = false }) {
   const say = (msg) => console.log(dryRun ? `[dry-run] ${msg}` : msg)
   const manifest = readManifest()
   let changed = false
@@ -35,7 +36,7 @@ export async function optimize({ blog = false, dryRun = false }) {
     }
     const updates = entry.type === 'video'
       ? await optimizeVideo(entry, say)
-      : await optimizeImage(entry, src, say, dryRun)
+      : await optimizeImage(entry, src, say, dryRun, thumbs)
     for (const [key, value] of Object.entries(updates)) {
       if (entry[key] === value) continue
       if (key === 'width' || key === 'height') say(`  ${entry.id}: ${key} ${entry[key]} -> ${value}`)
@@ -50,7 +51,7 @@ export async function optimize({ blog = false, dryRun = false }) {
   if (blog) await optimizeBlog(manifest, say, dryRun)
 }
 
-async function optimizeImage(entry, src, say, dryRun) {
+async function optimizeImage(entry, src, say, dryRun, forceThumbs) {
   const updates = {}
   let srcChanged = false
 
@@ -74,18 +75,28 @@ async function optimizeImage(entry, src, say, dryRun) {
   if (!srcChanged) Object.assign(updates, dims)
 
   // 2. Derivatives, each regenerated only when missing or stale. In a dry run
-  //    a pending re-encode makes them all stale.
+  //    a pending re-encode makes them all stale. Thumbs are also stale when
+  //    their size no longer matches THUMB_EDGE (e.g. after raising it), or on
+  //    `--thumbs`; they're cut from the pristine original when one is backed up.
   const thumbUrl = entry.thumb ?? thumbOf(entry.src)
+  const pristine = await pristineOf(src)
+  const want = thumbSize(await dimsOf(src))
+  const wrongSize = async (file) => {
+    if (!exists(file)) return true
+    const got = await dimsOf(file)
+    return Math.abs(got.width - want.width) > 2 || Math.abs(got.height - want.height) > 2
+  }
   const targets = [
-    ['thumb', thumbUrl, (s) => encodeJpeg(s, THUMB_MAX, THUMB_JPEG)],
-    ['srcWebp', withExt(entry.src, '.webp'), (s) => encodeWebp(s, FULL_MAX)],
-    ['thumbWebp', withExt(thumbUrl, '.webp'), (s) => encodeWebp(s, THUMB_MAX)],
+    ['thumb', thumbUrl, () => encodeThumbJpeg(pristine), true],
+    ['srcWebp', withExt(entry.src, '.webp'), () => encodeWebp(src, FULL_MAX), false],
+    ['thumbWebp', withExt(thumbUrl, '.webp'), () => encodeThumbWebp(pristine), true],
   ]
   let thumbChanged = false
-  for (const [key, url, encode] of targets) {
+  for (const [key, url, encode, isThumb] of targets) {
     const file = fileOf(url)
-    if (srcChanged || !isFresh(file, src)) {
-      const { data } = await encode(src)
+    const stale = srcChanged || !isFresh(file, src) || (isThumb && (forceThumbs || (await wrongSize(file))))
+    if (stale) {
+      const { data } = await encode()
       say(`+ ${rel(file)}  ${fmtBytes(data.length)}`)
       if (!dryRun) fs.writeFileSync(file, data)
       if (key === 'thumb') thumbChanged = true

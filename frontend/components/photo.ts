@@ -1,4 +1,6 @@
 export interface Photo {
+  /** Manifest id (photos from content/photos.json). */
+  id?: string
   src: string
   alt: string
   caption?: string
@@ -9,6 +11,12 @@ export interface Photo {
   /** CSS object-position for the cropped strip tile, e.g. "center", "top",
    *  "50% 20%". Handy for vertical images so the subject isn't cut off. */
   position?: string
+  /** Small image for tiles (otherwise derived as foo.jpg -> foo-thumb.jpg). */
+  thumb?: string
+  /** WebP twin of `thumb`, served via <picture> when present. */
+  thumbWebp?: string
+  /** Where clicking the tile goes, e.g. "/photos?c=events&p=delta-hacks". */
+  href?: string
 }
 
 /** GIF/PNG/JPG/WebP render as <img>; MP4/WebM/MOV/OGG render as <video>. */

@@ -18,16 +18,19 @@ const pad = (n: number) => String(n).padStart(2, '0')
 const thumbOf = (p: LightboxItem) => p.thumb ?? p.poster ?? p.src
 const SWIPE_PX = 50
 const CLOSE_MS = 180
+const SCROLL_KEYS = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '])
 
 /**
- * Shared full-screen viewer (home carousel + /photos). The current photo sits
- * on a blurred, darkened copy of itself, with caption/counter and a filmstrip
- * below. Esc / close button / backdrop click close it; ←/→, the on-screen
- * arrows, the filmstrip and swipes navigate. Opening pushes a history entry so
- * the browser back button closes it too. Focus is trapped inside while open and
- * handed back to whatever opened it. Styles live in globals.css (`.lb*`).
+ * Full-screen photo viewer (used by /photos). The current photo sits on a
+ * blurred, darkened copy of itself, with caption/counter and a filmstrip below.
+ * Esc / close button / backdrop click close it; ←/→, the on-screen arrows, the
+ * filmstrip and swipes navigate. While open the page behind can't scroll, focus
+ * is trapped inside, and focus goes back to whatever opened it. Styles live in
+ * globals.css (`.lb*`).
  *
- * Controlled: render it with an index to open, pass `onClose` to unmount it.
+ * Controlled and history-agnostic: render it with an index to open; `onClose`
+ * fires after the fade-out, and the parent decides what that means for the URL
+ * (PhotoGallery keeps the open photo in `?p=`, so Back closes it).
  */
 export default function Lightbox({
   items,
@@ -72,47 +75,36 @@ function LightboxView({
     [index, count, onIndexChange]
   )
 
-  // Fade out, then let the parent unmount us.
+  // Fade out, then let the parent unmount us (once, however many Esc presses).
+  const closingRef = useRef(false)
   const finish = useCallback(() => {
+    if (closingRef.current) return
+    closingRef.current = true
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduced) return onClose()
     setClosing(true)
     window.setTimeout(onClose, CLOSE_MS)
   }, [onClose])
 
-  // Every UI close goes through history so Back and the close button agree:
-  // pop our entry, and the popstate listener below does the actual closing.
-  const requestClose = useCallback(() => {
-    if (window.history.state?.__lightbox) window.history.back()
-    else finish()
-  }, [finish])
-
-  // History entry: pushed once (the guard keeps StrictMode's double effect from
-  // pushing twice). Next.js copies its router state into the entry for us.
+  // Scroll lock + focus in on open; focus back to the opener on close.
+  // The lock goes on <html>, not <body>: globals.css gives <html> overflow-x:
+  // clip, which stops body's overflow from reaching the viewport, so a body
+  // lock let wheel and keys scroll the page behind. Scrollbar width is padded
+  // back so nothing shifts, and scrollY is pinned so closing never jumps.
   useEffect(() => {
-    if (!window.history.state?.__lightbox) {
-      window.history.pushState({ ...window.history.state, __lightbox: true }, '')
-    }
-    const onPop = () => {
-      if (!window.history.state?.__lightbox) finish()
-    }
-    window.addEventListener('popstate', onPop)
-    return () => window.removeEventListener('popstate', onPop)
-  }, [finish])
-
-  // Scroll lock (with scrollbar compensation so the page behind doesn't jump)
-  // + focus in on open, focus back to the opener on close.
-  useEffect(() => {
+    const html = document.documentElement
     const opener = document.activeElement as HTMLElement | null
-    const { overflow, paddingRight } = document.body.style
-    const gutter = window.innerWidth - document.documentElement.clientWidth
-    document.body.style.overflow = 'hidden'
+    const y = window.scrollY
+    const prev = { overflow: html.style.overflow, paddingRight: document.body.style.paddingRight }
+    const gutter = window.innerWidth - html.clientWidth
+    html.style.overflow = 'hidden'
     if (gutter > 0) document.body.style.paddingRight = `${gutter}px`
     closeRef.current?.focus({ preventScroll: true })
     return () => {
-      document.body.style.overflow = overflow
-      document.body.style.paddingRight = paddingRight
+      html.style.overflow = prev.overflow
+      document.body.style.paddingRight = prev.paddingRight
       opener?.focus?.({ preventScroll: true })
+      if (window.scrollY !== y) window.scrollTo({ top: y, behavior: 'instant' })
     }
   }, [])
 
@@ -122,9 +114,14 @@ function LightboxView({
     for (const n of [items[(index + 1) % count], items[(index - 1 + count) % count]]) {
       if (n && !isVideo(n)) new Image().src = n.src
     }
-    stripRef.current
-      ?.querySelector<HTMLElement>(`[data-j="${index}"]`)
-      ?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' })
+    // Centre the active thumb by scrolling the strip itself. (scrollIntoView
+    // would also scroll every ancestor, i.e. the page behind.)
+    const strip = stripRef.current
+    const thumb = strip?.querySelector<HTMLElement>(`[data-j="${index}"]`)
+    if (strip && thumb) {
+      const left = thumb.offsetLeft - (strip.clientWidth - thumb.offsetWidth) / 2
+      strip.scrollTo({ left, behavior: 'smooth' })
+    }
   }, [index, items, count])
 
   // Keys are caught on window in the capture phase: a focused <video> would
@@ -133,11 +130,14 @@ function LightboxView({
   const handleKey = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       e.preventDefault()
-      requestClose()
+      finish()
     } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
       e.preventDefault()
       e.stopPropagation()
       go(e.key === 'ArrowRight' ? 1 : -1)
+    } else if (SCROLL_KEYS.has(e.key) && !(e.key === ' ' && (e.target as HTMLElement).closest?.('button'))) {
+      // Nothing in the viewer scrolls vertically; keep these from reaching the page.
+      e.preventDefault()
     } else if (e.key === 'Tab') {
       // Focus trap: wrap between the first and last focusable controls.
       const nodes = rootRef.current?.querySelectorAll<HTMLElement>('button')
@@ -199,7 +199,7 @@ function LightboxView({
       <div
         className="lb-stage"
         onClick={(e) => {
-          if (e.target === e.currentTarget) requestClose()
+          if (e.target === e.currentTarget) finish()
         }}
       >
         {video ? (
@@ -267,7 +267,7 @@ function LightboxView({
         </div>
       )}
 
-      <button ref={closeRef} type="button" className="lb-close" onClick={requestClose}>
+      <button ref={closeRef} type="button" className="lb-close" onClick={finish}>
         Close<span className="lb-hint"> (Esc)</span>
       </button>
       {count > 1 && (

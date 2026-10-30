@@ -1,19 +1,21 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 import { flushSync } from 'react-dom'
 import Lightbox from '@/components/Lightbox'
 import type { PhotoEntry } from '@/lib/photos'
-import CursorCaption from './CursorCaption'
 import PhotoTile from './PhotoTile'
 import { FILTERS, parseFilter, pad, toLightboxItem, type Filter } from './format'
 
 type Density = 3 | 5
 
-// ---- URL-backed filter (?c=…) ------------------------------------------------
-// The URL is the source of truth, so links are shareable and Back/Forward walk
-// through tab changes. pushState doesn't fire an event, so we send our own.
+// ---- URL-backed state: ?c=<tab>&p=<open photo id> --------------------------
+// The URL is the source of truth, so links are shareable (the home carousel
+// links straight to a photo) and Back/Forward walk through tab changes and
+// close the lightbox. pushState doesn't fire an event, so we send our own.
 const URL_EVENT = 'photos:url'
+/** Marks history entries we pushed to open a photo, so closing can pop them. */
+const OPENED = '__photosOpened'
 function subscribeUrl(cb: () => void) {
   window.addEventListener('popstate', cb)
   window.addEventListener(URL_EVENT, cb)
@@ -22,7 +24,14 @@ function subscribeUrl(cb: () => void) {
     window.removeEventListener(URL_EVENT, cb)
   }
 }
-const readFilter = () => parseFilter(new URLSearchParams(window.location.search).get('c'))
+const readSearch = () => window.location.search
+function setSearch(params: URLSearchParams, mode: 'push' | 'replace', state: object | null = null) {
+  const qs = params.toString()
+  const url = qs ? `?${qs}` : window.location.pathname
+  if (mode === 'push') window.history.pushState(state, '', url)
+  else window.history.replaceState({ ...window.history.state, ...state }, '', url)
+  window.dispatchEvent(new Event(URL_EVENT))
+}
 
 // ---- Density (3 or 5 columns), remembered per browser -----------------------
 const DENSITY_KEY = 'photos-density'
@@ -59,25 +68,27 @@ function withTransition(update: () => void) {
 }
 
 /**
- * The interactive part of /photos: tabs, density toggle, grid, cursor caption
- * and lightbox. The server page passes the manifest and the `?c=` it was
- * requested with, so the first paint already shows the right tab. `children`
+ * The interactive part of /photos: tabs, density toggle, grid and lightbox.
+ * The server page passes the manifest and the query it was requested with, so
+ * the first paint already shows the right tab. `children`
  * is the page title, laid out opposite the controls.
  */
 export default function PhotoGallery({
   photos,
-  initialFilter,
+  initialSearch,
   children,
 }: {
   photos: PhotoEntry[]
-  initialFilter: Filter
+  /** The query string the page was requested with (e.g. "?c=events&p=x"). */
+  initialSearch: string
   children: React.ReactNode
 }) {
-  const requested = useSyncExternalStore(subscribeUrl, readFilter, () => initialFilter)
+  const search = useSyncExternalStore(subscribeUrl, readSearch, () => initialSearch)
+  const params = useMemo(() => new URLSearchParams(search), [search])
+  const requested = parseFilter(params.get('c'))
+  const openId = params.get('p')
   const density = useSyncExternalStore<Density>(subscribeDensity, readDensity, () => 3)
   const [ready, setReady] = useState(false)
-  const [open, setOpen] = useState<number | null>(null)
-  const gridRef = useRef<HTMLDivElement>(null)
 
   // Only categories that actually have photos get a tab.
   const counts = useMemo(() => {
@@ -93,6 +104,10 @@ export default function PhotoGallery({
     [photos, filter]
   )
   const items = useMemo(() => visible.map(toLightboxItem), [visible])
+  const found = openId ? visible.findIndex((p) => p.id === openId) : -1
+  // The lightbox is client-only (it portals into <body>), so a deep-linked
+  // ?p= opens right after hydration.
+  const open = ready && found >= 0 ? found : null
 
   // Desktop holds the rise-in until hydration (see photos.css), so a remembered
   // 5-column choice is applied before any tile is visible.
@@ -103,18 +118,38 @@ export default function PhotoGallery({
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
     e.preventDefault()
     if (key === filter) return
-    const url = key === 'all' ? window.location.pathname : `?c=${key}`
-    withTransition(() => {
-      window.history.pushState(null, '', url)
-      window.dispatchEvent(new Event(URL_EVENT))
-    })
+    withTransition(() => setSearch(new URLSearchParams(key === 'all' ? '' : { c: key }), 'push'))
   }
 
   const selectDensity = (d: Density) => {
     if (d !== density) withTransition(() => writeDensity(d))
   }
 
-  const onOpen = useCallback((i: number) => setOpen(i), [])
+  // Opening pushes ?p= (so Back closes); moving between photos replaces it.
+  const onOpen = useCallback(
+    (i: number) => {
+      const next = new URLSearchParams(window.location.search)
+      next.set('p', visible[i].id)
+      setSearch(next, 'push', { [OPENED]: true })
+    },
+    [visible]
+  )
+  const onIndexChange = useCallback(
+    (i: number) => {
+      const next = new URLSearchParams(window.location.search)
+      next.set('p', visible[i].id)
+      setSearch(next, 'replace')
+    },
+    [visible]
+  )
+  // Closing pops the entry we pushed; a deep link (nothing to pop) just drops
+  // ?p= in place, leaving you on that tab of the gallery.
+  const onClose = useCallback(() => {
+    if (window.history.state?.[OPENED]) return window.history.back()
+    const next = new URLSearchParams(window.location.search)
+    next.delete('p')
+    setSearch(next, 'replace')
+  }, [])
 
   return (
     <div className="ph-gallery" data-cols={density} data-ready={ready ? '' : undefined}>
@@ -155,19 +190,14 @@ export default function PhotoGallery({
         </div>
       </header>
 
-      {/* The wrapper is stable (CursorCaption listens on it); the grid inside is
-          keyed by filter so a tab change replays the staggered rise-in. */}
-      <div ref={gridRef}>
-        <div key={filter} className="ph-grid">
-          {visible.map((p, i) => (
-            <PhotoTile key={p.id} photo={p} index={i} onOpen={onOpen} />
-          ))}
-        </div>
+      {/* Keyed by filter so a tab change replays the staggered rise-in. */}
+      <div key={filter} className="ph-grid">
+        {visible.map((p, i) => (
+          <PhotoTile key={p.id} photo={p} index={i} onOpen={onOpen} />
+        ))}
       </div>
 
-      <CursorCaption target={gridRef} />
-
-      <Lightbox items={items} index={open} onIndexChange={setOpen} onClose={() => setOpen(null)} />
+      <Lightbox items={items} index={open} onIndexChange={onIndexChange} onClose={onClose} />
     </div>
   )
 }

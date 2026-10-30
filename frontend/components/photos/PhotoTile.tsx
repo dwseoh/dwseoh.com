@@ -10,10 +10,13 @@ const EAGER = 6
 const MAX_STAGGER = 20
 
 /**
- * One square grid tile. Only the thumbnail (or video poster) is ever loaded
- * here; the full-size file is the lightbox's job. While the thumbnail loads the
- * tile shows the manifest's tiny `blur` image (when present) and the image fades
- * in on top. `data-caption` / `data-date` feed the optional CursorCaption.
+ * One square grid tile. Only the thumbnail (or video poster) is loaded here;
+ * the full-size file is the lightbox's job.
+ *
+ * Layers, bottom to top: the manifest's tiny `blur` image (softened by CSS) with
+ * a faint shimmer while loading → the thumbnail, which fades in once decoded →
+ * the hover/focus caption (a gradient rising from the bottom edge) → the video
+ * badge. Styles in app/photos/photos.css.
  */
 export default function PhotoTile({
   photo,
@@ -27,35 +30,36 @@ export default function PhotoTile({
   const [loaded, setLoaded] = useState(false)
   const video = photo.type === 'video'
   const caption = photo.caption.en
+  const sub = formatDate(photo.date) ?? CATEGORY_LABEL[photo.category]
   const webp = video ? undefined : photo.thumbWebp
+  const position = photo.position ?? 'center'
 
   return (
     <button
       type="button"
-      className="ph-tile"
-      style={
-        {
-          '--i': Math.min(index, MAX_STAGGER),
-          backgroundImage: photo.blur ? `url("${photo.blur}")` : undefined,
-        } as React.CSSProperties
-      }
-      data-caption={caption}
-      data-date={formatDate(photo.date) ?? CATEGORY_LABEL[photo.category]}
-      aria-label={video ? `${caption} (video)` : caption}
+      className={`ph-tile${loaded ? ' is-loaded' : ''}`}
+      style={{ '--i': Math.min(index, MAX_STAGGER) } as React.CSSProperties}
+      aria-label={`${caption}${video ? ' (video)' : ''}, ${sub}`}
       onClick={() => onOpen(index)}
     >
+      <span
+        className="ph-blur"
+        aria-hidden
+        style={{ backgroundImage: photo.blur ? `url("${photo.blur}")` : undefined, backgroundPosition: position }}
+      />
+      <span className="ph-shimmer" aria-hidden />
+
       <picture>
         {webp && <source type="image/webp" srcSet={webp} />}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={tileSrc(photo)}
-          alt={photo.alt.en}
+          alt=""
           width={photo.width}
           height={photo.height}
           loading={index < EAGER ? 'eager' : 'lazy'}
           decoding="async"
-          className={loaded ? 'is-loaded' : undefined}
-          style={{ objectPosition: photo.position ?? 'center' }}
+          style={{ objectPosition: position }}
           // Thumbnails can finish before hydration, so check on mount as well.
           ref={(el) => {
             if (el?.complete && el.naturalWidth > 0) setLoaded(true)
@@ -64,6 +68,11 @@ export default function PhotoTile({
           onError={() => setLoaded(true)}
         />
       </picture>
+
+      <span className="ph-cap" aria-hidden>
+        <b>{caption}</b>
+        <span>{sub}</span>
+      </span>
 
       {video && (
         <span className="ph-play" aria-hidden>

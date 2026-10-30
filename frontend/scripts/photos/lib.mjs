@@ -28,15 +28,21 @@ export const BACKUP_DIR = path.join(ROOT, '.photos-backup') // gitignored
 export const CATEGORIES = ['photography', 'events']
 
 export const FULL_MAX = 2000 // px, longest edge of the full image
-export const THUMB_MAX = 480 // px, >= 2x the 165x112 strip tile
+// Thumbnails feed square, cropped grid tiles: a /photos 3-column tile is ~340
+// CSS px, so ~680 device px on a 2x screen. Sizing by the SHORT edge keeps the
+// crop sharp for any aspect ratio (a 4:3 photo -> 960x720, a 16:9 -> 1280x720);
+// the long-edge cap only stops extreme panoramas from ballooning.
+export const THUMB_EDGE = 720 // px, short edge
+export const THUMB_LONG_MAX = 1600 // px, long-edge cap
 export const BLUR_WIDTH = 16 // px, the placeholder is stretched + blurred by CSS
 export const REENCODE_BYTES = 600 * 1024 // optimize re-encodes full images above this
 export const WARN_BYTES = 800 * 1024 // check warns about images above this
 export const WARN_VIDEO_BYTES = 5 * 1024 * 1024
 
 export const JPEG = { quality: 82, mozjpeg: true }
-export const THUMB_JPEG = { quality: 80, mozjpeg: true }
+export const THUMB_JPEG = { quality: 85, mozjpeg: true }
 export const WEBP = { quality: 80 }
+export const THUMB_WEBP = { quality: 82 }
 
 export const IMAGE_EXT = /\.(jpe?g|png|webp)$/i
 export const HEIC_EXT = /\.(heic|heif)$/i
@@ -171,6 +177,36 @@ export async function encodeJpeg(input, max, opts = JPEG) {
 
 export async function encodeWebp(input, max) {
   return pipeline(input, max).webp(WEBP).toBuffer({ resolveWithObject: true })
+}
+
+/** Thumbnail size for a source of display size `dims` (never enlarges). */
+export function thumbSize({ width, height }) {
+  const scale = Math.min(1, THUMB_EDGE / Math.min(width, height), THUMB_LONG_MAX / Math.max(width, height))
+  return { width: Math.round(width * scale), height: Math.round(height * scale) }
+}
+
+/** Thumbnail JPEG / WebP, sized by thumbSize(). */
+export async function encodeThumbJpeg(input) {
+  const { width } = thumbSize(await dimsOf(input))
+  return sharp(input).rotate().resize({ width }).flatten({ background: '#ffffff' }).jpeg(THUMB_JPEG)
+    .toBuffer({ resolveWithObject: true })
+}
+export async function encodeThumbWebp(input) {
+  const { width } = thumbSize(await dimsOf(input))
+  return sharp(input).rotate().resize({ width }).webp(THUMB_WEBP).toBuffer({ resolveWithObject: true })
+}
+
+/**
+ * Best source for derivatives: the untouched original in .photos-backup/ when
+ * there is one (so thumbs aren't cut from an already re-encoded file), else the
+ * served file. A backup whose aspect ratio no longer matches is ignored — the
+ * served file was replaced since.
+ */
+export async function pristineOf(file) {
+  const saved = path.join(BACKUP_DIR, path.relative(ROOT, file))
+  if (!exists(saved)) return file
+  const [a, b] = [await dimsOf(saved), await dimsOf(file)]
+  return Math.abs(a.width / a.height - b.width / b.height) < 0.01 ? saved : file
 }
 
 /** Re-encode keeping the source's own format (used for blog images). */
