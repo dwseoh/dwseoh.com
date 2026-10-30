@@ -76,6 +76,20 @@
   ],
   "experiences": [
     {
+      "id": "uw-seahorn",
+      "role": "학부 연구원",
+      "org": "워털루 대학교",
+      "logo": "/images/logos/uwaterloo.png",
+      "period": "2026년 9월 — 현재",
+      "duration": "2개월",
+      "location": "워털루, ON",
+      "type": "연구",
+      "blurb": "Arie Gurfinkel 교수님 지도 아래, 자동 형식 검증 도구인 SeaHorn의 Rust 지원 확장을 위해 Rust에서 LLVM IR로의 변환과 검증 의미론을 연구하고 있습니다.",
+      "skills": ["C++", "Rust", "LLVM", "Formal Verification"],
+      "href": "https://seahorn.github.io",
+      "present": true
+    },
+    {
       "id": "cerebras",
       "role": "AI 소프트웨어 엔지니어 인턴",
       "org": "Cerebras Systems",

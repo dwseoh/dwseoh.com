@@ -78,6 +78,20 @@
   ],
   "experiences": [
     {
+      "id": "uw-seahorn",
+      "role": "Undergraduate Researcher",
+      "org": "University of Waterloo",
+      "logo": "/images/logos/uwaterloo.png",
+      "period": "Sep 2026 — Present",
+      "duration": "2 mos",
+      "location": "Waterloo, ON",
+      "type": "Research",
+      "blurb": "Researching verification semantics under Prof. Arie Gurfinkel to extend Rust support for SeaHorn, an automated formal verification software.",
+      "skills": ["C++","Rust", "LLVM", "Formal Verification"],
+      "href": "https://seahorn.github.io",
+      "present": true
+    },
+    {
       "id": "cerebras",
       "role": "AI Software Engineer Intern",
       "org": "Cerebras Systems",
