@@ -4,7 +4,7 @@ import { routing } from './i18n/routing'
 export default createMiddleware(routing)
 
 export const config = {
-  // `blog` is excluded: the blog is English-only and lives outside the [locale]
-  // segment (app/blog), so it must not be rewritten to /en/blog by next-intl.
-  matcher: ['/((?!_next|_vercel|blog|.*\\..*).*)'],
+  // `blog` and `music` are excluded: both are English-only and live outside the [locale]
+  // segment (app/blog, app/music), so next-intl must not rewrite them.
+  matcher: ['/((?!_next|_vercel|blog|music|.*\\..*).*)'],
 }

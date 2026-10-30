@@ -40,5 +40,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  return [...home, ...blogListing, ...postEntries]
+  const music: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/music`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+  ]
+
+  return [...home, ...blogListing, ...postEntries, ...music]
 }
