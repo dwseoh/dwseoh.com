@@ -1,0 +1,176 @@
+/* ============================================================
+   /photos — a quiet, typography-first gallery. Colours, display type,
+   tile corners, motion and the shimmer come from the shared tokens in
+   globals.css (which also carry the sub-page dark palette); the top bar,
+   heading and tabs are shared components. Only the grid lives here.
+   ============================================================ */
+
+.photos-root {
+  min-height: 100dvh;
+  background: var(--n-bg);
+  color: var(--n-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.ph-wrap {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: var(--page-top) var(--page-gutter) 120px;
+}
+
+/* ---- header: shared .page-head (heading left, controls right) ---- */
+.ph-controls { display: flex; align-items: center; gap: 28px; }
+
+.ph-density { display: flex; gap: 4px; }
+.ph-density button {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--control-radius);
+  color: var(--n-light);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.ph-density button:hover,
+.ph-density button[aria-pressed='true'] { color: var(--n-text); background: var(--n-tile); }
+
+.photos-root a:focus-visible,
+.photos-root button:focus-visible {
+  outline: 2px solid var(--n-text);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.photos-root .ph-tile:focus-visible { outline-offset: -2px; border-radius: var(--tile-radius); }
+
+/* ---- grid ---- */
+.ph-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.ph-gallery[data-cols='5'] .ph-grid { grid-template-columns: repeat(5, 1fr); gap: 3px; }
+
+.ph-tile {
+  all: unset;
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--tile-radius);
+  cursor: zoom-in;
+  background-color: var(--n-tile);
+  isolation: isolate;
+  /* staggered rise-in */
+  opacity: 0;
+  transform: translateY(14px) scale(0.985);
+  animation: phRise 0.8s var(--ease) forwards;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+@keyframes phRise { to { opacity: 1; transform: none; } }
+
+/* Desktop waits for hydration so a remembered 5-column grid never visibly
+   reflows; phones always use 3 columns and start right away. */
+@media (min-width: 641px) {
+  .ph-gallery:not([data-ready]) .ph-tile { animation-play-state: paused; }
+}
+
+.ph-tile > * { position: absolute; inset: 0; }
+.ph-tile picture { display: contents; }
+
+/* Loading: the manifest's 16px blur, softened, under the shared shimmer
+   (.tile-shimmer, globals.css). Both fade away once the thumbnail is decoded
+   and has faded in on top. */
+.ph-blur {
+  background-size: cover;
+  filter: blur(14px) saturate(1.1);
+  transform: scale(1.15);
+}
+
+.ph-tile img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--tile-fade), transform var(--zoom-duration) var(--ease);
+}
+.ph-tile.is-loaded img { opacity: 1; }
+
+/* Hover / keyboard focus: a slow zoom, and a soft gradient rising from the
+   bottom edge carrying the caption. Same idea as the home strip's figcaption,
+   but taller and eased in rather than always on. Touch never sees it (a tap
+   opens the lightbox), and nothing outside the tile reacts. */
+.ph-cap {
+  top: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 1px;
+  min-height: 46%;
+  padding: 0 12px 10px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: left;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.38) 45%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.5s var(--ease);
+  pointer-events: none;
+}
+.ph-cap b,
+.ph-cap span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ph-cap b { font-weight: 500; letter-spacing: -0.005em; }
+.ph-cap span { opacity: 0.72; font-size: 11px; font-variant-numeric: tabular-nums; }
+.ph-gallery[data-cols='5'] .ph-cap { padding: 0 10px 8px; font-size: 11px; }
+.ph-gallery[data-cols='5'] .ph-cap span { font-size: 10px; }
+
+@media (hover: hover) {
+  .ph-tile:hover img { transform: scale(var(--zoom)); }
+  .ph-tile:hover .ph-cap { opacity: 1; transform: none; }
+}
+.ph-tile:focus-visible img { transform: scale(var(--zoom)); }
+.ph-tile:focus-visible .ph-cap { opacity: 1; transform: none; }
+
+.ph-play {
+  inset: 8px auto auto 8px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* ---- phones ---- */
+@media (max-width: 640px) {
+  .ph-wrap { padding-bottom: 80px; }
+  .ph-density { display: none; }
+  /* the tabs drop under the title here, so give them a full-width hairline
+     (the active underline sits on it) to close off the header before the grid */
+  .ph-head { margin-bottom: 24px; }
+  .ph-controls { width: 100%; padding-bottom: 5px; border-bottom: 1px solid var(--n-border); }
+  .ph-grid,
+  .ph-gallery[data-cols='5'] .ph-grid { grid-template-columns: repeat(3, 1fr); gap: 3px; }
+  .ph-tile { cursor: pointer; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ph-tile { animation: none; opacity: 1; transform: none; }
+  .ph-tile img, .ph-cap { transition: none; }
+}

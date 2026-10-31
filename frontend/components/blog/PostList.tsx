@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { fetchStats, statsEnabled, formatCount, type Stat } from '@/lib/stats'
+import TileImage from '@/components/subpage/TileImage'
 import { EyeIcon, HeartIcon, ClockIcon } from './Icons'
 import type { PostMeta } from '@/lib/blog'
 
@@ -15,6 +16,9 @@ interface Labels {
 // Max posts per page — a new page starts every 5 posts.
 const PAGE_SIZE = 5
 
+/** A post's category: its `category`, else its first tag (the row's label). */
+const kickerOf = (p: PostMeta) => p.category ?? p.tags[0]
+
 function formatDate(date: string): string {
   // Anchor at midday so the UTC date never slips a day when localized.
   const d = new Date(`${date}T12:00:00`)
@@ -25,7 +29,19 @@ function formatDate(date: string): string {
   }).format(d)
 }
 
-export default function PostList({ posts, labels }: { posts: PostMeta[]; labels: Labels }) {
+/**
+ * The blog index below the top bar: heading (passed in as `children`, so it
+ * stays server-rendered), then one paginated list of every post.
+ */
+export default function PostList({
+  posts,
+  labels,
+  children,
+}: {
+  posts: PostMeta[]
+  labels: Labels
+  children: React.ReactNode
+}) {
   const [stats, setStats] = useState<Record<string, Stat> | null>(null)
   const [page, setPage] = useState(1)
   const topRef = useRef<HTMLDivElement>(null)
@@ -42,110 +58,120 @@ export default function PostList({ posts, labels }: { posts: PostMeta[]; labels:
   }, [posts])
 
   const pageCount = Math.max(1, Math.ceil(posts.length / PAGE_SIZE))
+  const current = Math.min(page, pageCount)
   const visible = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE
+    const start = (current - 1) * PAGE_SIZE
     return posts.slice(start, start + PAGE_SIZE)
-  }, [posts, page])
+  }, [posts, current])
 
   function goToPage(next: number) {
     setPage(next)
     topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  const head = (
+    <header className="page-head blog-index-head">
+      {children}
+    </header>
+  )
+
   if (posts.length === 0) {
-    return <p className="blog-empty">{labels.empty}</p>
+    return (
+      <>
+        {head}
+        <p className="blog-empty">{labels.empty}</p>
+      </>
+    )
   }
 
   return (
-    <div ref={topRef} className="blog-list-wrap">
-      <div className="blog-list">
-        {visible.map((post) => {
-          const s = stats?.[post.slug]
-          const kicker = post.category ?? post.tags[0]
-          return (
-            <Link key={post.slug} href={`/blog/${post.slug}`} className="blog-card">
-              <article className="blog-card-body">
-                <div className="blog-card-text">
-                  {kicker && <span className="blog-card-kicker">{kicker}</span>}
-                  <h2 className="blog-card-title">{post.title}</h2>
-                  {post.summary && <p className="blog-card-summary">{post.summary}</p>}
+    <>
+      {head}
+      <div ref={topRef} className="blog-list-wrap">
+        <div className="blog-list">
+          {visible.map((post, i) => {
+            const s = stats?.[post.slug]
+            const kicker = kickerOf(post)
+            return (
+              <Link key={post.slug} href={`/blog/${post.slug}`} className="blog-card tile-zoom">
+                <article className="blog-card-body">
+                  <div className="blog-card-text">
+                    {kicker && <span className="eyebrow blog-card-kicker">{kicker}</span>}
+                    <h2 className="blog-card-title">{post.title}</h2>
+                    {post.summary && <p className="blog-card-summary">{post.summary}</p>}
 
-                  <div className="blog-meta blog-card-meta">
-                    <time className="blog-meta-item" dateTime={post.date}>
-                      {formatDate(post.date)}
-                    </time>
-                    <span className="blog-meta-item">
-                      <ClockIcon />
-                      {/* Number + unit must stay ONE flex item: .blog-meta-item is
-                          inline-flex, and a whitespace-only text node between two
-                          flex items is dropped, so the space would become the 5px
-                          gap instead. */}
-                      <span className="blog-meta-read">
-                        {post.readingMinutes}{' '}
-                        <span className="blog-meta-label">{labels.minRead}</span>
-                        <span className="blog-meta-label-short">{labels.minReadShort}</span>
-                      </span>
-                    </span>
-                    {s && (
+                    <div className="blog-meta blog-card-meta">
+                      <time className="blog-meta-item" dateTime={post.date}>
+                        {formatDate(post.date)}
+                      </time>
                       <span className="blog-meta-item">
-                        <EyeIcon />
-                        {formatCount(s.views)}
+                        <ClockIcon />
+                        {/* Number + unit must stay ONE flex item: .blog-meta-item is
+                            inline-flex, and a whitespace-only text node between two
+                            flex items is dropped, so the space would become the 5px
+                            gap instead. */}
+                        <span className="blog-meta-read">
+                          {post.readingMinutes}{' '}
+                          <span className="blog-meta-label">{labels.minRead}</span>
+                          <span className="blog-meta-label-short">{labels.minReadShort}</span>
+                        </span>
                       </span>
-                    )}
-                    {s && s.likes > 0 && (
-                      <span className="blog-meta-item">
-                        <HeartIcon />
-                        {formatCount(s.likes)}
-                      </span>
-                    )}
+                      {s && (
+                        <span className="blog-meta-item">
+                          <EyeIcon />
+                          {formatCount(s.views)}
+                        </span>
+                      )}
+                      {s && s.likes > 0 && (
+                        <span className="blog-meta-item">
+                          <HeartIcon />
+                          {formatCount(s.likes)}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {post.cover && (
-                  <div className="blog-card-thumb">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={post.cover} alt="" loading="lazy" />
-                  </div>
-                )}
-              </article>
-            </Link>
-          )
-        })}
-      </div>
+                  {post.cover && <TileImage src={post.cover} className="blog-card-thumb" eager={i < 2} />}
+                </article>
+              </Link>
+            )
+          })}
+        </div>
 
-      {pageCount >= 1 && (
-        <nav className="blog-pager" aria-label="Pagination">
-          <button
-            type="button"
-            className="blog-pager-arrow"
-            onClick={() => goToPage(page - 1)}
-            disabled={page === 1}
-            aria-label="Previous page"
-          >
-            ‹
-          </button>
-          {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
+        {pageCount >= 1 && (
+          <nav className="blog-pager" aria-label="Pagination">
             <button
-              key={n}
               type="button"
-              className={`blog-pager-num${n === page ? ' is-active' : ''}`}
-              onClick={() => goToPage(n)}
-              aria-current={n === page ? 'page' : undefined}
+              className="blog-pager-arrow"
+              onClick={() => goToPage(current - 1)}
+              disabled={current === 1}
+              aria-label="Previous page"
             >
-              {n}
+              ‹
             </button>
-          ))}
-          <button
-            type="button"
-            className="blog-pager-arrow"
-            onClick={() => goToPage(page + 1)}
-            disabled={page === pageCount}
-            aria-label="Next page"
-          >
-            ›
-          </button>
-        </nav>
-      )}
-    </div>
+            {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
+              <button
+                key={n}
+                type="button"
+                className={`blog-pager-num${n === current ? ' is-active' : ''}`}
+                onClick={() => goToPage(n)}
+                aria-current={n === current ? 'page' : undefined}
+              >
+                {n}
+              </button>
+            ))}
+            <button
+              type="button"
+              className="blog-pager-arrow"
+              onClick={() => goToPage(current + 1)}
+              disabled={current === pageCount}
+              aria-label="Next page"
+            >
+              ›
+            </button>
+          </nav>
+        )}
+      </div>
+    </>
   )
 }

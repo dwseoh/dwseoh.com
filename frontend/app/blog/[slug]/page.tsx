@@ -8,6 +8,8 @@ import ViewCounter from '@/components/blog/ViewCounter'
 import LikeButton from '@/components/blog/LikeButton'
 import ReadingProgress from '@/components/blog/ReadingProgress'
 import PostNav from '@/components/blog/PostNav'
+import PageHeading from '@/components/subpage/PageHeading'
+import TileImage from '@/components/subpage/TileImage'
 import { ClockIcon, ArrowLeftIcon } from '@/components/blog/Icons'
 import { copy } from '../copy'
 
@@ -88,9 +90,7 @@ export default async function BlogPost({ params }: PageParams) {
           />
 
           <header className="blog-post-header">
-            {kicker && <p className="blog-kicker">{kicker}</p>}
-            <h1 className="blog-post-title">{post.title}</h1>
-            {post.summary && <p className="blog-post-sub">{post.summary}</p>}
+            <PageHeading size="post" eyebrow={kicker} title={post.title} intro={post.summary || undefined} />
 
             <div className="blog-byline">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -126,8 +126,7 @@ export default async function BlogPost({ params }: PageParams) {
 
           {post.cover && (
             <figure className="blog-cover">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={post.cover} alt="" />
+              <TileImage src={post.cover} eager />
             </figure>
           )}
 

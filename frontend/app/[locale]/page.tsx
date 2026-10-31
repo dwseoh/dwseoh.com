@@ -1,4 +1,5 @@
 import { getTranslations, getLocale } from 'next-intl/server'
+import Link from 'next/link'
 import InlineLink from '@/components/InlineLink'
 import RotatingText from '@/components/RotatingText'
 import ScrambleText from '@/components/ScrambleText'
@@ -6,13 +7,14 @@ import LinkRow from '@/components/LinkRow'
 import HoverPreview from '@/components/HoverPreview'
 import ProjectCarousel, { type Project } from '@/components/ProjectCarousel'
 import HobbyCards, { type CarouselItem } from '@/components/HobbyCards'
-import PhotoStrip, { type Photo } from '@/components/PhotoStrip'
+import PhotoStrip from '@/components/PhotoStrip'
 import WebringCarousel, { type Webring } from '@/components/WebringCarousel'
 import SocialPill from '@/components/SocialPill'
 import LangSwitcher from '@/components/LangSwitcher'
 import VisitorCounter from '@/components/VisitorCounter'
 import Experience, { type Experience as ExperienceItem, type ExperienceLabels } from '@/components/Experience'
 import GolfCourse, { type Extracurricular, type ExtracurricularLabels } from '@/components/GolfCourse'
+import { carouselPhotos, type Locale } from '@/lib/photos'
 
 interface SimpleLink {
   label: string
@@ -29,16 +31,12 @@ const favicon = (url: string) => {
   }
 }
 
+// Section labels use the shared eyebrow style (globals.css `.eyebrow`).
 const headingStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
-  fontWeight: 600,
-  textTransform: 'uppercase',
-  letterSpacing: '0.06em',
-  color: 'var(--n-secondary)',
   margin: '2.5rem 0 0.875rem',
 }
 
-const sectionHeading = (text: string) => <h2 style={headingStyle}>{text}</h2>
+const sectionHeading = (text: string) => <h2 className="eyebrow" style={headingStyle}>{text}</h2>
 
 function OpenInNewIcon() {
   return (
@@ -55,7 +53,7 @@ export default async function HomePage() {
   const portfolioLinks   = t.raw('portfolioLinks') as SimpleLink[]
   const hobbyCategories  = t.raw('hobbyCategories') as CarouselItem[]
   const contactLinks     = t.raw('contactLinks') as SimpleLink[]
-  const photos           = t.raw('photos') as Photo[]
+  const photos           = carouselPhotos(locale as Locale)
   const webrings         = t.raw('webrings') as Webring[]
   const projects         = t.raw('projects') as Project[]
   const experiences      = t.raw('experiences') as ExperienceItem[]
@@ -119,7 +117,14 @@ export default async function HomePage() {
           })}
         </p>
 
-        <PhotoStrip photos={photos} />
+        <PhotoStrip photos={photos} galleryLabel={t('photosOpen')} />
+        {/* /photos is English-only and outside [locale], so a plain Link (not
+            next-intl's) keeps it unprefixed from /ko too. */}
+        <p style={{ textAlign: 'right', margin: '-1.75rem 0 0' }}>
+          <Link href="/photos?c=events" className="eyebrow photos-more">
+            {t('photosMore')} →
+          </Link>
+        </p>
 
         {sectionHeading(t('sections.portfolio'))}
         <div className="portfolio-grid">
@@ -132,7 +137,7 @@ export default async function HomePage() {
 
         {Array.isArray(projects) && projects.length > 0 && (
           <>
-            <h2 style={{ ...headingStyle, display: 'flex', alignItems: 'center', gap: '7px' }}>
+            <h2 className="eyebrow" style={{ ...headingStyle, display: 'flex', alignItems: 'center', gap: '7px' }}>
               <span className="inprogress" data-tip="coming soon" aria-label="Projects page — coming soon" role="img">
                 <OpenInNewIcon />
               </span>

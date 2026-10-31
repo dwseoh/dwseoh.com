@@ -14,7 +14,78 @@
   --n-hover-strong: rgba(55, 53, 47, 0.08);
   --n-callout-bg: rgba(35, 131, 226, 0.05);
   --n-scramble:  #9a86c4; /* muted violet shown while the name is scrambled */
+  --n-tile:      #f1f1ef; /* empty media tile, before its image arrives */
+  --n-tile-edge: rgba(55, 53, 47, 0.07); /* hairline inside a tile, so white images keep an edge */
   --n-width:     700px;
+  --blog-code-bg: #1e1d1b; /* code cards stay dark in both themes */
+
+  /* ---- SUB-PAGE SYSTEM — shared by /blog and /photos ----
+     One top bar, one heading pattern, one tile language. */
+
+  /* containers */
+  --page-width:  1080px;  /* wide sub-page container (the /photos grid) */
+  --read-width:  44rem;   /* reading column (blog index + posts) */
+  --page-gutter: 24px;
+  --page-top:    48px;    /* top bar → page heading */
+  --subbar-h:    58px;    /* sticky breadcrumb bar */
+
+  /* display type: eyebrow → display title (+ superscript count) → intro */
+  --eyebrow-size:     0.75rem;
+  --eyebrow-weight:   600;
+  --eyebrow-tracking: 0.06em;
+  --display-index:          clamp(44px, 8vw, 88px);  /* index pages */
+  --display-post:           clamp(36px, 6vw, 60px);  /* article titles */
+  --display-weight:         300;
+  --display-weight-post:    350;
+  --display-tracking:       -0.045em;
+  --display-tracking-post:  -0.035em;
+  --intro-size: 1rem;
+
+  /* media tiles + motion */
+  --tile-radius:    0px;   /* gallery tiles, blog thumbnails, covers, figures */
+  --control-radius: 6px;   /* small buttons, crumbs, hover pills */
+  --ease:           cubic-bezier(0.2, 0.7, 0.2, 1);
+  --zoom:           1.035; /* hover zoom on tiles */
+  --zoom-duration:  0.9s;
+  --tile-fade:      0.6s ease;  /* thumbnail fade-in once decoded */
+  --shimmer: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.14) 50%, transparent 70%);
+  --shimmer-duration: 1.5s;
+}
+
+/* The portfolio is light-only, but the sub-pages (/photos, /blog) follow the
+   system's dark mode. Set on <html> so <body> — and therefore overscroll
+   areas — pick it up too. A saved choice from the blog's (currently hidden)
+   theme toggle overrides the system via data-theme on <html>; see app/layout.tsx.
+   The palette is written twice because a media query can't share a selector. */
+@media (prefers-color-scheme: dark) {
+  html:has(.photos-root, .blog-root):not([data-theme='light']) {
+    --n-bg: #191817;
+    --n-text: #e9e6e1;
+    --n-secondary: #a5a199;
+    --n-light: #6f6b63;
+    --n-border: #302e2b;
+    --n-hover: rgba(255, 255, 255, 0.05);
+    --n-hover-strong: rgba(255, 255, 255, 0.085);
+    --n-callout-bg: rgba(255, 255, 255, 0.045);
+    --n-tile: #242321;
+    --n-tile-edge: rgba(255, 255, 255, 0.05);
+    --blog-code-bg: #111110;
+    color-scheme: dark;
+  }
+}
+html[data-theme='dark']:has(.photos-root, .blog-root) {
+  --n-bg: #191817;
+  --n-text: #e9e6e1;
+  --n-secondary: #a5a199;
+  --n-light: #6f6b63;
+  --n-border: #302e2b;
+  --n-hover: rgba(255, 255, 255, 0.05);
+  --n-hover-strong: rgba(255, 255, 255, 0.085);
+  --n-callout-bg: rgba(255, 255, 255, 0.045);
+  --n-tile: #242321;
+  --n-tile-edge: rgba(255, 255, 255, 0.05);
+  --blog-code-bg: #111110;
+  color-scheme: dark;
 }
 
 /* Root font-size drives all rem-based sizing. Shrinking it on phones
@@ -189,6 +260,11 @@ body {
 .photo-figure:hover video {
   transform: scale(1.05);
 }
+/* quiet "see more photos →" link under the home strip (eyebrow style, like the
+   section labels) */
+.photos-more { color: var(--n-secondary); text-decoration: none; transition: color 0.2s ease; }
+.photos-more:hover { color: var(--n-text); }
+
 .photo-cap {
   position: absolute;
   left: 0;
@@ -206,6 +282,123 @@ body {
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+/* ---- Lightbox (shared: home carousel + /photos) ----
+   Always dark regardless of theme: the photo sits on a heavily blurred,
+   saturated copy of itself under a dark veil, so the chrome is plain white. */
+.lb {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  overflow: hidden;
+  background: #0d0d0d;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  animation: fadeIn 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.lb.is-closing { opacity: 0; transition: opacity 0.18s ease; }
+.lb-amb {
+  position: absolute;
+  inset: -10%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(70px) saturate(1.4) brightness(0.55);
+  transform: scale(1.1);
+  transition: background-image 0.5s ease;
+}
+.lb-veil { position: absolute; inset: 0; background: rgba(10, 10, 10, 0.45); }
+.lb-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7vh 8vw 18vh;
+  cursor: zoom-out;
+}
+.lb-stage picture { display: contents; }
+.lb-media {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  cursor: default;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.lb-media.is-loaded { opacity: 1; }
+.lb-meta {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 96px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  pointer-events: none;
+}
+.lb-meta p { margin: 0; }
+.lb-cap { font-size: 15px; font-weight: 500; margin-bottom: 2px !important; }
+.lb-sub, .lb-idx { opacity: 0.65; }
+.lb-idx { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lb-strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  display: flex;
+  gap: 4px;
+  padding: 6px 32px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* center when it fits, scroll when it doesn't */
+  justify-content: safe center;
+}
+.lb-strip::-webkit-scrollbar { display: none; }
+.lb-thumb {
+  all: unset;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.lb-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lb-thumb:hover { opacity: 0.7; }
+.lb-thumb.is-on { opacity: 1; transform: translateY(-4px); }
+.lb-close, .lb-nav, .lb-gallery {
+  all: unset;
+  position: absolute;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+.lb-close:hover, .lb-nav:hover, .lb-gallery:hover { opacity: 1; }
+.lb-close { top: 24px; right: 32px; padding: 4px 0; }
+.lb-gallery { top: 24px; left: 32px; padding: 4px 0; }
+.lb-nav { top: 50%; transform: translateY(-50%); font-size: 22px; padding: 20px; line-height: 1; }
+.lb-prev { left: 12px; }
+.lb-next { right: 12px; }
+.lb button:focus-visible, .lb a:focus-visible { outline: 1px solid rgba(255, 255, 255, 0.8); outline-offset: 3px; border-radius: 4px; opacity: 1; }
+@media (max-width: 640px) {
+  .lb-stage { padding: 10vh 16px 22vh; }
+  .lb-meta { left: 16px; right: 16px; bottom: 80px; }
+  .lb-strip { padding-left: 16px; padding-right: 16px; }
+  .lb-close { right: 16px; top: 16px; }
+  .lb-gallery { left: 16px; top: 16px; }
+  .lb-hint, .lb-nav { display: none; }
+}
+@media (hover: none) {
+  .lb-nav { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lb { animation: none; }
+  .lb-amb, .lb-media, .lb-thumb { transition: none; }
 }
 
 /* ---- Projects: infinite focus carousel ---- */
@@ -1027,65 +1220,270 @@ body {
 }
 
 /* ============================================================
-   BLOG — a standalone editorial publication. It brings its own
-   chrome (sticky nav, reading-progress bar, newsletter footer),
-   serif display type, and a light/dark theme scoped entirely to
-   `.blog-root` so the light-only portfolio is never touched.
+   SUB-PAGE SYSTEM — the pieces /blog and /photos share (tokens in
+   :root above): the sticky breadcrumb bar, the page heading
+   (eyebrow → display title → intro), filter tabs, and image tiles.
+   Components: components/subpage/.
+   ============================================================ */
+
+/* small uppercase label: home section headings, sub-page eyebrows, post kickers */
+.eyebrow {
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase;
+  color: var(--n-secondary);
+}
+
+/* ---- top bar: Jamie's Website / Section / current ---- */
+.subbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--n-bg);
+  border-bottom: 1px solid var(--n-border);
+}
+.subbar-inner {
+  /* lines up with the page's own container (see SubpageBar's `width`) */
+  max-width: var(--page-width);
+  margin: 0 auto;
+  height: var(--subbar-h);
+  padding: 0 var(--page-gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.subbar[data-width='read'] .subbar-inner { max-width: var(--read-width); }
+.subbar-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  min-width: 0;
+  margin-left: -7px;   /* cancel the first crumb's padding so the logo aligns
+                          with the content's left edge below */
+  font-size: 14px;
+  overflow: hidden;
+}
+.subbar-crumb {
+  flex-shrink: 0;
+  padding: 4px 7px;
+  color: var(--n-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: var(--control-radius);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.subbar-crumb:hover { color: var(--n-text); background: var(--n-hover); }
+.subbar-crumb-home { display: inline-flex; align-items: center; gap: 7px; }
+.subbar-logo { width: 18px; height: 18px; border-radius: 4px; display: block; flex-shrink: 0; }
+/* the section: same size as its neighbours, just inked + a touch heavier */
+.subbar-crumb-section { font-weight: 550; color: var(--n-text); }
+.subbar-label-short { display: none; }
+.subbar-sep { flex-shrink: 0; color: var(--n-light); opacity: 0.5; }
+.subbar-tail { display: flex; align-items: center; gap: 1px; min-width: 0; }
+.subbar-current {
+  min-width: 0;
+  padding: 4px 7px;
+  color: var(--n-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.subbar-actions { display: flex; align-items: center; gap: 0.3rem; flex-shrink: 0; }
+.subbar-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--n-secondary);
+  border-radius: var(--control-radius);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.subbar-icon:hover { color: var(--n-text); background: var(--n-hover); }
+
+/* ---- page heading: heading block on the left, tabs/controls on the right ---- */
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 20px 24px;
+  margin-bottom: 28px;
+}
+.page-heading { min-width: 0; }
+.page-eyebrow { margin: 0 0 14px; }
+.display {
+  margin: 0;
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  color: var(--n-text);
+}
+.display-index { font-size: var(--display-index); line-height: 0.9; }
+.display-post {
+  font-size: var(--display-post);
+  font-weight: var(--display-weight-post);
+  letter-spacing: var(--display-tracking-post);
+  line-height: 1.06;
+  text-wrap: balance;
+}
+.display-count {
+  position: relative;
+  top: 0.5em;
+  margin-left: 0.2em;
+  font-size: 0.22em;
+  font-weight: 400;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  vertical-align: top;
+  color: var(--n-light);
+}
+.page-intro {
+  margin: 14px 0 0;
+  max-width: 34rem;
+  font-size: var(--intro-size);
+  line-height: 1.6;
+  color: var(--n-secondary);
+}
+.display-index + .page-intro { margin-top: 20px; } /* clears the big title's descenders */
+
+/* ---- filter tabs: superscript counts, a hairline under the active one ---- */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.tabs a {
+  position: relative;
+  font-size: 14px;
+  color: var(--n-light);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+.tabs sup {
+  margin-left: 2px;
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.tabs a:hover,
+.tabs a.is-on { color: var(--n-text); }
+.tabs a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease);
+}
+.tabs a.is-on::after { transform: scaleX(1); }
+
+/* ---- image tiles: empty tile colour + shimmer → fade in → slow hover zoom.
+   /photos' grid tiles (photos.css) use the same tokens and .tile-shimmer;
+   .tile is the standalone version (components/subpage/TileImage). ---- */
+.tile {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--tile-radius);
+  background-color: var(--n-tile);
+  isolation: isolate;
+}
+.tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--n-tile-edge);
+  pointer-events: none;
+}
+.tile > .tile-shimmer,
+.tile > .tile-img { position: absolute; inset: 0; }
+.tile-shimmer {
+  background: var(--shimmer);
+  background-size: 250% 100%;
+  animation: tileShimmer var(--shimmer-duration) ease-in-out infinite;
+  transition: opacity 0.4s ease;
+}
+.is-loaded > .tile-shimmer { opacity: 0; animation: none; }
+@keyframes tileShimmer {
+  from { background-position: 150% 0; }
+  to   { background-position: -100% 0; }
+}
+.tile-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--tile-fade), transform var(--zoom-duration) var(--ease);
+}
+.tile.is-loaded .tile-img { opacity: 1; }
+@media (hover: hover) {
+  .tile-zoom:hover .tile-img { transform: scale(var(--zoom)); }
+}
+.tile-zoom:focus-visible .tile-img { transform: scale(var(--zoom)); }
+
+/* view transitions: a soft cross-fade for tab / density changes */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: var(--ease);
+}
+
+@media (max-width: 640px) {
+  :root { --page-gutter: 16px; --page-top: 32px; --subbar-h: 52px; }
+  .page-head { margin-bottom: 20px; }
+  .page-eyebrow { margin-bottom: 10px; }
+  .subbar-inner { gap: 0.4rem; }
+  .subbar-actions { gap: 0.1rem; }
+  .subbar-crumb, .subbar-current { padding: 4px 5px; }
+  /* with a trailing crumb, the section collapses to its short label and the
+     title truncates into whatever room is left: Jamie's Website / .. / <title> */
+  .subbar-crumbs.has-tail .subbar-label { display: none; }
+  .subbar-crumbs.has-tail .subbar-label-short { display: inline; }
+  .subbar-tail { flex: 1; min-width: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile-shimmer { animation: none; }
+  .tile-img, .tabs a::after { transition: none; }
+}
+
+/* ============================================================
+   BLOG — a standalone editorial publication on the sub-page system
+   above (top bar, heading, tabs, tiles, dark palette). It adds the
+   search palette, reading-progress bar, post list and prose.
    Typography-first: a calm ~44rem reading column, generous
    vertical rhythm, monochrome ink accents.
    ============================================================ */
 
-/* ---- theme scope: the editorial palette + type live on .blog-root ---- */
+/* ---- theme scope: colours come from the --n-* tokens (light on :root, the
+   shared sub-page dark palette on <html>), so nothing is redefined here ---- */
 .blog-root {
-  /* light — inherits the portfolio's own palette (white paper, warm ink, blue
-     accent) so the blog reads as part of the same site. The editorial serif +
-     reading column are what set it apart, not the colors. */
-  --n-bg: #ffffff;
-  --n-text: #37352f;
-  --n-secondary: #787774;
-  --n-light: #9b9a97;
-  --n-border: #e9e9e7;
-  --n-hover: rgba(55, 53, 47, 0.04);
-  --n-hover-strong: rgba(55, 53, 47, 0.08);
-  --n-callout-bg: rgba(35, 131, 226, 0.05);
-
-  --blog-width: 44rem;        /* ~704px reading measure */
-  --blog-nav-h: 58px;
-  /* Display type matches the rest of the site. Every element that reads
-     var(--blog-serif) resolves to `font-family: inherit`, falling back to the
-     sans on <body> (Inter on EN, Gowun Dodum on KO) — the same face the
-     portfolio uses. Swap back to a serif stack here to restore editorial type. */
-  --blog-serif: inherit;
-  --blog-code-bg: #1e1d1b;    /* code cards stay dark in both themes */
-
   min-height: 100dvh;
   background: var(--n-bg);
   color: var(--n-text);
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-html[data-theme='dark'] .blog-root {
-  --n-bg: #191817;
-  --n-text: #e9e6e1;
-  --n-secondary: #a5a199;
-  --n-light: #6f6b63;
-  --n-border: #302e2b;
-  --n-hover: rgba(255, 255, 255, 0.05);
-  --n-hover-strong: rgba(255, 255, 255, 0.085);
-  --n-callout-bg: rgba(255, 255, 255, 0.045);
-  --blog-code-bg: #111110;
-  color-scheme: dark;
-}
-
 .blog-root ::selection { background: rgba(150, 130, 90, 0.22); }
-html[data-theme='dark'] .blog-root ::selection { background: rgba(220, 205, 165, 0.20); }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .blog-root ::selection { background: rgba(220, 205, 165, 0.2); }
+}
+html[data-theme='dark'] .blog-root ::selection { background: rgba(220, 205, 165, 0.2); }
 
 .blog-root a:focus-visible,
 .blog-root button:focus-visible,
 .blog-root input:focus-visible {
   outline: 2px solid var(--n-text);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: var(--control-radius);
 }
 /* …except the search field. It is autofocused the moment the palette opens, so
    the ring is never news — it just draws a black box around the input. The
@@ -1111,107 +1509,20 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   opacity: 0.8;
 }
 
-/* ---- publication nav ---- */
-.blog-nav {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: var(--n-bg);
-  border-bottom: 1px solid var(--n-border);
-}
-.blog-nav-inner {
-  /* Match the reading column so the breadcrumb lines up with the content below
-     and the search action sits over the column's right edge (not stranded). */
-  max-width: var(--blog-width);
-  margin: 0 auto;
-  height: var(--blog-nav-h);
-  padding: 0 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-/* breadcrumb directory: Jamie's Website / Blog Home / <current post> */
-.blog-crumbs {
-  display: flex;
-  align-items: center;
-  gap: 1px;
-  min-width: 0;
-  margin-left: -7px;   /* cancel the first crumb's padding so the logo aligns
-                          with the content column's left edge below */
-  font-size: 0.9rem;
-  overflow: hidden;
-}
-.blog-crumb {
-  flex-shrink: 0;
-  padding: 4px 7px;
-  color: var(--n-secondary);
-  text-decoration: none;
-  white-space: nowrap;
-  border-radius: 7px;
-  transition: color 0.15s ease, background 0.15s ease;
-}
-.blog-crumb:hover { color: var(--n-accent); background: var(--n-hover); }
-/* portfolio home crumb: favicon mark + name, one clickable unit */
-.blog-crumb-home { display: inline-flex; align-items: center; gap: 7px; }
-.blog-crumb-logo {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  display: block;
-  flex-shrink: 0;
-}
-.blog-crumb-blog {
-  /* Current section: same size as its neighbours, distinguished only by ink
-     colour + a touch more weight — no longer an oversized serif heading. */
-  font-size: 0.9rem;
-  font-weight: 550;
-  color: var(--n-text);
-}
-/* the ".." stand-in for "Blog Home" — phones only, and only on a post */
-.blog-crumb-label-short { display: none; }
-.blog-crumb-sep { flex-shrink: 0; color: var(--n-light); opacity: 0.5; }
-.blog-crumb-tail { display: flex; align-items: center; gap: 1px; min-width: 0; }
-.blog-crumb-current {
-  min-width: 0;
-  padding: 4px 7px;
-  color: var(--n-light);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.blog-nav-actions { display: flex; align-items: center; gap: 0.3rem; flex-shrink: 0; }
-.blog-nav-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--n-secondary);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.blog-nav-icon:hover { color: var(--n-text); background: var(--n-hover); }
-.blog-nav-icon img { display: block; border-radius: 2px; object-fit: cover; }
-
-/* back-to-list link at the top of a post */
+/* back-to-list link at the top of a post: quiet text, like the bar's crumbs */
 .blog-back {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin: 0 0 0.9rem -8px;   /* negative left optically aligns text to the column */
-  padding: 4px 8px;          /* compact — sits just above the post, minimal gap */
-  font-size: 0.85rem;
-  color: var(--n-secondary);
+  margin: 0 0 1.5rem -8px;   /* negative left optically aligns text to the column */
+  padding: 4px 8px;
+  font-size: 13px;
+  color: var(--n-light);
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: var(--control-radius);
   transition: color 0.15s ease, background 0.15s ease;
 }
-.blog-back:hover { color: var(--n-accent); background: var(--n-hover); }
+.blog-back:hover { color: var(--n-text); background: var(--n-hover); }
 .blog-back svg { transition: transform 0.16s ease; }
 .blog-back:hover svg { transform: translateX(-2px); }
 
@@ -1269,19 +1580,14 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   justify-content: space-between;
   gap: 12px;
   padding: 11px 12px;
-  border-radius: 9px;
+  border-radius: var(--control-radius);
   text-decoration: none;
   color: inherit;
   transition: background 0.12s ease;
 }
 .blog-search-item:hover { background: var(--n-hover); }
 .blog-search-item-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.blog-search-kicker {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--n-light);
-}
+.blog-search-kicker { color: var(--n-light); }
 .blog-search-item-title { font-weight: 600; color: var(--n-text); }
 .blog-search-item-sum {
   font-size: 0.82rem;
@@ -1295,42 +1601,17 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 
 /* ---- reading column ---- */
 .blog-main {
-  max-width: var(--blog-width);
+  max-width: var(--read-width);
   margin: 0 auto;
-  padding: 3rem 1.5rem 5rem;
+  padding: var(--page-top) var(--page-gutter) 5rem;
   animation: blogFade 0.5s ease both;
 }
-
-.blog-kicker {
-  margin: 0 0 0.9rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--n-light);
-}
-
-/* listing header — matches the homepage h1 scale (2.5rem/700), not an oversized
-   editorial title. Compact intro sits right under it. */
-.blog-header { margin-bottom: 1.75rem; }
-.blog-title {
-  font-size: clamp(2rem, 5vw, 2.5rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  margin: 0 0 0.6rem;
-}
-.blog-intro {
-  margin: 0;
-  max-width: 34rem;
-  color: var(--n-secondary);
-  font-size: 1rem;
-  line-height: 1.65;
-}
+/* index heading → list */
+.blog-index-head { margin-bottom: 2.25rem; }
 
 
 /* archive list */
-.blog-list-wrap { scroll-margin-top: calc(var(--blog-nav-h) + 1rem); }
+.blog-list-wrap { scroll-margin-top: calc(var(--subbar-h) + 1rem); }
 .blog-list { display: flex; flex-direction: column; }
 .blog-card {
   display: block;
@@ -1347,31 +1628,9 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   width: 156px;
   aspect-ratio: 3 / 2;
   align-self: center;
-  overflow: hidden;
-  border: 1px solid var(--n-border);
-  border-radius: 9px;
 }
-.blog-card-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.35s ease;
-}
-.blog-card:hover .blog-card-thumb img { transform: scale(1.04); }
-/* category as a subtle Notion "select" tag rather than loud tracked caps */
-.blog-card-kicker {
-  align-self: flex-start;
-  margin-bottom: 0.4rem;
-  padding: 1px 7px;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--n-secondary);
-  background: var(--n-hover-strong);
-  border-radius: 5px;
-}
+/* category: a plain eyebrow (.eyebrow), a step quieter than the title */
+.blog-card-kicker { margin-bottom: 0.4rem; color: var(--n-light); }
 .blog-card-title {
   margin: 0;
   font-size: 1.15rem;
@@ -1397,42 +1656,49 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   overflow: hidden;
 }
 
-/* numbered pager (appears once the archive overflows one page) */
+/* numbered pager: monochrome, the tabs' language — muted numbers, the current
+   one inked with a hairline under it */
 .blog-pager {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.3rem;
-  margin-top: 2rem;
+  gap: 0.25rem;
+  margin-top: 2.25rem;
 }
 .blog-pager-num,
 .blog-pager-arrow {
-  min-width: 34px;
-  height: 34px;
-  padding: 0 8px;
+  position: relative;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid transparent;
-  border-radius: 8px;
+  border: none;
+  border-radius: var(--control-radius);
   background: transparent;
-  color: var(--n-secondary);
+  color: var(--n-light);
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 14px;
   font-variant-numeric: tabular-nums;
   line-height: 1;
   cursor: pointer;
-  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  transition: color 0.25s ease, background 0.15s ease;
 }
-.blog-pager-arrow { font-size: 1.2rem; }
+.blog-pager-arrow { font-size: 18px; }
 .blog-pager-num:not(.is-active):hover,
 .blog-pager-arrow:not(:disabled):hover { color: var(--n-text); background: var(--n-hover); }
-.blog-pager-num.is-active {
-  color: #fff;
-  background: var(--n-accent);
-  border-color: var(--n-accent);
-  font-weight: 600;
+.blog-pager-num.is-active { color: var(--n-text); cursor: default; }
+.blog-pager-num.is-active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 12px;
+  height: 1px;
+  margin-left: -6px;
+  background: currentColor;
 }
 .blog-pager-arrow:disabled { opacity: 0.35; cursor: default; }
 
@@ -1455,24 +1721,9 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 }
 .blog-card-meta { margin-top: 1rem; }
 
-/* post header + byline */
+/* post header (shared .page-heading, size="post") + byline */
 .blog-post-header { margin-bottom: 2.75rem; }
-.blog-post-title {
-  margin: 0.4rem 0 1rem;
-  font-family: var(--blog-serif);
-  font-size: clamp(1.9rem, 4.4vw, 2.55rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-.blog-post-sub {
-  margin: 0 0 1.75rem;
-  font-size: 1.05rem;
-  line-height: 1.55;
-  color: var(--n-secondary);
-  font-weight: 400;
-}
-.blog-byline { display: flex; align-items: center; gap: 12px; }
+.blog-byline { display: flex; align-items: center; gap: 12px; margin-top: 1.75rem; }
 .blog-byline-avatar {
   width: 42px;
   height: 42px;
@@ -1484,17 +1735,10 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 .blog-byline-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .blog-byline-author { font-size: 0.9rem; font-weight: 600; color: var(--n-text); }
 
-/* optional cover image below the post header */
+/* optional cover image below the post header — a tile (.tile), so it shares
+   the gallery's corners, loading shimmer and fade-in; no shadow */
 .blog-cover { margin: 0 0 2.75rem; }
-.blog-cover img {
-  display: block;
-  width: 100%;
-  max-height: 460px;
-  object-fit: cover;
-  border-radius: 14px;
-  border: 1px solid var(--n-border);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10);
-}
+.blog-cover .tile { aspect-ratio: 3 / 2; }
 
 /* ---- prose: rendered Markdown body (see lib/markdown.tsx) ---- */
 .prose {
@@ -1506,8 +1750,7 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 .prose > :first-child { margin-top: 0; }
 .prose-p { margin: 0 0 1.5rem; }
 .prose-h {
-  font-family: var(--blog-serif);
-  scroll-margin-top: calc(var(--blog-nav-h) + 1rem);
+  scroll-margin-top: calc(var(--subbar-h) + 1rem);
   letter-spacing: -0.015em;
   line-height: 1.25;
   color: var(--n-text);
@@ -1572,9 +1815,8 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 .prose-figure { margin: 2rem 0; }
 .prose-figure img {
   width: 100%;
-  border-radius: 12px;
-  border: 1px solid var(--n-border);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10);
+  border-radius: var(--tile-radius);
+  background: var(--n-tile);
   display: block;
 }
 .prose-figure figcaption {
@@ -1687,7 +1929,6 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   color: var(--n-light);
 }
 .blog-postnav-title {
-  font-family: var(--blog-serif);
   font-size: 1.05rem;
   font-weight: 600;
   line-height: 1.3;
@@ -1718,18 +1959,8 @@ html:has(.blog-root) { scroll-behavior: smooth; }
 
 /* ---- responsive ---- */
 @media (max-width: 640px) {
-  .blog-root { --blog-nav-h: 52px; }
-  .blog-nav-inner { padding: 0 1rem; gap: 0.4rem; }
-  .blog-nav-actions { gap: 0.1rem; }
-  .blog-crumb { padding: 4px 5px; }
-  .blog-crumb-blog { font-size: 0.9rem; }
-  /* On a post, the middle crumb collapses to ".." and the title stays visible,
-     truncating into whatever room is left: Jamie's Website / .. / <title>. */
-  .blog-crumbs.is-post .blog-crumb-label { display: none; }
-  .blog-crumbs.is-post .blog-crumb-label-short { display: inline; }
-  .blog-crumb-tail { flex: 1; min-width: 0; }
-  .blog-crumb-current { padding: 4px 5px; }
-  .blog-main { padding: 2.25rem 1.25rem 4rem; }
+  .blog-main { padding-bottom: 4rem; }
+  .blog-index-head { margin-bottom: 1.75rem; }
 
   /* Meta rows wrap on phones, and a leading "·" used to strand itself at the
      start of every wrapped line. Separate with space instead of dots there. */
@@ -1738,10 +1969,9 @@ html:has(.blog-root) { scroll-behavior: smooth; }
   /* reading time sheds the word "read" — "7 min" next to a clock is unambiguous */
   .blog-meta-label { display: none; }
   .blog-meta-label-short { display: inline; }
-  .blog-header { margin-bottom: 1.5rem; }
   .blog-card { padding: 1.1rem 0; }
   .blog-card-body { gap: 1rem; }
-  .blog-card-thumb { width: 116px; border-radius: 8px; }
+  .blog-card-thumb { width: 116px; }
   .blog-card-title { font-size: 1.1rem; }
   .blog-cover { margin-bottom: 2rem; }
   .blog-postnav { grid-template-columns: 1fr; }

@@ -4,16 +4,20 @@ import { useEffect, useState } from 'react'
 import { SunIcon, MoonIcon } from './Icons'
 
 /**
- * Light/dark switch for the blog surface. The pre-paint script in the root
- * layout sets `data-theme` on <html> before React mounts (no flash); this just
- * reads that value, flips it on click, and persists the choice. Only .blog-root
- * styles react to the attribute, so the portfolio is unaffected.
+ * Light/dark switch for the blog surface. Without a saved choice the page
+ * follows the system theme; the pre-paint script in the root layout applies a
+ * saved one as `data-theme` on <html> before React mounts (no flash). This
+ * reads the current theme, flips it on click, and persists the choice. Only
+ * sub-page styles react to the attribute, so the portfolio is unaffected.
  */
 export default function ThemeToggle({ label }: { label: string }) {
   const [theme, setTheme] = useState<'light' | 'dark' | null>(null)
 
   useEffect(() => {
-    const current = document.documentElement.getAttribute('data-theme')
+    // No saved choice → the page is following the system theme.
+    const current =
+      document.documentElement.getAttribute('data-theme') ??
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     setTheme(current === 'dark' ? 'dark' : 'light')
   }, [])
 
@@ -34,7 +38,7 @@ export default function ThemeToggle({ label }: { label: string }) {
     <button
       type="button"
       onClick={toggle}
-      className="blog-nav-icon"
+      className="subbar-icon"
       aria-label={label}
       title={label}
     >

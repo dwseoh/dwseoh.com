@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-// Theme toggle is hidden for now (blog is light-only) but kept fully functional.
+// Theme toggle is hidden for now (the blog follows the system theme) but kept fully functional.
 // Re-enable by uncommenting this import and the <ThemeToggle /> below.
 // import ThemeToggle from './ThemeToggle'
+import SubpageBar from '@/components/subpage/SubpageBar'
 import { SearchIcon, CloseIcon, ArrowRightIcon } from './Icons'
 
 export interface NavPost {
@@ -76,65 +77,26 @@ export default function BlogNav({
 
   return (
     <>
-      <header className="blog-nav">
-        <div className="blog-nav-inner">
-          <nav
-            className={`blog-crumbs${currentPost ? ' is-post' : ''}`}
-            aria-label="Breadcrumb"
-          >
-            {/* dwseoh.com — the portfolio home is the site root. Logo + name are
-                a single clickable crumb back to the portfolio. */}
-            <Link href="/" className="blog-crumb blog-crumb-home">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/favicon.png"
-                alt=""
-                className="blog-crumb-logo"
-                width={18}
-                height={18}
-              />
-              {labels.home}
-            </Link>
-            <span className="blog-crumb-sep" aria-hidden="true">/</span>
-            <Link
-              href="/blog"
-              className="blog-crumb blog-crumb-blog"
-              aria-current={currentPost ? undefined : 'page'}
-              aria-label={labels.blogHome}
-            >
-              {/* On a post, phones collapse this middle crumb to ".." so the
-                  post title still fits: Jamie's Website / .. / <title>.
-                  Both labels ship; CSS picks one. */}
-              <span className="blog-crumb-label">{labels.blogHome}</span>
-              <span className="blog-crumb-label-short" aria-hidden="true">..</span>
-            </Link>
-            {currentPost && (
-              <span className="blog-crumb-tail">
-                <span className="blog-crumb-sep" aria-hidden="true">/</span>
-                <span className="blog-crumb-current" aria-current="page">
-                  {currentPost.title}
-                </span>
-              </span>
-            )}
-          </nav>
+      <SubpageBar
+        home={labels.home}
+        section={{ label: labels.blogHome, href: '/blog', short: '..' }}
+        current={currentPost?.title}
+        width="read"
+      >
+        <button
+          type="button"
+          className="subbar-icon"
+          aria-label={labels.search}
+          title={labels.search}
+          onClick={() => setSearchOpen(true)}
+        >
+          <SearchIcon size={17} />
+        </button>
 
-          <div className="blog-nav-actions">
-            <button
-              type="button"
-              className="blog-nav-icon"
-              aria-label={labels.search}
-              title={labels.search}
-              onClick={() => setSearchOpen(true)}
-            >
-              <SearchIcon size={17} />
-            </button>
-
-            {/* Theme toggle hidden for now — blog is light-only. It still works;
-                restore it (and the import above) to bring the switch back:
-                <ThemeToggle label={labels.theme} /> */}
-          </div>
-        </div>
-      </header>
+        {/* Theme toggle hidden for now — the blog follows the system theme (like
+            /photos). It still works; restore it (and the import above) to bring
+            the switch back: <ThemeToggle label={labels.theme} /> */}
+      </SubpageBar>
 
       {searchOpen && (
         <div className="blog-search" role="dialog" aria-modal="true" aria-label={labels.search}>
@@ -152,7 +114,7 @@ export default function BlogNav({
               />
               <button
                 type="button"
-                className="blog-nav-icon"
+                className="subbar-icon"
                 aria-label="Close"
                 onClick={closeSearch}
               >
@@ -172,7 +134,7 @@ export default function BlogNav({
                     onClick={closeSearch}
                   >
                     <span className="blog-search-item-main">
-                      {p.category && <span className="blog-search-kicker">{p.category}</span>}
+                      {p.category && <span className="eyebrow blog-search-kicker">{p.category}</span>}
                       <span className="blog-search-item-title">{p.title}</span>
                       {p.summary && <span className="blog-search-item-sum">{p.summary}</span>}
                     </span>

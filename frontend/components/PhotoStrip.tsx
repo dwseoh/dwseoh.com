@@ -12,8 +12,8 @@ const EDGE_MASK =
 
 const GAP = 12 // px between tiles, applied as margin-right so the loop is seamless
 
-// Strip tiles use a small thumbnail (foo.jpg -> foo-thumb.jpg) for fast loading;
-// the lightbox loads the full-size original.
+// Strip tiles use the small thumbnail (the manifest's, else foo.jpg -> foo-thumb.jpg),
+// as WebP when there's a twin; the full-size file only loads on /photos.
 function thumbOf(src: string) {
   return src.replace(/(\.[^.\/]+)$/, '-thumb$1')
 }
@@ -22,17 +22,21 @@ function thumbOf(src: string) {
  * Body-width auto-scrolling photo strip with faded edges. Spacing is applied as
  * margin-right (not flex gap) so the duplicated set is exactly half the track —
  * that makes translateX(-50%) loop seamlessly with no stutter. Hovering pauses
- * the scroll, zooms the tile, and reveals its caption. Click opens a lightbox.
+ * the scroll, zooms the tile, and reveals its caption. Clicking a tile opens it
+ * in the shared Lightbox right here; `galleryLabel` adds a link from there to
+ * the photo on /photos.
  * Marquee + hover styles live in globals.css.
  */
 export default function PhotoStrip({
   photos,
   durationSec = 38,
+  galleryLabel,
 }: {
   photos: Photo[]
   durationSec?: number
+  galleryLabel?: string
 }) {
-  const [lightbox, setLightbox] = useState<Photo | null>(null)
+  const [open, setOpen] = useState<number | null>(null)
   const [loaded, setLoaded] = useState<Record<number, boolean>>({})
   const [errored, setErrored] = useState<Record<number, boolean>>({})
   const [fallback, setFallback] = useState<Record<number, boolean>>({})
@@ -54,7 +58,8 @@ export default function PhotoStrip({
           }}
         >
           <div
-            className={`photo-track${lightbox ? ' is-paused' : ''}`}
+            // Hold still while a photo is open, so closing lands where you left off.
+            className={`photo-track${open !== null ? ' is-paused' : ''}`}
             style={{
               display: 'flex',
               width: 'max-content',
@@ -74,11 +79,14 @@ export default function PhotoStrip({
                 objectPosition: photo.position ?? 'center',
                 display: 'block',
               }
+              // The second copy only exists for the seamless loop: hide it from
+              // assistive tech and the Tab order.
+              const clone = i >= photos.length
               return (
                 <figure
                   key={i}
                   className="photo-figure"
-                  onClick={() => !isError && setLightbox(photo)}
+                  aria-hidden={clone || undefined}
                   style={{
                     position: 'relative',
                     margin: 0,
@@ -130,20 +138,43 @@ export default function PhotoStrip({
                     />
                   ) : (
                     // Images use a lightweight thumbnail (falls back to full if missing).
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={fallback[i] ? photo.src : thumbOf(photo.src)}
-                      alt={photo.alt}
-                      decoding="async"
-                      ref={(el) => {
-                        if (el && el.complete && el.naturalWidth > 0) markLoaded(i)
+                    <picture>
+                      {photo.thumbWebp && !fallback[i] && <source type="image/webp" srcSet={photo.thumbWebp} />}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={fallback[i] ? photo.src : (photo.thumb ?? thumbOf(photo.src))}
+                        alt={photo.alt}
+                        loading="lazy"
+                        decoding="async"
+                        ref={(el) => {
+                          if (el && el.complete && el.naturalWidth > 0) markLoaded(i)
+                        }}
+                        onLoad={() => markLoaded(i)}
+                        onError={() => {
+                          if (!fallback[i]) setFallback((s) => ({ ...s, [i]: true }))
+                          else markError(i)
+                        }}
+                        style={mediaStyle}
+                      />
+                    </picture>
+                  )}
+
+                  {/* whole-tile button: opens the photo in the lightbox */}
+                  {!isError && (
+                    <button
+                      type="button"
+                      aria-label={photo.caption || photo.alt}
+                      tabIndex={clone ? -1 : undefined}
+                      onClick={() => setOpen(i % photos.length)}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        zIndex: 4,
+                        padding: 0,
+                        border: 0,
+                        background: 'none',
+                        cursor: 'zoom-in',
                       }}
-                      onLoad={() => markLoaded(i)}
-                      onError={() => {
-                        if (!fallback[i]) setFallback((s) => ({ ...s, [i]: true }))
-                        else markError(i)
-                      }}
-                      style={mediaStyle}
                     />
                   )}
 
@@ -198,8 +229,13 @@ export default function PhotoStrip({
           </div>
         </div>
       </div>
-
-      <Lightbox photo={lightbox} onClose={() => setLightbox(null)} />
+      <Lightbox
+        items={photos}
+        index={open}
+        onIndexChange={setOpen}
+        onClose={() => setOpen(null)}
+        galleryLabel={galleryLabel}
+      />
     </>
   )
 }
