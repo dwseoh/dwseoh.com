@@ -1,7 +1,7 @@
 'use client'
 
-import Link from 'next/link'
 import { useState } from 'react'
+import Lightbox from './Lightbox'
 import { isVideo, type Photo } from './photo'
 
 export type { Photo } from './photo'
@@ -22,17 +22,21 @@ function thumbOf(src: string) {
  * Body-width auto-scrolling photo strip with faded edges. Spacing is applied as
  * margin-right (not flex gap) so the duplicated set is exactly half the track —
  * that makes translateX(-50%) loop seamlessly with no stutter. Hovering pauses
- * the scroll, zooms the tile, and reveals its caption. Clicking a tile with an
- * `href` goes to that photo on /photos (open in the lightbox, on its tab).
+ * the scroll, zooms the tile, and reveals its caption. Clicking a tile opens it
+ * in the shared Lightbox right here; `galleryLabel` adds a link from there to
+ * the photo on /photos.
  * Marquee + hover styles live in globals.css.
  */
 export default function PhotoStrip({
   photos,
   durationSec = 38,
+  galleryLabel,
 }: {
   photos: Photo[]
   durationSec?: number
+  galleryLabel?: string
 }) {
+  const [open, setOpen] = useState<number | null>(null)
   const [loaded, setLoaded] = useState<Record<number, boolean>>({})
   const [errored, setErrored] = useState<Record<number, boolean>>({})
   const [fallback, setFallback] = useState<Record<number, boolean>>({})
@@ -54,7 +58,8 @@ export default function PhotoStrip({
           }}
         >
           <div
-            className="photo-track"
+            // Hold still while a photo is open, so closing lands where you left off.
+            className={`photo-track${open !== null ? ' is-paused' : ''}`}
             style={{
               display: 'flex',
               width: 'max-content',
@@ -91,7 +96,7 @@ export default function PhotoStrip({
                     height: '112px',
                     borderRadius: '10px',
                     overflow: 'hidden',
-                    cursor: isError || !photo.href ? 'default' : 'pointer',
+                    cursor: isError ? 'default' : 'zoom-in',
                     background: 'var(--n-hover)',
                     boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
                   }}
@@ -154,13 +159,22 @@ export default function PhotoStrip({
                     </picture>
                   )}
 
-                  {/* whole-tile link to the photo on /photos */}
-                  {photo.href && !isError && (
-                    <Link
-                      href={photo.href}
+                  {/* whole-tile button: opens the photo in the lightbox */}
+                  {!isError && (
+                    <button
+                      type="button"
                       aria-label={photo.caption || photo.alt}
                       tabIndex={clone ? -1 : undefined}
-                      style={{ position: 'absolute', inset: 0, zIndex: 4 }}
+                      onClick={() => setOpen(i % photos.length)}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        zIndex: 4,
+                        padding: 0,
+                        border: 0,
+                        background: 'none',
+                        cursor: 'zoom-in',
+                      }}
                     />
                   )}
 
@@ -215,6 +229,13 @@ export default function PhotoStrip({
           </div>
         </div>
       </div>
+      <Lightbox
+        items={photos}
+        index={open}
+        onIndexChange={setOpen}
+        onClose={() => setOpen(null)}
+        galleryLabel={galleryLabel}
+      />
     </>
   )
 }

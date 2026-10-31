@@ -117,7 +117,7 @@ export default async function HomePage() {
           })}
         </p>
 
-        <PhotoStrip photos={photos} />
+        <PhotoStrip photos={photos} galleryLabel={t('photosOpen')} />
         {/* /photos is English-only and outside [locale], so a plain Link (not
             next-intl's) keeps it unprefixed from /ko too. */}
         <p style={{ textAlign: 'right', margin: '-1.75rem 0 0' }}>

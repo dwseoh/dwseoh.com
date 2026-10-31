@@ -62,6 +62,7 @@ export function carouselPhotos(locale: Locale): Photo[] {
     .map((p) => ({
       id: p.id,
       src: p.src,
+      srcWebp: p.srcWebp,
       alt: p.alt[locale] ?? p.alt.en,
       caption: p.caption[locale] ?? p.caption.en,
       type: p.type,

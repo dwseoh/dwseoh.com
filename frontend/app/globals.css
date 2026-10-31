@@ -371,24 +371,26 @@ body {
 .lb-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .lb-thumb:hover { opacity: 0.7; }
 .lb-thumb.is-on { opacity: 1; transform: translateY(-4px); }
-.lb-close, .lb-nav {
+.lb-close, .lb-nav, .lb-gallery {
   all: unset;
   position: absolute;
   cursor: pointer;
   opacity: 0.7;
   transition: opacity 0.2s ease;
 }
-.lb-close:hover, .lb-nav:hover { opacity: 1; }
+.lb-close:hover, .lb-nav:hover, .lb-gallery:hover { opacity: 1; }
 .lb-close { top: 24px; right: 32px; padding: 4px 0; }
+.lb-gallery { top: 24px; left: 32px; padding: 4px 0; }
 .lb-nav { top: 50%; transform: translateY(-50%); font-size: 22px; padding: 20px; line-height: 1; }
 .lb-prev { left: 12px; }
 .lb-next { right: 12px; }
-.lb button:focus-visible { outline: 1px solid rgba(255, 255, 255, 0.8); outline-offset: 3px; border-radius: 4px; opacity: 1; }
+.lb button:focus-visible, .lb a:focus-visible { outline: 1px solid rgba(255, 255, 255, 0.8); outline-offset: 3px; border-radius: 4px; opacity: 1; }
 @media (max-width: 640px) {
   .lb-stage { padding: 10vh 16px 22vh; }
   .lb-meta { left: 16px; right: 16px; bottom: 80px; }
   .lb-strip { padding-left: 16px; padding-right: 16px; }
   .lb-close { right: 16px; top: 16px; }
+  .lb-gallery { left: 16px; top: 16px; }
   .lb-hint, .lb-nav { display: none; }
 }
 @media (hover: none) {

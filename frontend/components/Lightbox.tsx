@@ -21,7 +21,7 @@ const CLOSE_MS = 180
 const SCROLL_KEYS = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '])
 
 /**
- * Full-screen photo viewer (used by /photos). The current photo sits on a
+ * Full-screen photo viewer (home carousel + /photos). The current photo sits on a
  * blurred, darkened copy of itself, with caption/counter and a filmstrip below.
  * Esc / close button / backdrop click close it; ←/→, the on-screen arrows, the
  * filmstrip and swipes navigate. While open the page behind can't scroll, focus
@@ -30,22 +30,31 @@ const SCROLL_KEYS = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home
  *
  * Controlled and history-agnostic: render it with an index to open; `onClose`
  * fires after the fade-out, and the parent decides what that means for the URL
- * (PhotoGallery keeps the open photo in `?p=`, so Back closes it).
+ * (PhotoGallery keeps the open photo in `?p=`, so Back closes it). With
+ * `galleryLabel`, items that have an `href` get a link to that photo on /photos.
  */
 export default function Lightbox({
   items,
   index,
   onIndexChange,
   onClose,
+  galleryLabel,
 }: {
   items: LightboxItem[]
   index: number | null
   onIndexChange: (i: number) => void
   onClose: () => void
+  galleryLabel?: string
 }) {
   if (index === null || !items[index]) return null
   return createPortal(
-    <LightboxView items={items} index={index} onIndexChange={onIndexChange} onClose={onClose} />,
+    <LightboxView
+      items={items}
+      index={index}
+      onIndexChange={onIndexChange}
+      onClose={onClose}
+      galleryLabel={galleryLabel}
+    />,
     document.body
   )
 }
@@ -55,14 +64,15 @@ function LightboxView({
   index,
   onIndexChange,
   onClose,
+  galleryLabel,
 }: {
   items: LightboxItem[]
   index: number
   onIndexChange: (i: number) => void
   onClose: () => void
+  galleryLabel?: string
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
-  const closeRef = useRef<HTMLButtonElement>(null)
   const stripRef = useRef<HTMLDivElement>(null)
   const touch = useRef<{ x: number; y: number } | null>(null)
   const [closing, setClosing] = useState(false)
@@ -99,7 +109,9 @@ function LightboxView({
     const gutter = window.innerWidth - html.clientWidth
     html.style.overflow = 'hidden'
     if (gutter > 0) document.body.style.paddingRight = `${gutter}px`
-    closeRef.current?.focus({ preventScroll: true })
+    // Focus the dialog itself, not the close button: the first arrow key would
+    // otherwise put a keyboard focus ring on "Close".
+    rootRef.current?.focus({ preventScroll: true })
     return () => {
       html.style.overflow = prev.overflow
       document.body.style.paddingRight = prev.paddingRight
@@ -140,7 +152,7 @@ function LightboxView({
       e.preventDefault()
     } else if (e.key === 'Tab') {
       // Focus trap: wrap between the first and last focusable controls.
-      const nodes = rootRef.current?.querySelectorAll<HTMLElement>('button')
+      const nodes = rootRef.current?.querySelectorAll<HTMLElement>('button, a[href]')
       if (!nodes?.length) return
       const first = nodes[0]
       const last = nodes[nodes.length - 1]
@@ -267,7 +279,12 @@ function LightboxView({
         </div>
       )}
 
-      <button ref={closeRef} type="button" className="lb-close" onClick={finish}>
+      {galleryLabel && photo.href && (
+        <a className="lb-gallery" href={photo.href}>
+          {galleryLabel} →
+        </a>
+      )}
+      <button type="button" className="lb-close" onClick={finish}>
         Close<span className="lb-hint"> (Esc)</span>
       </button>
       {count > 1 && (

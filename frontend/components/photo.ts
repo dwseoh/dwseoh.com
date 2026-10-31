@@ -15,7 +15,10 @@ export interface Photo {
   thumb?: string
   /** WebP twin of `thumb`, served via <picture> when present. */
   thumbWebp?: string
-  /** Where clicking the tile goes, e.g. "/photos?c=events&p=delta-hacks". */
+  /** WebP twin of `src`, used by the lightbox when present. */
+  srcWebp?: string
+  /** This photo on /photos, e.g. "/photos?c=events&p=delta-hacks"; the
+   *  lightbox links to it. */
   href?: string
 }
 

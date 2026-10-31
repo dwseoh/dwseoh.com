@@ -26,8 +26,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* The sub-pages (/blog, /photos) follow the system theme via CSS
             (globals.css); the portfolio stays light. A theme saved by the blog's
             ThemeToggle (currently hidden) is applied before first paint and
-            overrides the system there. */}
+            overrides the system there. Ad-blocker extensions inject their own
+            <script> into <head> before hydration, which React then mistakes
+            for this one; suppress that harmless mismatch. */}
         <script
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('blog-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
           }}
