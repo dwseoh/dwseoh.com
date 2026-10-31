@@ -32,7 +32,7 @@ export default async function PhotosPage({
             eyebrow="Photographs by Jamie Seoh"
             title="Photos"
             count={photos.length}
-            intro="Things I've photographed, plus hackathons, concerts, talks and races."
+            intro="(Mostly) things I've photographed over the years!"
           />
         </PhotoGallery>
       </main>
