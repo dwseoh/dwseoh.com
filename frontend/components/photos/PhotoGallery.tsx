@@ -1,37 +1,17 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
-import { flushSync } from 'react-dom'
 import Lightbox from '@/components/Lightbox'
+import Tabs from '@/components/subpage/Tabs'
+import { isModifiedClick, readSearch, setSearch, subscribeUrl, withTransition } from '@/components/subpage/url'
 import type { PhotoEntry } from '@/lib/photos'
 import PhotoTile from './PhotoTile'
-import { FILTERS, parseFilter, pad, toLightboxItem, type Filter } from './format'
+import { FILTERS, parseFilter, toLightboxItem, type Filter } from './format'
 
 type Density = 3 | 5
 
-// ---- URL-backed state: ?c=<tab>&p=<open photo id> --------------------------
-// The URL is the source of truth, so links are shareable (the home carousel
-// links straight to a photo) and Back/Forward walk through tab changes and
-// close the lightbox. pushState doesn't fire an event, so we send our own.
-const URL_EVENT = 'photos:url'
 /** Marks history entries we pushed to open a photo, so closing can pop them. */
 const OPENED = '__photosOpened'
-function subscribeUrl(cb: () => void) {
-  window.addEventListener('popstate', cb)
-  window.addEventListener(URL_EVENT, cb)
-  return () => {
-    window.removeEventListener('popstate', cb)
-    window.removeEventListener(URL_EVENT, cb)
-  }
-}
-const readSearch = () => window.location.search
-function setSearch(params: URLSearchParams, mode: 'push' | 'replace', state: object | null = null) {
-  const qs = params.toString()
-  const url = qs ? `?${qs}` : window.location.pathname
-  if (mode === 'push') window.history.pushState(state, '', url)
-  else window.history.replaceState({ ...window.history.state, ...state }, '', url)
-  window.dispatchEvent(new Event(URL_EVENT))
-}
 
 // ---- Density (3 or 5 columns), remembered per browser -----------------------
 const DENSITY_KEY = 'photos-density'
@@ -58,13 +38,6 @@ function writeDensity(d: Density) {
     // private mode / blocked storage: the choice just won't persist
   }
   window.dispatchEvent(new Event(DENSITY_EVENT))
-}
-
-/** Cross-fade a synchronous state change when the View Transitions API exists. */
-function withTransition(update: () => void) {
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  if (!document.startViewTransition || reduced) return update()
-  document.startViewTransition(() => flushSync(update))
 }
 
 /**
@@ -115,7 +88,7 @@ export default function PhotoGallery({
 
   const selectFilter = (e: React.MouseEvent, key: Filter) => {
     // Let modified clicks open a new tab like any link would.
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+    if (isModifiedClick(e)) return
     e.preventDefault()
     if (key === filter) return
     withTransition(() => setSearch(new URLSearchParams(key === 'all' ? '' : { c: key }), 'push'))
@@ -153,23 +126,20 @@ export default function PhotoGallery({
 
   return (
     <div className="ph-gallery" data-cols={density} data-ready={ready ? '' : undefined}>
-      <header className="ph-head">
+      <header className="page-head ph-head">
         {children}
         <div className="ph-controls">
-          <nav className="ph-tabs" aria-label="Filter photos">
-            {tabs.map((t) => (
-              <a
-                key={t.key}
-                href={t.key === 'all' ? '/photos' : `/photos?c=${t.key}`}
-                className={t.key === filter ? 'is-on' : undefined}
-                aria-current={t.key === filter ? 'page' : undefined}
-                onClick={(e) => selectFilter(e, t.key)}
-              >
-                {t.label}
-                <sup>{pad(counts[t.key])}</sup>
-              </a>
-            ))}
-          </nav>
+          <Tabs
+            label="Filter photos"
+            active={filter}
+            onSelect={selectFilter}
+            items={tabs.map((t) => ({
+              key: t.key,
+              label: t.label,
+              count: counts[t.key],
+              href: t.key === 'all' ? '/photos' : `/photos?c=${t.key}`,
+            }))}
+          />
           <div className="ph-density" role="group" aria-label="Grid size">
             <button type="button" aria-label="Large tiles" aria-pressed={density === 3} onClick={() => selectDensity(3)}>
               <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden>

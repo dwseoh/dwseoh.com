@@ -1,12 +1,12 @@
-import Link from 'next/link'
 import PhotoGallery from '@/components/photos/PhotoGallery'
-import { pad } from '@/components/photos/format'
+import PageHeading from '@/components/subpage/PageHeading'
+import SubpageBar from '@/components/subpage/SubpageBar'
 import { photos } from '@/lib/photos'
 
 /**
  * Server shell: reads `?c=` (tab) and `?p=` (open photo) so the first paint
- * already shows the requested tab, then hands the manifest to the client gallery. The title is passed in as
- * children so it stays server-rendered.
+ * already shows the requested tab, then hands the manifest to the client gallery. The heading is passed in
+ * as children so it stays server-rendered.
  */
 export default async function PhotosPage({
   searchParams,
@@ -20,19 +20,22 @@ export default async function PhotosPage({
   const search = query.size ? `?${query}` : ''
 
   return (
-    <main className="ph-wrap">
-      {/* Without JS the rise-in never starts; just show the tiles. */}
-      <noscript>
-        <style>{'.ph-tile{opacity:1;transform:none;animation:none}.ph-tile img{opacity:1}'}</style>
-      </noscript>
-      <Link href="/" className="ph-back">
-        ← dwseoh.com
-      </Link>
-      <PhotoGallery photos={photos} initialSearch={search}>
-        <h1 className="ph-title">
-          Photos<sup>{pad(photos.length)}</sup>
-        </h1>
-      </PhotoGallery>
-    </main>
+    <>
+      <SubpageBar section={{ label: 'Photos', href: '/photos' }} />
+      <main className="ph-wrap">
+        {/* Without JS the rise-in never starts; just show the tiles. */}
+        <noscript>
+          <style>{'.ph-tile{opacity:1;transform:none;animation:none}.ph-tile img{opacity:1}'}</style>
+        </noscript>
+        <PhotoGallery photos={photos} initialSearch={search}>
+          <PageHeading
+            eyebrow="Photographs by Jamie Seoh"
+            title="Photos"
+            count={photos.length}
+            intro="Things I've photographed, plus hackathons, concerts, talks and races."
+          />
+        </PhotoGallery>
+      </main>
+    </>
   )
 }

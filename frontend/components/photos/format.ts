@@ -21,7 +21,7 @@ export function parseFilter(value: string | string[] | null | undefined): Filter
   return v === 'photography' || v === 'events' ? v : 'all'
 }
 
-export const pad = (n: number) => String(n).padStart(2, '0')
+export { pad } from '@/components/subpage/PageHeading'
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 

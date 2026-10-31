@@ -1,11 +1,11 @@
 /* ============================================================
-   /photos — a quiet, typography-first gallery. Colours come from the
-   site's --n-* tokens (globals.css), which also carry the dark palette
-   for this page. Lightbox styles are shared and live in globals.css.
+   /photos — a quiet, typography-first gallery. Colours, display type,
+   tile corners, motion and the shimmer come from the shared tokens in
+   globals.css (which also carry the sub-page dark palette); the top bar,
+   heading and tabs are shared components. Only the grid lives here.
    ============================================================ */
 
 .photos-root {
-  --ph-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   min-height: 100dvh;
   background: var(--n-bg);
   color: var(--n-text);
@@ -13,77 +13,13 @@
 }
 
 .ph-wrap {
-  max-width: 1080px;
+  max-width: var(--page-width);
   margin: 0 auto;
-  padding: 56px 24px 120px;
+  padding: var(--page-top) var(--page-gutter) 120px;
 }
 
-.ph-back {
-  display: inline-block;
-  margin-bottom: 40px;
-  font-size: 13px;
-  color: var(--n-light);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-.ph-back:hover { color: var(--n-text); }
-
-/* ---- header: big light title on the left, controls on the right ---- */
-.ph-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  flex-wrap: wrap;
-  gap: 20px 24px;
-  margin-bottom: 28px;
-}
-.ph-title {
-  margin: 0;
-  font-weight: 300;
-  font-size: clamp(44px, 8vw, 88px);
-  letter-spacing: -0.045em;
-  line-height: 0.9;
-}
-.ph-title sup,
-.ph-tabs sup {
-  font-weight: 400;
-  letter-spacing: 0;
-  font-variant-numeric: tabular-nums;
-}
-.ph-title sup {
-  position: relative;
-  top: 0.5em;
-  margin-left: 0.2em;
-  font-size: 0.22em;
-  vertical-align: top;
-  color: var(--n-light);
-}
-
+/* ---- header: shared .page-head (heading left, controls right) ---- */
 .ph-controls { display: flex; align-items: center; gap: 28px; }
-.ph-tabs { display: flex; gap: 20px; }
-.ph-tabs a {
-  position: relative;
-  font-size: 14px;
-  color: var(--n-light);
-  text-decoration: none;
-  transition: color 0.25s ease;
-}
-.ph-tabs sup { margin-left: 2px; font-size: 9.5px; }
-.ph-tabs a:hover,
-.ph-tabs a.is-on { color: var(--n-text); }
-.ph-tabs a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.35s var(--ph-ease);
-}
-.ph-tabs a.is-on::after { transform: scaleX(1); }
 
 .ph-density { display: flex; gap: 4px; }
 .ph-density button {
@@ -92,7 +28,7 @@
   place-items: center;
   width: 26px;
   height: 26px;
-  border-radius: 6px;
+  border-radius: var(--control-radius);
   color: var(--n-light);
   cursor: pointer;
   transition: color 0.2s ease, background 0.2s ease;
@@ -106,7 +42,7 @@
   outline-offset: 2px;
   border-radius: 4px;
 }
-.photos-root .ph-tile:focus-visible { outline-offset: -2px; border-radius: 0; }
+.photos-root .ph-tile:focus-visible { outline-offset: -2px; border-radius: var(--tile-radius); }
 
 /* ---- grid ---- */
 .ph-grid {
@@ -122,13 +58,14 @@
   display: block;
   aspect-ratio: 1;
   overflow: hidden;
+  border-radius: var(--tile-radius);
   cursor: zoom-in;
   background-color: var(--n-tile);
   isolation: isolate;
   /* staggered rise-in */
   opacity: 0;
   transform: translateY(14px) scale(0.985);
-  animation: phRise 0.8s var(--ph-ease) forwards;
+  animation: phRise 0.8s var(--ease) forwards;
   animation-delay: calc(var(--i, 0) * 45ms);
 }
 @keyframes phRise { to { opacity: 1; transform: none; } }
@@ -142,29 +79,14 @@
 .ph-tile > * { position: absolute; inset: 0; }
 .ph-tile picture { display: contents; }
 
-/* Loading: the manifest's 16px blur, softened, under a faint sheen. Both fade
-   away once the thumbnail is decoded and has faded in on top. */
+/* Loading: the manifest's 16px blur, softened, under the shared shimmer
+   (.tile-shimmer, globals.css). Both fade away once the thumbnail is decoded
+   and has faded in on top. */
 .ph-blur {
   background-size: cover;
   filter: blur(14px) saturate(1.1);
   transform: scale(1.15);
 }
-.ph-shimmer {
-  background: linear-gradient(
-    100deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.14) 50%,
-    transparent 70%
-  );
-  background-size: 250% 100%;
-  animation: phShimmer 1.5s ease-in-out infinite;
-  transition: opacity 0.4s ease;
-}
-@keyframes phShimmer {
-  from { background-position: 150% 0; }
-  to   { background-position: -100% 0; }
-}
-.ph-tile.is-loaded .ph-shimmer { opacity: 0; animation: none; }
 
 .ph-tile img {
   position: absolute;
@@ -174,7 +96,7 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.6s ease, transform 0.9s var(--ph-ease);
+  transition: opacity var(--tile-fade), transform var(--zoom-duration) var(--ease);
 }
 .ph-tile.is-loaded img { opacity: 1; }
 
@@ -202,7 +124,7 @@
   );
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 0.35s ease, transform 0.5s var(--ph-ease);
+  transition: opacity 0.35s ease, transform 0.5s var(--ease);
   pointer-events: none;
 }
 .ph-cap b,
@@ -217,10 +139,10 @@
 .ph-gallery[data-cols='5'] .ph-cap span { font-size: 10px; }
 
 @media (hover: hover) {
-  .ph-tile:hover img { transform: scale(1.035); }
+  .ph-tile:hover img { transform: scale(var(--zoom)); }
   .ph-tile:hover .ph-cap { opacity: 1; transform: none; }
 }
-.ph-tile:focus-visible img { transform: scale(1.035); }
+.ph-tile:focus-visible img { transform: scale(var(--zoom)); }
 .ph-tile:focus-visible .ph-cap { opacity: 1; transform: none; }
 
 .ph-play {
@@ -235,19 +157,14 @@
   backdrop-filter: blur(2px);
 }
 
-/* ---- view transitions: a soft cross-fade for tab / density changes ---- */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.35s;
-  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
 /* ---- phones ---- */
 @media (max-width: 640px) {
-  .ph-wrap { padding: 32px 16px 80px; }
-  .ph-back { margin-bottom: 24px; }
-  .ph-head { margin-bottom: 20px; }
+  .ph-wrap { padding-bottom: 80px; }
   .ph-density { display: none; }
+  /* the tabs drop under the title here, so give them a full-width hairline
+     (the active underline sits on it) to close off the header before the grid */
+  .ph-head { margin-bottom: 24px; }
+  .ph-controls { width: 100%; padding-bottom: 5px; border-bottom: 1px solid var(--n-border); }
   .ph-grid,
   .ph-gallery[data-cols='5'] .ph-grid { grid-template-columns: repeat(3, 1fr); gap: 3px; }
   .ph-tile { cursor: pointer; }
@@ -256,6 +173,4 @@
 @media (prefers-reduced-motion: reduce) {
   .ph-tile { animation: none; opacity: 1; transform: none; }
   .ph-tile img, .ph-cap { transition: none; }
-  .ph-shimmer { animation: none; }
-  .ph-tabs a::after { transition: none; }
 }

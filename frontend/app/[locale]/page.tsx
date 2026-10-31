@@ -31,16 +31,12 @@ const favicon = (url: string) => {
   }
 }
 
+// Section labels use the shared eyebrow style (globals.css `.eyebrow`).
 const headingStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
-  fontWeight: 600,
-  textTransform: 'uppercase',
-  letterSpacing: '0.06em',
-  color: 'var(--n-secondary)',
   margin: '2.5rem 0 0.875rem',
 }
 
-const sectionHeading = (text: string) => <h2 style={headingStyle}>{text}</h2>
+const sectionHeading = (text: string) => <h2 className="eyebrow" style={headingStyle}>{text}</h2>
 
 function OpenInNewIcon() {
   return (
@@ -124,8 +120,8 @@ export default async function HomePage() {
         <PhotoStrip photos={photos} />
         {/* /photos is English-only and outside [locale], so a plain Link (not
             next-intl's) keeps it unprefixed from /ko too. */}
-        <p style={{ textAlign: 'right', margin: '-1.75rem 0 0', fontSize: '0.8125rem' }}>
-          <Link href="/photos?c=events" className="photos-more">
+        <p style={{ textAlign: 'right', margin: '-1.75rem 0 0' }}>
+          <Link href="/photos?c=events" className="eyebrow photos-more">
             {t('photosMore')} →
           </Link>
         </p>
@@ -141,7 +137,7 @@ export default async function HomePage() {
 
         {Array.isArray(projects) && projects.length > 0 && (
           <>
-            <h2 style={{ ...headingStyle, display: 'flex', alignItems: 'center', gap: '7px' }}>
+            <h2 className="eyebrow" style={{ ...headingStyle, display: 'flex', alignItems: 'center', gap: '7px' }}>
               <span className="inprogress" data-tip="coming soon" aria-label="Projects page — coming soon" role="img">
                 <OpenInNewIcon />
               </span>

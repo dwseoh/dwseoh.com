@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import PostList from '@/components/blog/PostList'
+import PageHeading from '@/components/subpage/PageHeading'
 import { getAllPosts } from '@/lib/blog'
 import { copy } from './copy'
 
@@ -23,15 +24,12 @@ export default async function BlogIndex() {
 
   return (
     <main className="blog-main">
-      <header className="blog-header">
-        <h1 className="blog-title">{copy.title}</h1>
-        <p className="blog-intro">{copy.intro}</p>
-      </header>
-
       <PostList
         posts={posts}
         labels={{ minRead: copy.minRead, minReadShort: copy.minReadShort, empty: copy.empty }}
-      />
+      >
+        <PageHeading eyebrow={copy.eyebrow} title={copy.title} count={posts.length} intro={copy.intro} />
+      </PostList>
 
       <footer className="blog-footer">
         <a

@@ -10,7 +10,8 @@
  * frontmatter field, which drives the article's font + `lang` attribute.
  */
 export const copy = {
-  title: "Jamie's Blog",
+  title: 'Blog',
+  eyebrow: 'Words by Jamie Seoh',
   intro: 'Hear me yap -- it might come in handy someday!',
   seo: {
     title: 'Jamie\'s Blog',

@@ -19,20 +19,17 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale()
   return (
-    // The pre-paint script below sets data-theme on <html> before React
+    // The pre-paint script below may set data-theme on <html> before React
     // hydrates, so suppress the expected attribute mismatch on this element.
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {/* Blog is light-only for now: force the light palette before first paint.
-            The ThemeToggle component still works — to bring dark mode back, restore
-            the detection script below and un-hide the toggle in BlogNav.
-            Detection version:
-              var t=localStorage.getItem('blog-theme');
-              if(t!=='light'&&t!=='dark'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
-              document.documentElement.setAttribute('data-theme',t); */}
+        {/* The sub-pages (/blog, /photos) follow the system theme via CSS
+            (globals.css); the portfolio stays light. A theme saved by the blog's
+            ThemeToggle (currently hidden) is applied before first paint and
+            overrides the system there. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{document.documentElement.setAttribute('data-theme','light');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('blog-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
           }}
         />
       </head>

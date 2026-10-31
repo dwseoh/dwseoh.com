@@ -47,7 +47,7 @@ export default function PhotoTile({
         aria-hidden
         style={{ backgroundImage: photo.blur ? `url("${photo.blur}")` : undefined, backgroundPosition: position }}
       />
-      <span className="ph-shimmer" aria-hidden />
+      <span className="tile-shimmer" aria-hidden />
 
       <picture>
         {webp && <source type="image/webp" srcSet={webp} />}
