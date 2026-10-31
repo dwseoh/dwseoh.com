@@ -35,8 +35,9 @@ English-only.
 
 ## Photos
 
-`frontend/content/photos.json` lists every photo and video. It feeds both the
-home carousel and `/photos` (categories `photography` and `events`). Don't edit
+`frontend/content/photos.json` lists every photo and video, in display order. It
+feeds `/photos` (categories `photography`, `events` and `hobbies`) and the home
+carousel, which shows every `events` entry. Don't edit
 it by hand; use the CLI from `frontend/` (note the `--`):
 
 ```bash
@@ -50,7 +51,7 @@ npm run photos -- optimize --blog      # same for images used by blog posts
 npm run photos -- check                # validate the manifest (run before committing)
 ```
 
-Useful `add` flags: `--no-carousel` (only on `/photos`), `--first`, `--id`,
+Useful `add` flags: `--last` (new photos go first by default), `--id`,
 `--position "50% 25%"` (crop focus). HEIC needs macOS `sips`; video needs
 `ffmpeg`. Originals are never touched, and anything `optimize` rewrites is
 backed up to the gitignored `frontend/.photos-backup/`. Full reference:

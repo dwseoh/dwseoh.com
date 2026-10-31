@@ -1,6 +1,656 @@
 {
   "photos": [
     {
+      "id": "htn-volunteer-leads",
+      "type": "image",
+      "src": "/images/photos/htn-volunteer-leads.jpg",
+      "thumb": "/images/photos/htn-volunteer-leads-thumb.jpg",
+      "srcWebp": "/images/photos/htn-volunteer-leads.webp",
+      "thumbWebp": "/images/photos/htn-volunteer-leads-thumb.webp",
+      "width": 1333,
+      "height": 2000,
+      "blur": "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAAAwBACdASoQABgAPu1iqU2ppaOiMAgBMB2JZQC06YwcyTCWyQVKgQiY5gAA/rYwzsw1yIgD/j+Rm6SaEjDUpu0kHKaEkr9OqWv1c+QbIRgKUvAlQ7T27zDQ7G3UeT14RSUSXJYb+ixH1hEw6U8Q3LRuMhdwfwzDVS7C2jBAUzKy8M7MVxlUy65854AAAA==",
+      "category": "photography",
+      "date": "2026-09",
+      "caption": {
+        "en": "Hack the North Volunteer Leads"
+      },
+      "alt": {
+        "en": "Hack the North Volunteer Leads"
+      }
+    },
+    {
+      "id": "htn-logistics-team",
+      "type": "image",
+      "src": "/images/photos/htn-logistics-team.jpg",
+      "thumb": "/images/photos/htn-logistics-team-thumb.jpg",
+      "srcWebp": "/images/photos/htn-logistics-team.webp",
+      "thumbWebp": "/images/photos/htn-logistics-team-thumb.webp",
+      "width": 1333,
+      "height": 2000,
+      "blur": "data:image/webp;base64,UklGRqwAAABXRUJQVlA4IKAAAABQBACdASoQABgAPu1iqU2ppaOiMAgBMB2JZQAD5dIaWOdzEBDLKojK0z2AAP7gcX0GdFrhxPI1G7VbRnjkG2/T29GFJK0ff9WfqNspmMCICYZ8qf+igRr72r5yVaDt5EqMrAEJNWAFsPY4TuI+msNaZ3XGw+AmgToOkwfysv2F4qgV8HbmgYi/GvB/hmBnMnDIpb5qI/30BYub9WAGNAAA",
+      "category": "photography",
+      "date": "2026-09",
+      "caption": {
+        "en": "Hack the North Logistics Team"
+      },
+      "alt": {
+        "en": "Hack the North Logistics Team"
+      }
+    },
+    {
+      "id": "half-marathon-again",
+      "type": "image",
+      "src": "/images/photos/half-marathon-again.jpg",
+      "thumb": "/images/photos/half-marathon-again-thumb.jpg",
+      "srcWebp": "/images/photos/half-marathon-again.webp",
+      "thumbWebp": "/images/photos/half-marathon-again-thumb.webp",
+      "width": 2000,
+      "height": 1500,
+      "blur": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAADwAQCdASoQAAwAA4BaJZwAAqBqzSG9nGAA/un8B+kyggMAdpHmeY/lTGFjEUgaQmOt/dJq5O4CnGB8Z+iClpcKW5R0b2xsTjh5QGUF0uGgrUgjbbN1EYDQ4oRHqWmsxgA=",
+      "category": "events",
+      "date": "2026-10",
+      "caption": {
+        "en": "Half Marathon, Again",
+        "ko": "또 한 번의 하프 마라톤"
+      },
+      "alt": {
+        "en": "Half Marathon, Again",
+        "ko": "또 한 번의 하프 마라톤"
+      }
+    },
+    {
+      "id": "htn-team",
+      "type": "image",
+      "src": "/images/photos/htn-team.jpg",
+      "thumb": "/images/photos/htn-team-thumb.jpg",
+      "srcWebp": "/images/photos/htn-team.webp",
+      "thumbWebp": "/images/photos/htn-team-thumb.webp",
+      "width": 1333,
+      "height": 2000,
+      "blur": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAAAwBACdASoQABgAPu1iqU2ppaOiMAgBMB2JZQDCgB61U3gWlZYDxmljUwAA/o08nlui7R6C7p8fbFcaxWiYXB+JNgJvGQ6M1NUgsq4fts2e8LVVWCg2FMardAGzndmuRWgzH7ywj2TWrtdGDS95yxeeEcJGONvNRJ2xgAAA",
+      "category": "events",
+      "date": "2026-09",
+      "caption": {
+        "en": "Hack the North Team",
+        "ko": "핵 더 노스 팀"
+      },
+      "alt": {
+        "en": "Hack the North Team",
+        "ko": "핵 더 노스 팀"
+      }
+    },
+    {
+      "id": "climb",
+      "type": "image",
+      "src": "/images/photos/climb.jpg",
+      "thumb": "/images/photos/climb-thumb.jpg",
+      "srcWebp": "/images/photos/climb.webp",
+      "thumbWebp": "/images/photos/climb-thumb.webp",
+      "width": 1617,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADwAQCdASoQAAsAA4BaJQBOgBrSMB2jAAAA/thYbG6c8cFXbTHX6UAtYh8ibZ6ApeuxyARKN7QTtmLWpVjAuTLRr0Ch5zV5+xyFb3FyA/9FUAAA",
+      "category": "photography",
+      "date": "2026-08",
+      "caption": {
+        "en": "Climb"
+      },
+      "alt": {
+        "en": "Climb"
+      }
+    },
+    {
+      "id": "spacing-out",
+      "type": "image",
+      "src": "/images/photos/spacing-out.jpg",
+      "thumb": "/images/photos/spacing-out-thumb.jpg",
+      "srcWebp": "/images/photos/spacing-out.webp",
+      "thumbWebp": "/images/photos/spacing-out-thumb.webp",
+      "width": 1620,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAAAwAgCdASoQAAsAA4BaJbACdAD0uyzNYjHoAAD+2oRk4+7FMK3zyg6/LcGAQNoc5+k/3YEg8iyB4uDjJgnCZN+06DhNgEuDuY3RHj+9NrqHjBOKRDsz1vIhPIAAAA==",
+      "category": "photography",
+      "date": "2026-08",
+      "caption": {
+        "en": "Spacing Out"
+      },
+      "alt": {
+        "en": "Spacing Out"
+      }
+    },
+    {
+      "id": "sunflower",
+      "type": "image",
+      "src": "/images/photos/sunflower.jpg",
+      "thumb": "/images/photos/sunflower-thumb.jpg",
+      "srcWebp": "/images/photos/sunflower.webp",
+      "thumbWebp": "/images/photos/sunflower-thumb.webp",
+      "width": 1514,
+      "height": 1009,
+      "blur": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAADwAQCdASoQAAsAA4BaJbACdAYsYzbZb1AA/LSUdZ87vNRQ8FnuYocrdYBE3cBYSVfc/RIyUPQxqA5fYyfiBPkWpxpRRI4KVtQOD+rsaa/4Gtyl/mOR7dzmXKcAPXY/fToiXMiVRW7ihmEwmYj5BdghhAA=",
+      "category": "photography",
+      "date": "2026-08",
+      "caption": {
+        "en": "Sunflower"
+      },
+      "alt": {
+        "en": "Sunflower"
+      }
+    },
+    {
+      "id": "lake-moraine-kayak",
+      "type": "image",
+      "src": "/images/photos/lake-moraine-kayak.jpg",
+      "thumb": "/images/photos/lake-moraine-kayak-thumb.jpg",
+      "srcWebp": "/images/photos/lake-moraine-kayak.webp",
+      "thumbWebp": "/images/photos/lake-moraine-kayak-thumb.webp",
+      "width": 1317,
+      "height": 879,
+      "blur": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAACwAQCdASoQAAsAA4BaJbACdDBOQGIAAP7kJS706X7o5j17hwGAvRo5r3MWV4FbqyRbhmRvTcBiB++v9KSbr1P2+uEvef/c6fIPLvO0b/6X184C3KA+IAAA",
+      "category": "photography",
+      "date": "2026-08",
+      "caption": {
+        "en": "Moraine Lake Kayak"
+      },
+      "alt": {
+        "en": "Moraine Lake Kayak"
+      }
+    },
+    {
+      "id": "banff-canoe",
+      "type": "image",
+      "src": "/images/photos/banff-canoe.jpg",
+      "thumb": "/images/photos/banff-canoe-thumb.jpg",
+      "srcWebp": "/images/photos/banff-canoe.webp",
+      "thumbWebp": "/images/photos/banff-canoe-thumb.webp",
+      "width": 1541,
+      "height": 1027,
+      "blur": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAAAQAgCdASoQAAsAA4BaJYwCdAEU+XUpZyQAAPy0+2+3s/pCoFerhn7u/y063UI35jmKaJ2zZrQP4F4AAAA=",
+      "category": "photography",
+      "date": "2026-08",
+      "caption": {
+        "en": "Banff Canoe and Sparking Sunlight"
+      },
+      "alt": {
+        "en": "Banff Canoe"
+      }
+    },
+    {
+      "id": "more-banff",
+      "type": "image",
+      "src": "/images/photos/more-banff.jpg",
+      "thumb": "/images/photos/more-banff-thumb.jpg",
+      "srcWebp": "/images/photos/more-banff.webp",
+      "thumbWebp": "/images/photos/more-banff-thumb.webp",
+      "width": 1550,
+      "height": 1033,
+      "blur": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAAAQAgCdASoQAAsAA4BaJYwC7AEXtlLkzfrgAP7s+CIwVexKr6uZGwFgWCYPFVX7pfC8pR/R+bNfI7b75yCvsOfiKBMGYO155F7E1pLwEXDjW/KBWSaJJaBAAAA=",
+      "category": "photography",
+      "date": "2026-08",
+      "caption": {
+        "en": "Banff"
+      },
+      "alt": {
+        "en": "Banff"
+      }
+    },
+    {
+      "id": "banff-boat",
+      "type": "image",
+      "src": "/images/photos/banff-boat.jpg",
+      "thumb": "/images/photos/banff-boat-thumb.jpg",
+      "srcWebp": "/images/photos/banff-boat.webp",
+      "thumbWebp": "/images/photos/banff-boat-thumb.webp",
+      "width": 1620,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADwAQCdASoQAAsAA4BaJbACsADwCwG1BIAA/oORq2WNiiTGqZQnP2ufBEW2VdRCr/Wuasbo7Xhqlr8Nzk+ftI8rjLSwNuv05zUtxbVKgAA=",
+      "category": "photography",
+      "date": "2026-08",
+      "caption": {
+        "en": "Banff Boat"
+      },
+      "alt": {
+        "en": "Banff Boat"
+      }
+    },
+    {
+      "id": "banff-looking-away",
+      "type": "image",
+      "src": "/images/photos/banff-looking-away.jpg",
+      "thumb": "/images/photos/banff-looking-away-thumb.jpg",
+      "srcWebp": "/images/photos/banff-looking-away.webp",
+      "thumbWebp": "/images/photos/banff-looking-away-thumb.webp",
+      "width": 1620,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAAAwAgCdASoQAAsAA4BaJZgCdAEeY3a4xsh2AAD6j1ZS1yG9XjFNknQ4YHCU3eW+hZqOqhaEmS8RXoQMspQNjL6zmiJkMeQ9uC4wiLX8gKmUs5z9jeg6u7d0vwSH9WaAAAA=",
+      "category": "photography",
+      "date": "2026-08",
+      "caption": {
+        "en": "Looking Away, Banff"
+      },
+      "alt": {
+        "en": "Looking Away, Banff"
+      }
+    },
+    {
+      "id": "nyc",
+      "type": "image",
+      "src": "/images/photos/nyc.jpg",
+      "thumb": "/images/photos/nyc-thumb.jpg",
+      "srcWebp": "/images/photos/nyc.webp",
+      "thumbWebp": "/images/photos/nyc-thumb.webp",
+      "width": 2000,
+      "height": 1499,
+      "blur": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADwAQCdASoQAAwAA4BaJbACdADpohRtaEAAzdrSQ5FhdWuKUMJc72BEj2Lzs+RCCB1JSH7XqrAHuWRFYIB/jOMf54k3rJXjq0de1uNQAAA=",
+      "category": "photography",
+      "date": "2026-08",
+      "caption": {
+        "en": "NYC"
+      },
+      "alt": {
+        "en": "NYC"
+      }
+    },
+    {
+      "id": "stars-ny",
+      "type": "image",
+      "src": "/images/photos/stars-ny.jpg",
+      "thumb": "/images/photos/stars-ny-thumb.jpg",
+      "srcWebp": "/images/photos/stars-ny.webp",
+      "thumbWebp": "/images/photos/stars-ny-thumb.webp",
+      "width": 1500,
+      "height": 2000,
+      "blur": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAABwAwCdASoQABUAPu1iqU2ppaOiMAgBMB2JZQCdMoAEZoHFPFAA/u7kETE3Jbr++qKlLKj7yNhPzk8AAAA=",
+      "category": "photography",
+      "date": "2026-08",
+      "caption": {
+        "en": "Stars in New York"
+      },
+      "alt": {
+        "en": "Stars in New York"
+      }
+    },
+    {
+      "id": "asparagus-picking",
+      "type": "image",
+      "src": "/images/photos/asparagus-picking.jpg",
+      "thumb": "/images/photos/asparagus-picking-thumb.jpg",
+      "srcWebp": "/images/photos/asparagus-picking.webp",
+      "thumbWebp": "/images/photos/asparagus-picking-thumb.webp",
+      "width": 2000,
+      "height": 1333,
+      "blur": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADwAQCdASoQAAsAA4BaJYgCdAEUnc6wVwAA/eKBjNU9nu/fr9K9+F6ld4bY6U5NK0wc17SfGcyhIPVR2N3fY9rgAAA=",
+      "category": "photography",
+      "date": "2026-06",
+      "caption": {
+        "en": "Asparagus Picking"
+      },
+      "alt": {
+        "en": "Asparagus Picking"
+      }
+    },
+    {
+      "id": "8-ball",
+      "type": "image",
+      "src": "/images/photos/8-ball.jpg",
+      "thumb": "/images/photos/8-ball-thumb.jpg",
+      "srcWebp": "/images/photos/8-ball.webp",
+      "thumbWebp": "/images/photos/8-ball-thumb.webp",
+      "width": 1620,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAAAwAgCdASoQAAsAA4BaJQBOgCIKCTWSCyU6AAD+5B9VMqv5/rhw9SRdjstiRvx5cnF/knnyjUSCXvzNkfSyliYmuEvfw7sVF/GIhvkyygA=",
+      "category": "photography",
+      "date": "2026-06",
+      "caption": {
+        "en": "8 Ball"
+      },
+      "alt": {
+        "en": "8 Ball"
+      }
+    },
+    {
+      "id": "baseball-stadium",
+      "type": "image",
+      "src": "/images/photos/baseball-stadium.jpg",
+      "thumb": "/images/photos/baseball-stadium-thumb.jpg",
+      "srcWebp": "/images/photos/baseball-stadium.webp",
+      "thumbWebp": "/images/photos/baseball-stadium-thumb.webp",
+      "width": 1366,
+      "height": 911,
+      "blur": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAADwAQCdASoQAAsAA4BaJQBWACPYF28CN1wA/phf41opg6l9HsAaLgCwp9pH2gK7NCLhKggVtL+DI/qiyhBkjljvG0Xvs1wz2vCMeHXzPCfWhwAKGsCngOwAAAA=",
+      "category": "photography",
+      "date": "2026-05",
+      "caption": {
+        "en": "Baseball Stadium"
+      },
+      "alt": {
+        "en": "Baseball Stadium"
+      }
+    },
+    {
+      "id": "play-ball",
+      "type": "image",
+      "src": "/images/photos/play-ball.jpg",
+      "thumb": "/images/photos/play-ball-thumb.jpg",
+      "srcWebp": "/images/photos/play-ball.webp",
+      "thumbWebp": "/images/photos/play-ball-thumb.webp",
+      "width": 1500,
+      "height": 2000,
+      "blur": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAADQAwCdASoQABUAPu1iqU2ppaOiMAgBMB2JZQDE2BMgHZx8iY3WqqAA/u6gbVliyRITsvc5MKt5DH7KKOVPAj+QHjbLFZsgSbjyVCPZ4u287jcPNwtkIAgN4+WDoVP5A6mOQwrj6l7RqlpE4aE0neIAAAA=",
+      "category": "photography",
+      "date": "2026-05",
+      "caption": {
+        "en": "Play Ball"
+      },
+      "alt": {
+        "en": "Play Ball"
+      }
+    },
+    {
+      "id": "on-a-walk",
+      "type": "image",
+      "src": "/images/photos/on-a-walk.jpg",
+      "thumb": "/images/photos/on-a-walk-thumb.jpg",
+      "srcWebp": "/images/photos/on-a-walk.webp",
+      "thumbWebp": "/images/photos/on-a-walk-thumb.webp",
+      "width": 1620,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAAAwAgCdASoQAAsAA4BaJbACw7ED8RD0Dn0VoAD+qcDQdgZIXMsseIWRj1PptKddRYSXykndMFyUanmsZBYM3h/z3WZERgAA",
+      "category": "photography",
+      "date": "2026-05",
+      "caption": {
+        "en": "On a Walk"
+      },
+      "alt": {
+        "en": "On a Walk"
+      }
+    },
+    {
+      "id": "random-aesthetic-flick",
+      "type": "image",
+      "src": "/images/photos/random-aesthetic-flick.jpg",
+      "thumb": "/images/photos/random-aesthetic-flick-thumb.jpg",
+      "srcWebp": "/images/photos/random-aesthetic-flick.webp",
+      "thumbWebp": "/images/photos/random-aesthetic-flick-thumb.webp",
+      "width": 594,
+      "height": 892,
+      "blur": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAAAwBACdASoQABgAPu1iqU2ppaOiMAgBMB2JZgC06Bh2IuqrnWGLgPe4abAA/ujxVihwpI4eHIu0tTF9k36ArhQWyd7nHvl//hYVQizBcA/yMa0WTkYon53qTqh/GDc4V1FdRMqKknHV4lqnHwrYSXDsE5gP2B2XNMWZqudsAAA=",
+      "category": "photography",
+      "date": "2026-05",
+      "caption": {
+        "en": "Random Aesthetic Flick"
+      },
+      "alt": {
+        "en": "Random Aesthetic Flick"
+      }
+    },
+    {
+      "id": "kinkaku-ji",
+      "type": "image",
+      "src": "/images/photos/kinkaku-ji.jpg",
+      "thumb": "/images/photos/kinkaku-ji-thumb.jpg",
+      "srcWebp": "/images/photos/kinkaku-ji.webp",
+      "thumbWebp": "/images/photos/kinkaku-ji-thumb.webp",
+      "width": 1620,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADwAQCdASoQAAsAA4BaJQBOgCP/eAm31vIA/vTr4ghXBV/cNos1RXkosXjq5q5nsuS8Gh8hXl195AgrcWxPrk2wkg6cSegYYAA=",
+      "category": "photography",
+      "date": "2026-05",
+      "caption": {
+        "en": "Kinkaku-ji"
+      },
+      "alt": {
+        "en": "Kinkaku-ji"
+      }
+    },
+    {
+      "id": "kyoto",
+      "type": "image",
+      "src": "/images/photos/kyoto.jpg",
+      "thumb": "/images/photos/kyoto-thumb.jpg",
+      "srcWebp": "/images/photos/kyoto.webp",
+      "thumbWebp": "/images/photos/kyoto-thumb.webp",
+      "width": 1620,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAACwAQCdASoQAAsAA4BaJbACdACSaf5AAP55KJIJFNJQFdlAPXyk8d6ffTuNrpiXqflyd1L3EXcIcK0QYXuL/eujea36h8jFY4AAAA==",
+      "category": "photography",
+      "date": "2026-05",
+      "caption": {
+        "en": "Kyoto"
+      },
+      "alt": {
+        "en": "Kyoto"
+      }
+    },
+    {
+      "id": "shibuya-crossing",
+      "type": "image",
+      "src": "/images/photos/shibuya-crossing.jpg",
+      "thumb": "/images/photos/shibuya-crossing-thumb.jpg",
+      "srcWebp": "/images/photos/shibuya-crossing.webp",
+      "thumbWebp": "/images/photos/shibuya-crossing-thumb.webp",
+      "width": 1290,
+      "height": 878,
+      "blur": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAADwAQCdASoQAAsAA4BaJQBOgMXhfnMHPAAA/tfnciMukK6r5iOawb1V3gSq40dBnkC9rBb5kkxwR39H6L+0R0AfUPDlbAwEZ1x5otlGt/tG3fjU0c+AFOknJdq3TsYptAOqaAcAAAA=",
+      "category": "photography",
+      "date": "2026-04",
+      "caption": {
+        "en": "Shibuya Crossing"
+      },
+      "alt": {
+        "en": "Shibuya Crossing"
+      }
+    },
+    {
+      "id": "mirror-photography",
+      "type": "image",
+      "src": "/images/photos/mirror-photography.jpg",
+      "thumb": "/images/photos/mirror-photography-thumb.jpg",
+      "srcWebp": "/images/photos/mirror-photography.webp",
+      "thumbWebp": "/images/photos/mirror-photography-thumb.webp",
+      "width": 1620,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAAAQAgCdASoQAAsAA4BaJYwCdAEekRAu7NyAAP5ojICkdF29IYJTi0z4QxR8e+mdkkPDEs11xhMtd8fm4kUGsM+30EB9dkdyTgOlANQJMpuVcAAA",
+      "category": "photography",
+      "date": "2026-04",
+      "caption": {
+        "en": "Mirror Photography"
+      },
+      "alt": {
+        "en": "Mirror Photography"
+      }
+    },
+    {
+      "id": "garden-of-words",
+      "type": "image",
+      "src": "/images/photos/garden-of-words.jpg",
+      "thumb": "/images/photos/garden-of-words-thumb.jpg",
+      "srcWebp": "/images/photos/garden-of-words.webp",
+      "thumbWebp": "/images/photos/garden-of-words-thumb.webp",
+      "width": 1620,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAACwAQCdASoQAAsAA4BaJYgAAcSaTGUAAP7tDUtQl0bATy0hj+09lZU0dmUZIyKcMAHonUJcHuW9gMBXuRNTbh1dtYy+oXIzKH4/K9/vWb8AAA==",
+      "category": "photography",
+      "date": "2026-04",
+      "caption": {
+        "en": "Garden of Words"
+      },
+      "alt": {
+        "en": "Garden of Words"
+      }
+    },
+    {
+      "id": "kamakura",
+      "type": "image",
+      "src": "/images/photos/kamakura.jpg",
+      "thumb": "/images/photos/kamakura-thumb.jpg",
+      "srcWebp": "/images/photos/kamakura.webp",
+      "thumbWebp": "/images/photos/kamakura-thumb.webp",
+      "width": 1481,
+      "height": 987,
+      "blur": "data:image/webp;base64,UklGRkoAAABXRUJQVlA4ID4AAACwAQCdASoQAAsAA4BaJaACdAEJBaRAAPecclw/YskxdPpIlHRPppFgc64eMH78MgAMy3oIjaVxSnaW06iAAA==",
+      "category": "photography",
+      "date": "2026-04",
+      "caption": {
+        "en": "Kamakura"
+      },
+      "alt": {
+        "en": "Kamakura"
+      }
+    },
+    {
+      "id": "smiski",
+      "type": "image",
+      "src": "/images/photos/smiski.jpg",
+      "thumb": "/images/photos/smiski-thumb.jpg",
+      "srcWebp": "/images/photos/smiski.webp",
+      "thumbWebp": "/images/photos/smiski-thumb.webp",
+      "width": 1620,
+      "height": 1080,
+      "blur": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAAAwAgCdASoQAAsAA4BaJbACdAEf/Qy00GnyAAD+9KDMSQgVwP06zCz1iWgdBK7iTdQwP286GGvUpyEc9WQU+jgitDjeb8mb3eZHn8luq0ZJMmHK+xgm9KkoW1AAAA==",
+      "category": "photography",
+      "date": "2026-04",
+      "caption": {
+        "en": "Smiski"
+      },
+      "alt": {
+        "en": "Smiski"
+      }
+    },
+    {
+      "id": "seoul-tower",
+      "type": "image",
+      "src": "/images/photos/seoul-tower.jpg",
+      "thumb": "/images/photos/seoul-tower-thumb.jpg",
+      "srcWebp": "/images/photos/seoul-tower.webp",
+      "thumbWebp": "/images/photos/seoul-tower-thumb.webp",
+      "width": 1500,
+      "height": 2000,
+      "blur": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAACwAwCdASoQABUAPu1iqU2ppaQiMAgBMB2JYgCsAA/y+qL/7zqMgAD92Q0Ait98n1vF9raCxVzZ7uBgGdoApX4D9ycg/QFBerbNTmdqhV2DHs+vtJf+38zVfTAeb2DtW3H/Izd3UDFgoGU+DNIAAA==",
+      "category": "photography",
+      "date": "2025-07",
+      "caption": {
+        "en": "Seoul Tower"
+      },
+      "alt": {
+        "en": "Seoul Tower"
+      }
+    },
+    {
+      "id": "italy",
+      "type": "image",
+      "src": "/images/photos/italy.jpg",
+      "thumb": "/images/photos/italy-thumb.jpg",
+      "srcWebp": "/images/photos/italy.webp",
+      "thumbWebp": "/images/photos/italy-thumb.webp",
+      "width": 2000,
+      "height": 1500,
+      "blur": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAAAQAgCdASoQAAwAA4BaJQBOgMXhmUE/MdMAAN904JzzI/2XDsv17GwOAYzi0vSc0YkAf51l+Xj5NThPJWig0Ia4F+YDsMF+3vlPJW78ALT4CqV/osArT4qAAAA=",
+      "category": "photography",
+      "date": "2025-03",
+      "caption": {
+        "en": "Italy"
+      },
+      "alt": {
+        "en": "Italy"
+      }
+    },
+    {
+      "id": "cat",
+      "type": "image",
+      "src": "/images/photos/cat.jpg",
+      "thumb": "/images/photos/cat-thumb.jpg",
+      "srcWebp": "/images/photos/cat.webp",
+      "thumbWebp": "/images/photos/cat-thumb.webp",
+      "width": 1500,
+      "height": 2000,
+      "blur": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAQBACdASoQABUAPu1iqU2ppaOiMAgBMB2JYwCsAYyKuU8oxEqD1ufDgAD5XXfT6/IhkhgLX3z69HL1DpbUdpVp39ieXKBgoJknEO3bZD3ExDzAr1TgnCKtQrmZ0S+akhbrVZfySSGGtceSWgZnmw6pBqiX/5mgOk7DmhkPwMBHaOiBYaP4EAAA",
+      "category": "photography",
+      "date": "2024-12",
+      "caption": {
+        "en": "Cat"
+      },
+      "alt": {
+        "en": "Cat"
+      }
+    },
+    {
+      "id": "shad-me",
+      "type": "image",
+      "src": "/images/photos/shad-me.jpg",
+      "thumb": "/images/photos/shad-me-thumb.jpg",
+      "srcWebp": "/images/photos/shad-me.webp",
+      "thumbWebp": "/images/photos/shad-me-thumb.webp",
+      "width": 1224,
+      "height": 1632,
+      "blur": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAwBACdASoQABUAPu1kqU2ppaQiMAgBMB2JZQCsACHaW+olN2NhqcYD2AAA/nbDHzlB+dtIHuMFZ4zayr6YpHZheeiHgTH2eODY792jIKIzNB7k16mp/9Cf8LC0GmOQTOwdpY//wAA=",
+      "category": "photography",
+      "date": "2024-07",
+      "caption": {
+        "en": "SHAD '24"
+      },
+      "alt": {
+        "en": "SHAD '24"
+      }
+    },
+    {
+      "id": "embryo",
+      "type": "image",
+      "src": "/images/photos/embryo.jpg",
+      "thumb": "/images/photos/embryo-thumb.jpg",
+      "srcWebp": "/images/photos/embryo.webp",
+      "thumbWebp": "/images/photos/embryo-thumb.webp",
+      "width": 1500,
+      "height": 2000,
+      "blur": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAACwAgCdASoQABUAPu1iqU2ppaOiMAgBMB2JaQAAeyAA/vENCf+jBOyYjL/7U0TAAAA=",
+      "category": "photography",
+      "date": "2024-07",
+      "caption": {
+        "en": "Embryo"
+      },
+      "alt": {
+        "en": "Embryo"
+      }
+    },
+    {
+      "id": "sky",
+      "type": "image",
+      "src": "/images/photos/sky.jpg",
+      "thumb": "/images/photos/sky-thumb.jpg",
+      "srcWebp": "/images/photos/sky.webp",
+      "thumbWebp": "/images/photos/sky-thumb.webp",
+      "width": 2000,
+      "height": 1500,
+      "blur": "data:image/webp;base64,UklGRkIAAABXRUJQVlA4IDYAAADwAQCdASoQAAwAA4BaJQBOjXAAWZ03QAAA/uk4Zyppfj/EzM246+tvvZdY6rarNkivSCkAAAA=",
+      "category": "photography",
+      "date": "2024-06",
+      "caption": {
+        "en": "Sky"
+      },
+      "alt": {
+        "en": "Sky"
+      }
+    },
+    {
+      "id": "zoo-birb",
+      "type": "image",
+      "src": "/images/photos/zoo-birb.jpg",
+      "thumb": "/images/photos/zoo-birb-thumb.jpg",
+      "srcWebp": "/images/photos/zoo-birb.webp",
+      "thumbWebp": "/images/photos/zoo-birb-thumb.webp",
+      "width": 1125,
+      "height": 2000,
+      "blur": "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAAAwBACdASoQABwAPu1kqU2ppaQiMAgBMB2JQBOgBEHwWfE/KsoGYZZcOHAA/sxmov6BTjANlxT5ExQOsai3DTlaZVw4i7e6SElq4SzEqY0R8rEO/D4nvhtvK7OMh4CnkCR33T9YB+e0MeiA9W6Vvx7EQ6wtsO974yq5iDCu8H6fixs37HB0G80CdR6m1o4Y/AA=",
+      "category": "photography",
+      "date": "2024-05",
+      "caption": {
+        "en": "Zoo Birb"
+      },
+      "alt": {
+        "en": "Zoo Birb"
+      }
+    },
+    {
       "id": "presenting-microsoft",
       "type": "image",
       "src": "/images/photos/presenting-microsoft.jpg",
@@ -18,30 +668,7 @@
       "alt": {
         "en": "Presenting at Microsoft",
         "ko": "Microsoft에서 발표"
-      },
-      "carousel": true
-    },
-    {
-      "id": "img-4093",
-      "type": "image",
-      "src": "/images/photos/img-4093.jpg",
-      "thumb": "/images/photos/img-4093-thumb.jpg",
-      "srcWebp": "/images/photos/img-4093.webp",
-      "thumbWebp": "/images/photos/img-4093-thumb.webp",
-      "width": 1200,
-      "height": 1600,
-      "blur": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAABQBACdASoQABUAPu1iqU2ppaOiMAgBMB2JZQAD5YoOEObR0xtHcGvyr1QAAP7nKYnlg0IpMZZC1ngIV/QhITsu978+ZjIZ64WQ5k9tHAZnj5qkbknbN4szJonxU/oVNQBeqRIltgqFRBfXRxsa8XENI9mJkIpBJ8FveLgA",
-      "position": "50% 25%",
-      "category": "events",
-      "caption": {
-        "en": "Running a Half Marathon",
-        "ko": "하프 마라톤 완주"
-      },
-      "alt": {
-        "en": "Running a Half Marathon",
-        "ko": "하프 마라톤 완주"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "delta-hacks",
@@ -61,8 +688,7 @@
       "alt": {
         "en": "Winning DeltaHacks",
         "ko": "DeltaHacks 12 우승"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "orchestra-conducting",
@@ -80,8 +706,7 @@
       "alt": {
         "en": "Conducting an Orchestra",
         "ko": "오케스트라 지휘"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "img-6411",
@@ -102,8 +727,7 @@
       "alt": {
         "en": "High School Graduation!",
         "ko": "고등학교 졸업!"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "stem-fellowship",
@@ -123,8 +747,28 @@
       "alt": {
         "en": "STEM Fellowship",
         "ko": "STEM Fellowship"
+      }
+    },
+    {
+      "id": "img-4093",
+      "type": "image",
+      "src": "/images/photos/img-4093.jpg",
+      "thumb": "/images/photos/img-4093-thumb.jpg",
+      "srcWebp": "/images/photos/img-4093.webp",
+      "thumbWebp": "/images/photos/img-4093-thumb.webp",
+      "width": 1200,
+      "height": 1600,
+      "blur": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAABQBACdASoQABUAPu1iqU2ppaOiMAgBMB2JZQAD5YoOEObR0xtHcGvyr1QAAP7nKYnlg0IpMZZC1ngIV/QhITsu978+ZjIZ64WQ5k9tHAZnj5qkbknbN4szJonxU/oVNQBeqRIltgqFRBfXRxsa8XENI9mJkIpBJ8FveLgA",
+      "position": "50% 25%",
+      "category": "events",
+      "caption": {
+        "en": "Running a Half Marathon",
+        "ko": "하프 마라톤 완주"
       },
-      "carousel": true
+      "alt": {
+        "en": "Running a Half Marathon",
+        "ko": "하프 마라톤 완주"
+      }
     },
     {
       "id": "photography",
@@ -136,7 +780,7 @@
       "width": 1600,
       "height": 900,
       "blur": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADQAQCdASoQAAkAA4BaJZAC7ADAVoJAAAD+q697nZsBBD5/ARG0vTe/CmjbXw3/F17EuSsWg+WaBSsciyLfgD5mI1Z/BfZ29RGLduVG0K/njLaAAAA=",
-      "category": "photography",
+      "category": "events",
       "caption": {
         "en": "Photography",
         "ko": "사진 촬영"
@@ -144,8 +788,7 @@
       "alt": {
         "en": "Photography",
         "ko": "사진 촬영"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "woowoo-ensemble",
@@ -166,8 +809,7 @@
       "alt": {
         "en": "WooWoo Ensemble Performance",
         "ko": "WooWoo Ensemble 공연"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "conducting-concert-band",
@@ -188,8 +830,7 @@
       "alt": {
         "en": "Conducting concert band",
         "ko": "콘서트 밴드 지휘"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "shad-dalhousie-24",
@@ -209,8 +850,7 @@
       "alt": {
         "en": "SHAD Dalhousie 2024",
         "ko": "SHAD Dalhousie 2024"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "world-sudoku-and-puzzle-championships",
@@ -230,8 +870,7 @@
       "alt": {
         "en": "World Sudoku and Puzzle Championships",
         "ko": "World Sudoku and Puzzle Championships"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "best-pitch-eureka-hacks",
@@ -252,8 +891,7 @@
       "alt": {
         "en": "Winning Best Pitch at Eureka Hacks",
         "ko": "Eureka Hacks 베스트 피치 수상"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "gold-utsc-oba-ensemble-festival",
@@ -274,8 +912,7 @@
       "alt": {
         "en": "Gold at the OBA Ensemble Festival",
         "ko": "OBA 앙상블 페스티벌 금상"
-      },
-      "carousel": true
+      }
     },
     {
       "id": "presenting-hack-the-ridge",
@@ -295,8 +932,7 @@
       "alt": {
         "en": "Presenting at Hack the Ridge",
         "ko": "Hack the Ridge에서 발표"
-      },
-      "carousel": true
+      }
     }
   ]
 }

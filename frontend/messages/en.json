@@ -311,7 +311,7 @@
       "thumb": "/images/thumbnails/photography.png",
       "desc": "Capturing moments in nature, cities, and beyond. Canon EOS R10 User.",
       "links": [
-        { "label": "Photo Gallery", "href": "#", "locked": true },
+        { "label": "Photo Gallery", "href": "/photos?c=photography", "icon": "camera" },
         { "label": "@jam_flicks", "href": "https://instagram.com/jam_flicks", "icon": "instagram" }
       ]
     }

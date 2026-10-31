@@ -28,8 +28,8 @@ npm run photos -- add ~/Downloads/IMG_1234.HEIC \
   `THUMB_JPEG` and `THUMB_WEBP` in `lib.mjs`.
 - Videos go to `public/videos/<id>.mp4` (H.264, ≤720p, no audio), plus `-poster.jpg`.
 - `--id` defaults to a slug of the filename. `--alt` defaults to the caption.
-- More flags: `--alt-ko`, `--position "50% 25%"` (crop focus), `--no-carousel`
-  (only on `/photos`), `--first` (put at the front), and `--keep-audio`.
+- More flags: `--alt-ko`, `--position "50% 25%"` (crop focus), `--last` (append instead of the default
+  newest-first, which puts new photos at the front), and `--keep-audio`.
 - Missing `--caption` or `--category` prompts in a terminal and errors otherwise.
 - Your originals are never touched.
 
@@ -63,7 +63,7 @@ npm run photos -- check
 - Exits 1 on **errors**: a missing file, a duplicate id, a bad category, or a
   missing English caption/alt.
 - Also **warns** about:
-  - a missing Korean caption on a carousel entry
+  - a missing Korean caption on an events (carousel) entry
   - files over 800 KB
   - leftover metadata
   - missing webp/blur

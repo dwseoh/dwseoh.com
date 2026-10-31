@@ -309,7 +309,7 @@
       "thumb": "/images/thumbnails/photography.png",
       "desc": "자연, 도시, 그리고 그 너머의 순간들을 담습니다. Canon EOS R10 사용자.",
       "links": [
-        { "label": "사진 갤러리", "href": "#", "locked": true },
+        { "label": "사진 갤러리", "href": "/photos?c=photography", "icon": "camera" },
         { "label": "@jam_flicks", "href": "https://instagram.com/jam_flicks", "icon": "instagram" }
       ]
     }

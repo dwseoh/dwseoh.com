@@ -10,7 +10,7 @@
 import type { Photo } from '@/components/photo'
 import manifest from '@/content/photos.json'
 
-export type PhotoCategory = 'photography' | 'events'
+export type PhotoCategory = 'photography' | 'events' | 'hobbies'
 export type Locale = 'en' | 'ko'
 
 export interface PhotoEntry {
@@ -38,8 +38,6 @@ export interface PhotoEntry {
   date?: string
   caption: { en: string; ko?: string }
   alt: { en: string; ko?: string }
-  /** Also show in the home-page carousel. */
-  carousel: boolean
 }
 
 export const photos = (manifest as { photos: PhotoEntry[] }).photos
@@ -54,12 +52,13 @@ export function photoHref(entry: Pick<PhotoEntry, 'id' | 'category'>): string {
 }
 
 /**
- * Carousel entries in the shape PhotoStrip takes; Korean falls back to English.
- * Each tile links to the photo on /photos rather than opening its own viewer.
+ * The home carousel is the Events category, in manifest order, in the shape
+ * PhotoStrip takes; Korean falls back to English. Each tile links to the photo
+ * on /photos rather than opening its own viewer.
  */
 export function carouselPhotos(locale: Locale): Photo[] {
   return photos
-    .filter((p) => p.carousel)
+    .filter((p) => p.category === 'events')
     .map((p) => ({
       id: p.id,
       src: p.src,

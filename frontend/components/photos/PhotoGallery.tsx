@@ -65,7 +65,7 @@ export default function PhotoGallery({
 
   // Only categories that actually have photos get a tab.
   const counts = useMemo(() => {
-    const c: Record<Filter, number> = { all: photos.length, photography: 0, events: 0 }
+    const c: Record<Filter, number> = { all: photos.length, photography: 0, events: 0, hobbies: 0 }
     for (const p of photos) c[p.category]++
     return c
   }, [photos])

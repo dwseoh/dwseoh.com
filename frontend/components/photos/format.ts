@@ -8,17 +8,19 @@ export const FILTERS: { key: Filter; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'photography', label: 'Photography' },
   { key: 'events', label: 'Events' },
+  { key: 'hobbies', label: 'Hobbies' },
 ]
 
 export const CATEGORY_LABEL: Record<PhotoCategory, string> = {
   photography: 'Photography',
   events: 'Events',
+  hobbies: 'Hobbies',
 }
 
 /** `?c=` value → filter; anything unknown (or missing) means "all". */
 export function parseFilter(value: string | string[] | null | undefined): Filter {
   const v = Array.isArray(value) ? value[0] : value
-  return v === 'photography' || v === 'events' ? v : 'all'
+  return FILTERS.find((f) => f.key === v)?.key ?? 'all'
 }
 
 export { pad } from '@/components/subpage/PageHeading'

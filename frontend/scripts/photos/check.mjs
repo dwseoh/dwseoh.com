@@ -30,7 +30,7 @@ export async function check() {
     if (!CATEGORIES.includes(p.category)) errors.push(`${at}: invalid category "${p.category}"`)
     if (!p.caption?.en) errors.push(`${at}: missing caption.en`)
     if (!p.alt?.en) errors.push(`${at}: missing alt.en`)
-    if (p.carousel && !p.caption?.ko) warnings.push(`${at}: carousel entry has no caption.ko (falls back to English)`)
+    if (p.category === 'events' && !p.caption?.ko) warnings.push(`${at}: carousel (events) entry has no caption.ko (falls back to English)`)
     if (p.date && !/^\d{4}(-\d{2})?$/.test(p.date)) warnings.push(`${at}: date "${p.date}" isn't YYYY or YYYY-MM`)
 
     for (const key of ['src', 'thumb', 'srcWebp', 'thumbWebp', 'poster']) {

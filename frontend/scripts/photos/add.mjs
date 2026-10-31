@@ -65,12 +65,11 @@ export async function add(files, flags) {
       date: flags.date,
       caption: { en: caption, ko: flags['caption-ko'] },
       alt: { en: flags.alt ?? caption, ko: flags['alt-ko'] ?? flags['caption-ko'] },
-      carousel: !flags['no-carousel'],
     }
 
-    // --first keeps the batch in its given order at the front.
-    if (flags.first) manifest.photos.splice(i, 0, entry)
-    else manifest.photos.push(entry)
+    // Newest first: the batch goes to the front in its given order; --last appends.
+    if (flags.last) manifest.photos.push(entry)
+    else manifest.photos.splice(i, 0, entry)
     writeManifest(manifest) // per item, so files on disk and manifest never drift
 
     const after = Object.values(job.outs).map((f) => `${path.basename(f)} ${fmtBytes(sizeOf(f))}`)

@@ -25,7 +25,7 @@ export const BLOG_DIR = path.join(ROOT, 'content', 'blog')
 export const MANIFEST = path.join(ROOT, 'content', 'photos.json')
 export const BACKUP_DIR = path.join(ROOT, '.photos-backup') // gitignored
 
-export const CATEGORIES = ['photography', 'events']
+export const CATEGORIES = ['photography', 'events', 'hobbies']
 
 export const FULL_MAX = 2000 // px, longest edge of the full image
 // Thumbnails feed square, cropped grid tiles: a /photos 3-column tile is ~340
@@ -53,7 +53,7 @@ export const VIDEO_EXT = /\.(mp4|mov)$/i
 // Same key order as PhotoEntry in lib/photos.ts, so diffs stay tidy.
 const KEY_ORDER = [
   'id', 'type', 'src', 'thumb', 'srcWebp', 'thumbWebp', 'poster', 'width', 'height',
-  'blur', 'position', 'category', 'date', 'caption', 'alt', 'carousel',
+  'blur', 'position', 'category', 'date', 'caption', 'alt',
 ]
 
 export function readManifest() {

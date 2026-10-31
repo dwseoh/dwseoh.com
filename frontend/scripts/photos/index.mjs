@@ -12,9 +12,9 @@ import { optimize } from './optimize.mjs'
 const USAGE = `usage: npm run photos -- <command> [flags]
 
   add <file...>   import JPG/PNG/HEIC/HEIF/WebP or MP4/MOV
-      --id <slug>  --category photography|events  --date YYYY[-MM]
+      --id <slug>  --category photography|events|hobbies  --date YYYY[-MM]
       --caption <en>  --caption-ko <ko>  --alt <en>  --alt-ko <ko>
-      --position "50% 25%"  --no-carousel  --first  --keep-audio
+      --position "50% 25%"  --last  --keep-audio
   optimize        backfill webp twins, thumbs, blur, dimensions; shrink big files
       --blog  --dry-run  --thumbs (regenerate every thumbnail)
   check           report problems (exit 1 on errors)
@@ -30,8 +30,7 @@ const options = {
   alt: { type: 'string' },
   'alt-ko': { type: 'string' },
   position: { type: 'string' },
-  'no-carousel': { type: 'boolean' },
-  first: { type: 'boolean' },
+  last: { type: 'boolean' },
   'keep-audio': { type: 'boolean' },
   blog: { type: 'boolean' },
   'dry-run': { type: 'boolean' },
@@ -47,8 +46,7 @@ const options = {
 function npmAteFlags(values) {
   return Object.keys(options).filter((name) => {
     const env = `npm_config_${name.replaceAll('-', '_')}`
-    const negated = name === 'no-carousel' && 'npm_config_carousel' in process.env
-    return (env in process.env || negated) && values[name] === undefined
+    return env in process.env && values[name] === undefined
   })
 }
 
