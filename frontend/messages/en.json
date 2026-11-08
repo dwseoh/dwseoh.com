@@ -173,6 +173,15 @@
       "href": "https://hackthenorth.com"
     },
     {
+      "id": "akcse-uw",
+      "name": "Association of Korean Canadian Scientists and Engineers",
+      "role": "Software Engineer",
+      "date": "2026 - Present",
+      "logo": "/images/logos/akcse-uw.png",
+      "blurb": "Rebuilding their website (rewrote BE, migrated infra, redesigned admin CMS), and working on developing ML-based Cupid algorithm",
+      "href":"https://akcseuw.ca/"
+    },
+    {
       "id": "uw-ksa",
       "name": "UW Korean Student Association",
       "role": "Events",

@@ -753,7 +753,7 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
             </span>
             <span className="golf-detail-date">{cur.date}</span>
           </div>
-          <p className="golf-detail-blurb">{cur.blurb}</p>
+          <p className="golf-detail-blurb" title={cur.blurb}>{cur.blurb}</p>
         </div>
       </div>
     </div>
