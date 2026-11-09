@@ -4,7 +4,6 @@ import { routing } from './i18n/routing'
 export default createMiddleware(routing)
 
 export const config = {
-  // `blog` and `music` are excluded: both are English-only and live outside the [locale]
-  // segment (app/blog, app/music), so next-intl must not rewrite them.
-  matcher: ['/((?!_next|_vercel|blog|music|.*\\..*).*)'],
+  // These English-only pages live outside [locale], so exclude them from rewrites.
+  matcher: ['/((?!_next|_vercel|blog|photos|music|.*\\..*).*)'],
 }

@@ -35,7 +35,7 @@ I reflected on the experience later and the many feelings I went through in such
 
 > *The wind is rising. We must try to live.*.   
 
-![The wind rises thumbnail](/images/photos/the-wind-rises.png "Scene from the Ghibli film 'The Wind Rises'")
+![The wind rises thumbnail](/images/photos/the-wind-rises.jpg "Scene from the Ghibli film 'The Wind Rises'")
 
 That line belongs to the French poet Paul Valéry, and Miyazaki (Ghibli Studios Director) borrowed it for a film called *The Wind Rises*. The film follows a man named Jiro who wants, more than anything, to build a beautiful airplane. He wants to give something graceful to the air. And unlike the swallow, he succeeds. His plane flies. That is the tragedy of it: the beautiful thing he made was turned into a weapon of war. The swallow reached for flight and failed, and died. Jiro reached for flight and succeeded, and it killed people. The longing was the same. The ending was the same. The air was merciless to both. 
 

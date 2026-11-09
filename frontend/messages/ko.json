@@ -6,9 +6,9 @@
     "title": "서동완 (소프트웨어 공학과 @ 워털루 대학교)",
     "description": "워털루 대학교 소프트웨어 공학과 재학; 해커톤 주최자, 작곡가, 클라리넷 연주자, 사진작가. 현재 캐나다에 거주중."
   },
-  "bio1": "저는 캐나다 <uw>워털루 대학교</uw>에서 소프트웨어 공학을 전공하고 있고, 2019년 가을에 캐나다로 이주했습니다. 이번 여름에는 <cerebras>Cerebras Systems</cerebras>이라는 반도체 회사에서 AI 소프트웨어 엔지니어링 인턴으로 일했으며, 추론(inference)을 위한 low-level C++ 인프라와 디버깅 도구를 개발했습니다. 이제는 2027년 겨울 인턴십/코업을 찾고 있습니다.",
-  "bioMusic": "여가 시간에는 음악에 큰 열정을 쏟고 있습니다. 저는 다양한 역할들을 맡아왔습니다; 나는 <roles></roles>",
-  "bioCommunity": "또한 커뮤니티 활동에도 적극적으로 참여하고 있습니다. 현재 <htn>Hack the North</htn>에서 Logistics Organizer (해커톤 주최측)으로 활동 중이며, 이전에는 Ignition Hacks 스폰서십 디렉터, 워털루 한인 학생회(행사 담당), Hack the Ridge 회장 등을 역임했습니다.",
+  "bio1": "저는 캐나다 <uw>워털루 대학교</uw>에서 소프트웨어 공학을 전공하고 있고, 2019년 가을에 캐나다로 이주했습니다. 지난여름에는 <cerebras>Cerebras Systems</cerebras>이라는 반도체 회사에서 AI 소프트웨어 엔지니어링 인턴으로 일했으며, 세계에서 가장 빠른 추론(inference)을 위한 low-level C++ 디버깅 도구를 개발했습니다. <blog>제가 쓴 글</blog>에서 저의 여정을 확인해 보세요.",
+  "bioMusic": "여가 시간에는 음악에 열정을 쏟고 있고, 다양한 역할들을 맡아왔습니다; 나는 <roles></roles><nl></nl>최근에는 작곡을 많이 하고 있습니다. 여기서 제 작품을 확인해 보세요!",
+  "bioCommunity": "또한 커뮤니티 활동에도 적극적으로 참여하고 있습니다. 캐나다 최대 규모의 해커톤인 <htn>Hack the North</htn>를 주최했으며, 이전에는 Ignition Hacks 스폰서십 디렉터, Hack the Ridge 회장 등을 역임했습니다.",
   "roles": ["클라리넷 연주자.", "지휘자.", "작곡가.", "음악 프로듀서.", "피아니스트.", "앙상블 디렉터."],
   "sections": {
     "portfolio": "포트폴리오 링크",
@@ -19,6 +19,8 @@
     "photos": "사진",
     "contact": "연락처"
   },
+  "photosMore": "사진 더 보기",
+  "photosOpen": "갤러리에서 보기",
   "construction": "준비 중입니다.",
   "previews": {
     "uw": "세계적인 코업(co-op) 프로그램과 최상위권 공학·컴퓨터과학 학부로 유명한 캐나다 대학교",
@@ -74,6 +76,20 @@
     }
   ],
   "experiences": [
+    {
+      "id": "uw-seahorn",
+      "role": "학부 연구원",
+      "org": "워털루 대학교",
+      "logo": "/images/logos/uwaterloo.png",
+      "period": "2026년 9월 — 현재",
+      "duration": "2개월",
+      "location": "워털루, ON",
+      "type": "연구",
+      "blurb": "Arie Gurfinkel 교수님 지도 아래, 자동 형식 검증 도구인 SeaHorn의 Rust 지원 확장을 위해 Rust에서 LLVM IR로의 변환과 검증 의미론을 연구하고 있습니다.",
+      "skills": ["C++", "Rust", "LLVM", "Formal Verification"],
+      "href": "https://seahorn.github.io",
+      "present": true
+    },
     {
       "id": "cerebras",
       "role": "AI 소프트웨어 엔지니어 인턴",
@@ -153,6 +169,15 @@
       "logo": "/images/logos/hackthenorth.png",
       "blurb": "Organizing Canada's largest hackathon: 1,000+ hackers at the University of Waterloo.",
       "href": "https://hackthenorth.com"
+    },
+    {
+      "id": "akcse-uw",
+      "name": "(악세) Association of Korean Canadian Scientists and Engineers",
+      "role": "Software Engineer",
+      "date": "2026 - Present",
+      "logo": "/images/logos/akcse-uw.png",
+      "blurb": "Rebuilding their website (rewrote BE, migrated infra, redesigned admin CMS), and working on developing ML-based Cupid algorithm",
+      "href":"https://akcseuw.ca/"
     },
     {
       "id": "uw-ksa",
@@ -294,31 +319,15 @@
       "thumb": "/images/thumbnails/photography.png",
       "desc": "자연, 도시, 그리고 그 너머의 순간들을 담습니다. Canon EOS R10 사용자.",
       "links": [
-        { "label": "사진 갤러리", "href": "#", "locked": true },
+        { "label": "사진 갤러리", "href": "/photos?c=photography", "icon": "camera" },
         { "label": "@jam_flicks", "href": "https://instagram.com/jam_flicks", "icon": "instagram" }
       ]
     }
   ],
-  "photos": [
-    { "src": "/images/photos/presenting-microsoft.jpg", "alt": "Microsoft에서 발표", "caption": "마이크로소프트에서 발표" },
-    { "src": "/images/photos/img-4093.jpg", "alt": "하프 마라톤 완주", "caption": "하프 마라톤 완주", "position": "50% 25%"},
-    { "src": "/images/photos/delta-hacks.jpg", "alt": "DeltaHacks 12 우승", "caption": "DeltaHacks 12 우승"},
-    { "src": "/videos/orchestra-conducting.mp4", "poster": "/videos/orchestra-conducting-poster.jpg", "alt": "오케스트라 지휘", "caption": "라이브 공연에서 오케스트라 지휘" },
-    { "src": "/images/photos/img-6411.jpg", "alt": "고등학교 졸업!", "caption": "고등학교 졸업!", "position": "50% 100%"},
-    { "src": "/images/photos/stem-fellowship.jpg", "alt": "STEM Fellowship", "caption": "STEM Fellowship" },
-    { "src": "/images/photos/photography.jpg", "alt": "사진 촬영", "caption": "사진 촬영"},
-    { "src": "/images/photos/woowoo-ensemble.jpg", "alt": "WooWoo Ensemble 공연", "caption": "WooWoo Ensemble 공연", "position": "50% 65%" },
-    { "src": "/images/photos/conducting-concert-band.jpg", "alt": "콘서트 밴드 지휘", "caption": "콘서트 밴드 지휘", "position": "50% 27%"},
-    { "src": "/images/photos/shad-dalhousie-24.jpg", "alt": "SHAD Dalhousie 2024", "caption": "SHAD Dalhousie '24" },
-    { "src": "/images/photos/world-sudoku-and-puzzle-championships.jpg", "alt": "World Sudoku and Puzzle Championships", "caption": "World Sudoku & Puzzle Championships" },
-    { "src": "/images/photos/best-pitch-eureka-hacks.jpg", "alt": "Eureka Hacks 베스트 피치 수상", "caption": "Eureka Hacks 베스트 피치", "position": "50% 22%" },
-    { "src": "/images/photos/gold-utsc-oba-ensemble-festival.jpg", "alt": "OBA 앙상블 페스티벌 금상", "caption": "OBA 앙상블 페스티벌 금상", "position": "50% 28%" },
-    { "src": "/images/photos/presenting-hack-the-ridge.jpg", "alt": "Hack the Ridge에서 발표", "caption": "Hack the Ridge에서 발표" }
-  ],
   "contactLinks": [
     { "label": "Discord",   "href": "https://discord.com/users/891434702509060106", "icon": "discord"   },
     { "label": "Instagram", "href": "https://www.instagram.com/dongwan_seoh/",      "icon": "instagram" },
-    { "label": "X (트위터)", "href": "https://x.com/sdw1_",                          "icon": "x"         },
+    { "label": "X (트위터)", "href": "https://x.com/jamieseohz",                          "icon": "x"         },
     { "label": "이메일",     "href": "mailto:contact@dwseoh.com",                    "icon": "email"     }
   ],
   "webrings": [

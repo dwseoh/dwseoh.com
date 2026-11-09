@@ -4,7 +4,8 @@
 ![GitHub top language](https://img.shields.io/github/languages/top/dwseoh/dwseoh.com)
 ![GitHub last commit](https://img.shields.io/github/last-commit/dwseoh/dwseoh.com?color=red)
 
-Personal site: a single-page portfolio in English and Korean, plus a blog at `/blog`.
+Personal site: a single-page portfolio in English and Korean, plus a blog at `/blog`
+and a photo gallery at `/photos`.
 
 - `frontend/`: Next.js app deployed on Vercel.
 - `backend/`: Cloudflare Worker behind the view, like, and visitor counters
@@ -25,11 +26,36 @@ npm run dev      # http://localhost:3000
 ## Editing content
 
 Copy, links, and media paths live in `frontend/messages/en.json`, with `ko.json`
-as its Korean mirror. Changing text, portfolio links, hobby cards, photos, or
-webrings needs no code changes.
+as its Korean mirror. Changing text, portfolio links, hobby cards, or webrings
+needs no code changes. Photos live in their own manifest; see Photos.
 
 English is served at `/` and Korean at `/ko` (next-intl, `localePrefix:
-'as-needed'`). The blog sits outside the `[locale]` segment and is English-only.
+'as-needed'`). The blog and `/photos` sit outside the `[locale]` segment and are
+English-only.
+
+## Photos
+
+`frontend/content/photos.json` lists every photo and video, in display order. It
+feeds `/photos` (categories `photography`, `events` and `hobbies`) and the home
+carousel, which shows every `events` entry. Don't edit
+it by hand; use the CLI from `frontend/` (note the `--`):
+
+```bash
+# add: resize, strip GPS/EXIF, write thumb + webp + blur, append to the manifest
+npm run photos -- add ~/Downloads/IMG_1234.HEIC --category photography \
+  --caption "Sunset over Lake Ontario" --caption-ko "온타리오 호수의 노을" --date 2026-10
+
+npm run photos -- optimize --dry-run   # preview fixes to existing files
+npm run photos -- optimize             # fill missing thumbs/webp/blur, strip metadata, shrink
+npm run photos -- optimize --blog      # same for images used by blog posts
+npm run photos -- check                # validate the manifest (run before committing)
+```
+
+Useful `add` flags: `--last` (new photos go first by default), `--id`,
+`--position "50% 25%"` (crop focus). HEIC needs macOS `sips`; video needs
+`ffmpeg`. Originals are never touched, and anything `optimize` rewrites is
+backed up to the gitignored `frontend/.photos-backup/`. Full reference:
+[`frontend/scripts/photos/README.md`](frontend/scripts/photos/README.md).
 
 ## Blog
 
@@ -53,9 +79,9 @@ lang: en
 headings, lists, quotes, code, links, images, pipe tables, and GitHub-style
 `> [!NOTE]` callouts.
 
-The blog shares the site's palette but reads as its own publication: serif type,
-a narrower column, client-side search, a light/dark toggle scoped to `/blog`, a
-reading-progress bar, pagination, and prev/next links. Subscribe links point at
+The blog and `/photos` share one sub-page design (top bar, heading, square
+tiles; follows the system light/dark setting). The blog adds client-side search,
+a reading-progress bar, pagination, and prev/next links. Subscribe links point at
 [Substack](https://substack.com/@dwseoh).
 
 ## Counters

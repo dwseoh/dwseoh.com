@@ -1,4 +1,3 @@
-import { newsreader } from '@/app/fonts'
 import BlogNav from '@/components/blog/BlogNav'
 import { getAllPosts } from '@/lib/blog'
 import { copy } from './copy'
@@ -22,7 +21,7 @@ export default async function BlogLayout({ children }: { children: React.ReactNo
   }))
 
   return (
-    <div className={`blog-root ${newsreader.variable}`}>
+    <div className="blog-root">
       <BlogNav
         posts={navPosts}
         labels={{
