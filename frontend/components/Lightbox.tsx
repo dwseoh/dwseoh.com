@@ -76,9 +76,11 @@ function LightboxView({
   const stripRef = useRef<HTMLDivElement>(null)
   const touch = useRef<{ x: number; y: number } | null>(null)
   const [closing, setClosing] = useState(false)
-  const [loaded, setLoaded] = useState(false)
+  // The src that has finished loading; any other photo starts faded out.
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null)
 
   const photo = items[index]
+  const loaded = loadedSrc === photo.src
   const count = items.length
   const go = useCallback(
     (delta: number) => onIndexChange((index + delta + count) % count),
@@ -120,9 +122,8 @@ function LightboxView({
     }
   }, [])
 
-  // Reset the fade-in for each photo; warm the neighbours so ←/→ feel instant.
+  // Warm the neighbours so ←/→ feel instant.
   useEffect(() => {
-    setLoaded(false)
     for (const n of [items[(index + 1) % count], items[(index - 1 + count) % count]]) {
       if (n && !isVideo(n)) new Image().src = n.src
     }
@@ -237,10 +238,10 @@ function LightboxView({
               alt={photo.alt}
               decoding="async"
               ref={(el) => {
-                if (el?.complete && el.naturalWidth > 0) setLoaded(true)
+                if (el?.complete && el.naturalWidth > 0) setLoadedSrc(photo.src)
               }}
-              onLoad={() => setLoaded(true)}
-              onError={() => setLoaded(true)}
+              onLoad={() => setLoadedSrc(photo.src)}
+              onError={() => setLoadedSrc(photo.src)}
             />
           </picture>
         )}

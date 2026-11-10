@@ -9,7 +9,7 @@
     "photos": "node scripts/photos/index.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
     "next": "16.4.3",

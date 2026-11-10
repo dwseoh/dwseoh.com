@@ -1,7 +1,31 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 import { SunIcon, MoonIcon } from './Icons'
+
+type Theme = 'light' | 'dark'
+
+const DARK_QUERY = '(prefers-color-scheme: dark)'
+
+/** Re-read when <html data-theme> changes or the system theme flips. */
+function subscribeTheme(onChange: () => void) {
+  const observer = new MutationObserver(onChange)
+  observer.observe(document.documentElement, { attributeFilter: ['data-theme'] })
+  const media = window.matchMedia(DARK_QUERY)
+  media.addEventListener('change', onChange)
+  return () => {
+    observer.disconnect()
+    media.removeEventListener('change', onChange)
+  }
+}
+
+/** No saved choice → the page is following the system theme. */
+function readTheme(): Theme {
+  const current =
+    document.documentElement.getAttribute('data-theme') ??
+    (window.matchMedia(DARK_QUERY).matches ? 'dark' : 'light')
+  return current === 'dark' ? 'dark' : 'light'
+}
 
 /**
  * Light/dark switch for the blog surface. Without a saved choice the page
@@ -11,25 +35,18 @@ import { SunIcon, MoonIcon } from './Icons'
  * sub-page styles react to the attribute, so the portfolio is unaffected.
  */
 export default function ThemeToggle({ label }: { label: string }) {
-  const [theme, setTheme] = useState<'light' | 'dark' | null>(null)
-
-  useEffect(() => {
-    // No saved choice → the page is following the system theme.
-    const current =
-      document.documentElement.getAttribute('data-theme') ??
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-    setTheme(current === 'dark' ? 'dark' : 'light')
-  }, [])
+  // null on the server and during hydration; the real theme right after.
+  const theme = useSyncExternalStore<Theme | null>(subscribeTheme, readTheme, () => null)
 
   function toggle() {
     const next = theme === 'dark' ? 'light' : 'dark'
+    // Setting the attribute notifies subscribeTheme, which re-renders us.
     document.documentElement.setAttribute('data-theme', next)
     try {
       localStorage.setItem('blog-theme', next)
     } catch {
       /* private mode — the choice just won't persist */
     }
-    setTheme(next)
   }
 
   // Render a stable, icon-less button until mounted so SSR and first client
