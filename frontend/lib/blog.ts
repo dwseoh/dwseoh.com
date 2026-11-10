@@ -30,7 +30,7 @@ export interface Post extends PostMeta {
 
 /** Minimal YAML-subset frontmatter parser: `key: value`, quoted strings, and
  *  inline arrays like `[a, b, c]`. Enough for our fixed set of fields. */
-function parseFrontmatter(raw: string): { data: Record<string, unknown>; body: string } {
+export function parseFrontmatter(raw: string): { data: Record<string, unknown>; body: string } {
   const match = /^---\s*\n([\s\S]*?)\n---\s*\n?/.exec(raw)
   if (!match) return { data: {}, body: raw }
 
@@ -39,7 +39,7 @@ function parseFrontmatter(raw: string): { data: Record<string, unknown>; body: s
     const kv = /^([A-Za-z0-9_-]+)\s*:\s*(.*)$/.exec(line.trim())
     if (!kv) continue
     const key = kv[1]
-    let value = kv[2].trim()
+    const value = kv[2].trim()
 
     if (value.startsWith('[') && value.endsWith(']')) {
       data[key] = value
@@ -55,7 +55,7 @@ function parseFrontmatter(raw: string): { data: Record<string, unknown>; body: s
 }
 
 /** ~200 wpm, rounded up, floor of 1 minute. */
-function readingTime(body: string): number {
+export function readingTime(body: string): number {
   const words = body.trim().split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.round(words / 200))
 }

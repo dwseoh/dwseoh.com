@@ -1,19 +1,16 @@
 # dwseoh.com
 
+[![CI](https://github.com/dwseoh/dwseoh.com/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dwseoh/dwseoh.com/actions/workflows/ci.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/dwseoh/dwseoh.com)
 ![GitHub top language](https://img.shields.io/github/languages/top/dwseoh/dwseoh.com)
 ![GitHub last commit](https://img.shields.io/github/last-commit/dwseoh/dwseoh.com?color=red)
 
-Personal site: a single-page portfolio in English and Korean, plus a blog at `/blog`
-and a photo gallery at `/photos`.
+Personal site: a single-page portfolio in English and Korean, plus a blog at `/blog`, a photo gallery at `/photos`, and a music showcase page at `/music`.
 
 - `frontend/`: Next.js app deployed on Vercel.
 - `backend/`: Cloudflare Worker behind the view, like, and visitor counters
 
-
-# Do it yourself!
-
-## Running locally
+## Run it locally
 
 ```bash
 cd frontend
@@ -22,6 +19,19 @@ npm run dev      # http://localhost:3000
 ```
 
 `npm run build` for a production build. The backend is optional; see Counters.
+
+## Tests
+
+```bash
+cd frontend && npm test     # blog, Markdown renderer, photos, stats, EN/KO key parity
+cd frontend && npm run lint # ESLint (eslint-config-next, core-web-vitals + TypeScript)
+cd backend && npm test      # worker routes against an in-memory KV
+```
+
+CI (`.github/workflows/ci.yml`) runs on every push to `main` and every pull
+request: lint, typecheck, unit tests, `photos check`, and `next build` for the
+frontend; typecheck, unit tests, and a `wrangler deploy --dry-run` bundle for
+the backend.
 
 ## Editing content
 

@@ -51,7 +51,6 @@ export default function PhotoTile({
 
       <picture>
         {webp && <source type="image/webp" srcSet={webp} />}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={tileSrc(photo)}
           alt=""

@@ -231,7 +231,6 @@ function LightboxView({
         ) : (
           <picture key={photo.src}>
             {photo.srcWebp && <source type="image/webp" srcSet={photo.srcWebp} />}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className={`lb-media${loaded ? ' is-loaded' : ''}`}
               src={photo.src}
