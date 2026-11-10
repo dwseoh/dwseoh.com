@@ -170,6 +170,7 @@ html:has(.cw-root) {
    background runs under it. */
 .cw-root .subbar {
   position: relative;
+  z-index: auto; /* not sticky here, so no need to sit above the page (or the phone sheet) */
   background: transparent;
   border-bottom: 0;
 }
@@ -235,7 +236,8 @@ html:has(.cw-root) {
   font-variant-numeric: tabular-nums;
 }
 /* The selected row's secondary text steps up too. */
-.cw-row[aria-selected='true'] :is(.cw-c-num, .cw-s, .cw-c-album, .cw-c-year, .cw-c-dur) {
+:is(.cw-row[aria-selected='true'], .cw-flat-row[aria-current])
+  :is(.cw-c-num, .cw-s, .cw-c-album, .cw-c-year, .cw-c-dur) {
   color: var(--fg-2);
 }
 .cw-c-dur {
@@ -1138,41 +1140,191 @@ html:has(.cw-root) {
   }
 }
 
-/* ── Phones and small tablets: catalogue on top, detail below ─────────── */
+/* ── Phones and small tablets ─────────────────────────────────────────── */
+/* The page scrolls as one column with the player pinned to the bottom of the
+   screen. The drum gives way to a plain list (its swipes would fight the
+   page's), and a piece opens in a sheet that slides up over it. */
+
+/* Phone-only parts, hidden on wider screens. */
+.cw-flat,
+.cw-sheet-bar,
+.cw-scrim {
+  display: none;
+}
 
 @media (max-width: 900px) {
   .cw-root {
     --gutter: 20px;
     --rail-w: 0px;
+    /* Room at the bottom of the page for the pinned player. */
+    --player-room: calc(112px + env(safe-area-inset-bottom));
   }
   .cw-app {
     display: block;
     height: auto;
   }
-  .cw-browse {
-    height: 78svh;
-    min-height: 520px;
-  }
   .cw-head {
-    margin: 12px 0 16px;
+    margin: 12px 0 20px;
   }
+  .cw-cols,
   .cw-rail {
     display: none;
   }
-  .cw-detail {
-    overflow: visible;
-    border-left: 0;
-    border-top: 1px solid var(--line);
+
+  /* The player, pinned. The strip fades the list out under it. */
+  .cw-foot {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 20;
+    margin: 0;
+    padding: 20px 12px calc(10px + env(safe-area-inset-bottom));
+    border-top: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in oklab, var(--bg) 80%, transparent) 45%,
+      color-mix(in oklab, var(--bg) 92%, transparent)
+    );
   }
-  .cw-d {
-    padding-top: 28px;
+  .cw-viz {
+    left: 0;
+    width: 100%;
+  }
+  .cw-np {
+    background: rgba(24, 23, 22, 0.62);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    backdrop-filter: blur(18px) saturate(1.2);
+  }
+
+  /* ── The list ── */
+  .cw-stage {
+    display: none;
+  }
+  .cw-browse {
+    display: block;
+    padding-bottom: var(--player-room);
+  }
+  .cw-flat {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cw-flat-row {
+    display: block;
+    width: 100%;
+    height: var(--row-h);
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s;
+  }
+  /* The last piece opened keeps a quiet version of the selector. */
+  .cw-flat-row[aria-current] {
+    background: rgba(255, 255, 255, 0.07);
+  }
+  .cw-flat-row[aria-current][data-featured] {
+    background: var(--gold-wash), rgba(255, 255, 255, 0.07);
+  }
+  .cw-flat-row:active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  .cw-flat-row:focus-visible {
+    outline: 0;
+    box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--fg) 40%, transparent);
+  }
+  .cw-flat .cw-row-inner {
+    opacity: 1;
+  }
+
+  /* ── The details, as a sheet ── */
+  .cw-root .cw-detail {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 30;
+    max-height: calc(100svh - 40px);
+    border: 0;
+    border-radius: 18px 18px 0 0;
+    background: color-mix(in oklab, var(--c1) 28%, #0e0d0d);
+    box-shadow: 0 -24px 60px rgba(0, 0, 0, 0.55);
+    transform: translateY(100%);
+    visibility: hidden;
+    transition:
+      transform 0.42s var(--ease),
+      visibility 0s 0.42s;
+  }
+  .cw-root .cw-detail[data-open] {
+    transform: translateY(var(--drag, 0px));
+    visibility: visible;
+    transition: transform 0.42s var(--ease);
+  }
+  .cw-root .cw-detail.is-dragging {
+    transition: none;
+  }
+  .cw-root .cw-d {
+    padding: 4px var(--gutter) calc(36px + env(safe-area-inset-bottom));
+  }
+  .cw-sheet-bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    background: inherit;
+  }
+  .cw-sheet-grip {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--fg-4);
+  }
+  .cw-sheet-close {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--fg-2);
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .cw-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    display: block;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.42s var(--ease);
+  }
+  .cw-scrim[data-open] {
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cw-root,
-  .cw-lens::before {
-    transition: none;
+  .cw-lens::before,
+  .cw-root .cw-detail[data-open],
+  .cw-root .cw-detail,
+  .cw-scrim {
+    transition: none !important;
   }
   .cw-d > * {
     animation: none !important;

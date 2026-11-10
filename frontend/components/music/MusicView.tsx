@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import PageHeading from '@/components/subpage/PageHeading'
 import SubpageBar from '@/components/subpage/SubpageBar'
 import Tabs from '@/components/subpage/Tabs'
@@ -19,7 +19,7 @@ import {
 import Cover from './Cover'
 import DetailPanel from './DetailPanel'
 import Drum from './Drum'
-import { ClockIcon, PauseIcon, PinIcon, PlayIcon } from './Icons'
+import { ClockIcon, CloseIcon, PauseIcon, PinIcon, PlayIcon } from './Icons'
 import NowPlaying from './NowPlaying'
 import Visualizer from './Visualizer'
 
@@ -61,6 +61,19 @@ const isSection = (k: string | null): k is SectionKey => sections.some((s) => s.
 const HOME = sections[0].key
 
 /**
+ * Phones and small tablets: the list is a plain list that scrolls with the
+ * page, each piece opens in a sheet from the bottom, and the player is pinned
+ * to the bottom of the screen. Matches the breakpoint in music.css.
+ */
+const PHONE_QUERY = '(max-width: 900px)'
+const onPhoneChange = (cb: () => void) => {
+  const m = window.matchMedia(PHONE_QUERY)
+  m.addEventListener('change', cb)
+  return () => m.removeEventListener('change', cb)
+}
+const isPhone = () => window.matchMedia(PHONE_QUERY).matches
+
+/**
  * One row of the list. Memoised: focus is styled by the drum (aria-selected,
  * --f), so moving it doesn't re-render any rows.
  */
@@ -81,7 +94,7 @@ const Row = memo(function Row({
   section: SectionKey
 }) {
   return (
-    <div className={`cw-grid cw-row-inner${p.audio ? ' has-audio' : ''}${isNow ? ' is-now' : ''}`}>
+    <span className={`cw-grid cw-row-inner${p.audio ? ' has-audio' : ''}${isNow ? ' is-now' : ''}`}>
       <span className="cw-c-num">
         {eq ? (
           <Eq />
@@ -110,7 +123,7 @@ const Row = memo(function Row({
       <span className="cw-c-album">{collection.title}</span>
       <span className="cw-c-year">{p.year}</span>
       <span className="cw-c-dur">{p.duration}</span>
-    </div>
+    </span>
   )
 })
 
@@ -158,6 +171,78 @@ export default function MusicView({
     const el = detailRef.current
     if (el && el.scrollHeight > el.clientHeight && el.scrollTop > 0) el.scrollTop = 0
   }, [shownSlug])
+
+  // ── Phones ───────────────────────────────────────────────────────────────
+  /** The detail panel is a sheet that opens over the list. */
+  const asSheet = useSyncExternalStore(onPhoneChange, isPhone, () => false)
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const opener = useRef<HTMLElement | null>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
+
+  const closeSheet = useCallback(() => {
+    setSheetOpen(false)
+    opener.current?.focus({ preventScroll: true })
+  }, [])
+
+  // While the sheet is open the page behind it stays put, and focus moves in.
+  useEffect(() => {
+    if (!asSheet || !sheetOpen) return
+    const html = document.documentElement
+    const was = html.style.overflow
+    html.style.overflow = 'hidden'
+    closeRef.current?.focus({ preventScroll: true })
+    return () => {
+      html.style.overflow = was
+    }
+  }, [asSheet, sheetOpen])
+
+  // Pull the sheet down from its top to close it.
+  useEffect(() => {
+    const el = detailRef.current
+    if (!el || !asSheet) return
+    let y0 = 0
+    let t0 = 0
+    let dy = 0
+    let armed = false
+    let dragging = false
+    const start = (e: TouchEvent) => {
+      armed = el.scrollTop <= 0
+      dragging = false
+      dy = 0
+      y0 = e.touches[0].clientY
+      t0 = e.timeStamp
+    }
+    const move = (e: TouchEvent) => {
+      if (!armed) return
+      dy = e.touches[0].clientY - y0
+      if (!dragging) {
+        if (dy < -4) armed = false // scrolling the sheet up, not pulling it down
+        if (dy < 6) return
+        dragging = true
+        el.classList.add('is-dragging')
+      }
+      e.preventDefault()
+      el.style.setProperty('--drag', `${Math.max(0, dy)}px`)
+    }
+    const end = (e: TouchEvent) => {
+      if (!dragging) return
+      dragging = false
+      el.classList.remove('is-dragging')
+      el.style.removeProperty('--drag')
+      const v = dy / Math.max(1, e.timeStamp - t0) // px per ms
+      if (dy > 110 || (dy > 30 && v > 0.6)) closeSheet()
+    }
+    el.addEventListener('touchstart', start, { passive: true })
+    el.addEventListener('touchmove', move, { passive: false })
+    el.addEventListener('touchend', end)
+    el.addEventListener('touchcancel', end)
+    return () => {
+      el.removeEventListener('touchstart', start)
+      el.removeEventListener('touchmove', move)
+      el.removeEventListener('touchend', end)
+      el.removeEventListener('touchcancel', end)
+    }
+  }, [asSheet, closeSheet])
 
   // ── Audio ────────────────────────────────────────────────────────────────
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -236,6 +321,13 @@ export default function MusicView({
     [bySlug],
   )
 
+  /** Phones: show a piece in the sheet. */
+  const openPiece = (s: string, from?: HTMLElement | null) => {
+    opener.current = from ?? (document.activeElement as HTMLElement | null)
+    focus(s)
+    setSheetOpen(true)
+  }
+
   const move = useCallback(
     (delta: number) => setSlug(list[Math.max(0, Math.min(list.length - 1, index + delta))].slug),
     [index, list],
@@ -268,7 +360,10 @@ export default function MusicView({
       })
     }
     const want = q.get('piece')
-    if (want) focus(want)
+    if (want) {
+      focus(want)
+      if (isPhone() && pieces.some((p) => p.slug === want)) setSheetOpen(true)
+    }
   }, [focus, pieces])
 
   const mounted = useRef(false)
@@ -293,6 +388,12 @@ export default function MusicView({
       if (el.closest('input, textarea, select, video, iframe, [contenteditable]')) return
       const onControl = !!el.closest('button, a')
       const piece = list[index]
+      if (e.key === 'Escape') {
+        if (!sheetOpen) return
+        e.preventDefault()
+        closeSheet()
+        return
+      }
       switch (e.key) {
         case 'ArrowDown':
         case 'j':
@@ -331,7 +432,7 @@ export default function MusicView({
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [index, list, move, now, toggle])
+  }, [index, list, move, now, toggle, sheetOpen, closeSheet])
 
   const focused = list[index]
   const palette = byCollection.get(focused.collection)!.palette
@@ -439,6 +540,32 @@ export default function MusicView({
             )}
           </div>
 
+          {/* Phones: the list as a plain list; a piece opens in the sheet. */}
+          <ul className="cw-flat" aria-label={sectionInfo.label}>
+            {list.map((p, i) => {
+              const isNow = nowSlug === p.slug
+              return (
+                <li key={p.slug}>
+                  <button
+                    className="cw-flat-row"
+                    aria-current={i === index ? 'true' : undefined}
+                    data-featured={p.featured ? '' : undefined}
+                    onClick={(e) => openPiece(p.slug, e.currentTarget)}
+                  >
+                    <Row
+                      p={p}
+                      collection={byCollection.get(p.collection)!}
+                      number={numbers.get(p.slug)!}
+                      isNow={isNow}
+                      eq={isNow && playing}
+                      section={section}
+                    />
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+
           <footer className="cw-foot">
             <Visualizer className="cw-viz" analyser={analyserRef} playing={playing} tint={focused.collection} />
             <NowPlaying
@@ -452,13 +579,26 @@ export default function MusicView({
               onPrev={now || prevUp ? skipBack : undefined}
               onNext={nextUp ? () => toggle(nextUp) : undefined}
               onSeek={seek}
-              onShow={() => focus(barPiece.slug)}
+              onShow={() => (asSheet ? openPiece(barPiece.slug) : focus(barPiece.slug))}
             />
           </footer>
         </section>
 
         {/* ── Right: the focused piece ────────────────────────────────── */}
-        <aside ref={detailRef} className="cw-detail" aria-label="Selected piece">
+        <aside
+          ref={detailRef}
+          className="cw-detail"
+          aria-label={asSheet ? shown.title : 'Selected piece'}
+          data-open={sheetOpen ? '' : undefined}
+          {...(asSheet && { role: 'dialog', 'aria-modal': true, inert: !sheetOpen })}
+        >
+          {/* Phones: the sheet's handle and close button. */}
+          <div className="cw-sheet-bar">
+            <span className="cw-sheet-grip" aria-hidden="true" />
+            <button ref={closeRef} className="cw-sheet-close" onClick={closeSheet} aria-label="Close">
+              <CloseIcon />
+            </button>
+          </div>
           <p className="cw-sr" aria-live="polite">
             {focused.title}, {focused.categories.join(' and ')}, {focused.year}
           </p>
@@ -474,6 +614,7 @@ export default function MusicView({
           />
         </aside>
       </div>
+      <div className="cw-scrim" data-open={sheetOpen ? '' : undefined} onClick={closeSheet} aria-hidden="true" />
 
       <audio
         ref={audioRef}

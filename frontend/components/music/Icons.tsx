@@ -78,3 +78,9 @@ export const PinIcon = ({ className }: P) => (
     </g>
   </svg>
 )
+
+export const CloseIcon = ({ className }: P) => (
+  <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" {...stroke} aria-hidden="true">
+    <path d="M6 6l12 12M18 6 6 18" />
+  </svg>
+)
