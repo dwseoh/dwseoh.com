@@ -1,0 +1,30 @@
+# Runs before every commit (installed by `npm install` in frontend/ via husky).
+# Fast checks only; the full `next build` stays in CI. Skip once with
+# `git commit --no-verify`.
+set -e
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
+if echo "$staged" | grep -q '^frontend/'; then
+  cd frontend
+  echo "› frontend: lint staged files"
+  npx lint-staged
+  echo "› frontend: typecheck"
+  npm run -s typecheck
+  echo "› frontend: tests"
+  npm test --silent
+  cd ..
+fi
+
+if echo "$staged" | grep -q '^backend/'; then
+  cd backend
+  if [ ! -d node_modules ]; then
+    echo "› backend: node_modules missing; run 'npm install' in backend/" >&2
+    exit 1
+  fi
+  echo "› backend: typecheck"
+  npm run -s typecheck
+  echo "› backend: tests"
+  npm test --silent
+  cd ..
+fi

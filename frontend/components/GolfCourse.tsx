@@ -387,7 +387,8 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
     }
   }, [])
   const fadeTrail = useCallback(() => {
-    for (const el of trailRefs.current) {
+    for (let i = 0; i < trailRefs.current.length; i++) {
+      const el = trailRefs.current[i]
       if (!el) continue
       const o = parseFloat(el.style.opacity || '0')
       el.style.opacity = o > 0.012 ? `${(o * 0.78).toFixed(3)}` : '0'
@@ -395,7 +396,10 @@ export default function GolfCourse({ items, labels }: { items: Extracurricular[]
   }, [])
   const clearTrail = useCallback(() => {
     histRef.current.length = 0
-    for (const el of trailRefs.current) if (el) el.style.opacity = '0'
+    for (let i = 0; i < trailRefs.current.length; i++) {
+      const el = trailRefs.current[i]
+      if (el) el.style.opacity = '0'
+    }
   }, [])
 
   // measure viewport width

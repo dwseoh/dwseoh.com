@@ -26,3 +26,6 @@ placeholder-v1/
 # photos pipeline: pre-optimize originals (npm run photos optimize)
 frontend/.photos-backup/
 docs/
+
+# wrangler dry-run bundle
+backend/dist/

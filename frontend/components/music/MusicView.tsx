@@ -164,10 +164,13 @@ export default function MusicView({
   const shownSlug = useDeferredValue(slug)
   const shown = bySlug.get(shownSlug)!
   const shownCollection = byCollection.get(shown.collection)!
-  const prevShown = useRef({ slug: shownSlug, dir: 'down' as 'up' | 'down' })
-  if (prevShown.current.slug !== shownSlug) {
+  // Which way the panel slides: down when moving later in the list, up when
+  // earlier. Adjusted during render (React discards this pass and re-renders
+  // with the new value before committing), so it's never a frame stale.
+  const [prevShown, setPrevShown] = useState({ slug: shownSlug, dir: 'down' as 'up' | 'down' })
+  if (prevShown.slug !== shownSlug) {
     const pos = (s: string) => list.findIndex((p) => p.slug === s)
-    prevShown.current = { slug: shownSlug, dir: pos(shownSlug) >= pos(prevShown.current.slug) ? 'down' : 'up' }
+    setPrevShown({ slug: shownSlug, dir: pos(shownSlug) >= pos(prevShown.slug) ? 'down' : 'up' })
   }
 
   // A new piece starts at its cover, not wherever the last one was scrolled to.
@@ -357,6 +360,9 @@ export default function MusicView({
     const q = new URLSearchParams(window.location.search)
     const c = q.get('c')
     if (isSection(c)) {
+      // Must run after hydration: reading the URL during render would make the
+      // server and client disagree. Syncing from an external source on mount.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSection(c)
       setSlug((cur) => {
         const next = sectionList(pieces, c)
@@ -610,7 +616,7 @@ export default function MusicView({
             key={shown.slug}
             piece={shown}
             collection={shownCollection}
-            dir={prevShown.current.dir}
+            dir={prevShown.dir}
             player={{ isCurrent: nowSlug === shown.slug, playing, time, duration }}
             onToggle={() => toggle(shown)}
             onSeek={seek}

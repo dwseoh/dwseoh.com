@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react'
+import { useCallback, useMemo, useSyncExternalStore } from 'react'
 import Lightbox from '@/components/Lightbox'
 import Tabs from '@/components/subpage/Tabs'
 import { isModifiedClick, readSearch, setSearch, subscribeUrl, withTransition } from '@/components/subpage/url'
@@ -40,6 +40,9 @@ function writeDensity(d: Density) {
   window.dispatchEvent(new Event(DENSITY_EVENT))
 }
 
+/** `ready` never changes after hydration, so there is nothing to subscribe to. */
+const subscribeNever = () => () => {}
+
 /**
  * The interactive part of /photos: tabs, density toggle, grid and lightbox.
  * The server page passes the manifest and the query it was requested with, so
@@ -61,7 +64,10 @@ export default function PhotoGallery({
   const requested = parseFilter(params.get('c'))
   const openId = params.get('p')
   const density = useSyncExternalStore<Density>(subscribeDensity, readDensity, () => 3)
-  const [ready, setReady] = useState(false)
+  // Hydrated yet? false on the server and during hydration, true right after.
+  // Desktop holds the rise-in until then (see photos.css), so a remembered
+  // 5-column choice is applied before any tile is visible.
+  const ready = useSyncExternalStore(subscribeNever, () => true, () => false)
 
   // Only categories that actually have photos get a tab.
   const counts = useMemo(() => {
@@ -81,10 +87,6 @@ export default function PhotoGallery({
   // The lightbox is client-only (it portals into <body>), so a deep-linked
   // ?p= opens right after hydration.
   const open = ready && found >= 0 ? found : null
-
-  // Desktop holds the rise-in until hydration (see photos.css), so a remembered
-  // 5-column choice is applied before any tile is visible.
-  useEffect(() => setReady(true), [])
 
   const selectFilter = (e: React.MouseEvent, key: Filter) => {
     // Let modified clicks open a new tab like any link would.

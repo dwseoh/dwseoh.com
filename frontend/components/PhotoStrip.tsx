@@ -140,7 +140,6 @@ export default function PhotoStrip({
                     // Images use a lightweight thumbnail (falls back to full if missing).
                     <picture>
                       {photo.thumbWebp && !fallback[i] && <source type="image/webp" srcSet={photo.thumbWebp} />}
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={fallback[i] ? photo.src : (photo.thumb ?? thumbOf(photo.src))}
                         alt={photo.alt}

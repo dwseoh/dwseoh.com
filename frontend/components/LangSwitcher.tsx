@@ -1,12 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import Image, { type StaticImageData } from 'next/image'
 import { useLocale } from 'next-intl'
 import { usePathname, useRouter } from '@/i18n/routing'
+import englandFlag from '@/public/images/england.png'
+import koreaFlag from '@/public/images/korea.png'
 
-const FLAGS: Record<string, string> = {
-  en: '/images/england.png',
-  ko: '/images/korea.png',
+const FLAGS: Record<string, StaticImageData> = {
+  en: englandFlag,
+  ko: koreaFlag,
 }
 const LABELS: Record<string, string> = {
   en: 'English',
@@ -42,7 +45,7 @@ export default function LangSwitcher() {
           fontFamily: 'inherit',
         }}
       >
-        <img src={FLAGS[locale]} alt={locale} width={18} style={{ borderRadius: '2px' }} />
+        <Image src={FLAGS[locale]} alt={locale} width={18} style={{ borderRadius: '2px', height: 'auto' }} />
         <span>{LABELS[locale]}</span>
         <span style={{ fontSize: '10px', marginLeft: '1px' }}>{open ? '▴' : '▾'}</span>
       </button>
@@ -86,7 +89,7 @@ export default function LangSwitcher() {
                   textAlign: 'left',
                 }}
               >
-                <img src={FLAGS[loc]} alt={loc} width={18} style={{ borderRadius: '2px' }} />
+                <Image src={FLAGS[loc]} alt={loc} width={18} style={{ borderRadius: '2px', height: 'auto' }} />
                 {LABELS[loc]}
               </button>
             ))}

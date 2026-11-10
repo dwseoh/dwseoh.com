@@ -1,7 +1,15 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { randomGlyph, scrambleCounts } from './scramble'
+
+const REDUCED_MOTION = '(prefers-reduced-motion: reduce)'
+
+function subscribeReducedMotion(onChange: () => void) {
+  const media = window.matchMedia(REDUCED_MOTION)
+  media.addEventListener('change', onChange)
+  return () => media.removeEventListener('change', onChange)
+}
 
 // Re-randomize each scrambled glyph only ~30% of frames so it reads as a calm
 // settle rather than a frantic flicker (especially important for Hangul).
@@ -26,12 +34,15 @@ export default function ScrambleText({
   const progress = useRef(0) // 0 = fully scrambled, 1 = fully resolved
   const prevText = useRef(text)
   const glyphs = useRef<string[]>([])
+  // Reduced motion: no animation at all, just the text.
+  const reduced = useSyncExternalStore(
+    subscribeReducedMotion,
+    () => window.matchMedia(REDUCED_MOTION).matches,
+    () => false
+  )
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setDisplay(text)
-      return
-    }
+    if (reduced) return
     // text changed (language switch) → decode again from scratch
     if (prevText.current !== text) {
       prevText.current = text
@@ -73,7 +84,7 @@ export default function ScrambleText({
 
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [hovered, text, duration])
+  }, [hovered, text, duration, reduced])
 
   return (
     <span
@@ -90,7 +101,7 @@ export default function ScrambleText({
     >
       <span aria-hidden style={{ visibility: 'hidden' }}>{text}</span>
       <span aria-label={text} style={{ position: 'absolute', left: 0, top: 0, whiteSpace: 'pre' }}>
-        {display}
+        {reduced ? text : display}
       </span>
     </span>
   )
