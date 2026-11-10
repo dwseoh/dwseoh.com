@@ -8,7 +8,7 @@
     "start": "next start",
     "photos": "node scripts/photos/index.mjs",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
     "prepare": "cd .. && husky frontend/.husky"
   },
