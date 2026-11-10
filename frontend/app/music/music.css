@@ -1240,7 +1240,7 @@ html:has(.cw-root) {
     text-align: left;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-    transition: background-color 0.2s;
+    /* No fade: stepping with the arrow keys would leave two rows lit mid-fade. */
   }
   /* The last piece opened keeps a quiet version of the selector. */
   .cw-flat-row[aria-current] {
