@@ -15,7 +15,8 @@
  * - `video`: a YouTube URL/id (`t=` and `end=` times, in seconds, are kept), or a self-hosted
  *   '/videos/x.mp4'. Anything else (e.g. an Instagram reel) goes in `links`.
  * - `score`: a MuseScore (or any) URL for the full score.
- * - `cover`: an image path. Without one, the cover is generated from the title.
+ * - `cover`: an image in public/images/music/. Pieces use their collection's
+ *   cover unless they have their own; with neither, one is generated.
  */
 
 export type Category = 'composition' | 'performance' | 'arrangement'
@@ -33,6 +34,8 @@ export interface Collection {
   palette: [string, string]
   /** Default genre for its pieces. */
   genre: string
+  /** Album art for its pieces, e.g. '/images/music/sketches-1-0.jpg'. */
+  cover?: string
 }
 
 export interface Piece {
@@ -108,9 +111,27 @@ const DEMO_VIDEO = '/videos/orchestra-conducting.mp4'
 const DEMO_SCORE = 'https://musescore.com/'
 
 export const collections: Collection[] = [
-  { id: 'sketches-1-0', title: 'Sketches 1.0', palette: ['#24211e', '#c4b8a6'], genre: 'Chamber' },
-  { id: 'hot-summer-night', title: 'Hot Summer Night', palette: ['#321a13', '#d6a07c'], genre: 'Piano' },
-  { id: 'hack-the-north', title: 'Hack the North', palette: ['#1b1f29', '#a3b1c6'], genre: 'Jazz' },
+  {
+    id: 'sketches-1-0',
+    title: 'Sketches 1.0',
+    palette: ['#24211e', '#c4b8a6'],
+    genre: 'Chamber',
+    cover: '/images/music/sketches-1-0.jpg',
+  },
+  {
+    id: 'hot-summer-night',
+    title: 'Hot Summer Night',
+    palette: ['#321a13', '#d6a07c'],
+    genre: 'Piano',
+    cover: '/images/music/hot-summer-night.jpg',
+  },
+  {
+    id: 'hack-the-north',
+    title: 'Hack the North',
+    palette: ['#1b1f29', '#a3b1c6'],
+    genre: 'Jazz',
+    cover: '/images/music/hack-the-north.png',
+  },
   { id: 'season-23-24', title: '2023–24 Season', palette: ['#1a2030', '#94a4c0'], genre: 'Classical' },
   { id: 'season-24-25', title: '2024–25 Season', palette: ['#2a1c22', '#bf9ca6'], genre: 'Classical' },
   { id: 'screen-and-game', title: 'Screen & Game', palette: ['#1e2229', '#a9b2bf'], genre: 'Film & game' },
@@ -807,7 +828,11 @@ export const catalogue: Piece[] = [
  * arrangements stay in `catalogue` until they're ready. To show everything,
  * make this `catalogue` again and restore the tabs in `sections`.
  */
-export const pieces = catalogue.filter((p) => p.categories.includes('composition'))
+const albumCover = new Map(collections.map((c) => [c.id, c.cover]))
+
+export const pieces = catalogue
+  .filter((p) => p.categories.includes('composition'))
+  .map((p) => ({ ...p, cover: p.cover ?? albumCover.get(p.collection) }))
 
 export const inSection = (piece: Piece, key: SectionKey) => key === 'all' || piece.categories.includes(key)
 

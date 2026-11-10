@@ -700,7 +700,7 @@ html:has(.cw-root) {
 .cw-d-art .cw-cover.is-lg {
   overflow: visible; /* lets the seal sit on the corner */
 }
-.cw-d-art .cw-cover.is-lg svg {
+.cw-d-art .cw-cover.is-lg :is(svg, img) {
   border-radius: inherit;
 }
 .cw-d-head {
