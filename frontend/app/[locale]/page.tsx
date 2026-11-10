@@ -107,6 +107,7 @@ export default async function HomePage() {
             roles: () => <RotatingText words={roles} />,
             nl: () => <br />,
             blog: (chunks) => <InlineLink href="/blog">{chunks}</InlineLink>,
+            music: (chunks) => <InlineLink href="/music">{chunks}</InlineLink>,
           })}
         </p>
 

@@ -7,7 +7,7 @@
     "description": "Software Engineering student at the University of Waterloo; hackathon organizer, composer, clarinetist, and photographer. Native Korean speaker."
   },
   "bio1": "I study software engineering at <uw>University of Waterloo</uw>. I'm a native Korean speaker, and I moved to Canada in the fall of 2019. Last summer, I worked at <cerebras>Cerebras Systems</cerebras> as an AI SWE Intern, building low-level C++ debugging tools for the world's fastest inference. Follow my progress with <blog>my writings</blog>.",
-  "bioMusic": "I have a great passion for music during my spare time. I am a <roles></roles><nl></nl>I've been composing a lot more recently; check out my work here!",
+  "bioMusic": "I have a great passion for music during my spare time. I am a <roles></roles><nl></nl>I've been composing a lot more recently; check out <music>my music</music> here!",
   "bioCommunity": "Additionally, I'm a big community contributor. I organized <htn>Hack the North</htn>, Canada's largest hackathon. Previously, I was the Sponsorship Director at Ignition Hacks, Hack the Ridge President, and more.",
   "roles": ["clarinetist.", "conductor.", "composer.", "music producer.", "pianist.", "ensemble director."],
   "sections": {
@@ -310,7 +310,7 @@
       "thumb": "/images/thumbnails/music.png",
       "desc": "Explore my music performances, compositions, and more!",
       "links": [
-        { "label": "Compositions", "href": "#", "locked": true },
+        { "label": "Compositions", "href": "/music", "icon": "music" },
         { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
         { "label": "[Retired] Music Projects", "href": "https://projects.dwseoh.com", "icon": "music" }
       ]
