@@ -739,9 +739,6 @@ html:has(.cw-root) {
   font-size: 13.5px;
   color: var(--fg);
 }
-.cw-d-credits .is-mine dd {
-  color: var(--gold);
-}
 
 .cw-d-title {
   margin: 0;
@@ -824,6 +821,24 @@ html:has(.cw-root) {
   font-size: 13px;
   color: var(--fg-3);
 }
+/* No recording, but a video: the whole row opens it. */
+.cw-player.is-video {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.cw-player.is-video:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.cw-player.is-video:hover .cw-play {
+  transform: scale(1.06);
+}
+.is-video .cw-player-note {
+  color: var(--fg-2);
+}
 
 .cw-range {
   --p: 0%;
@@ -882,6 +897,19 @@ html:has(.cw-root) {
   line-height: 1.65;
   color: var(--fg-2);
   text-wrap: pretty;
+}
+.cw-d-desc + .cw-d-desc {
+  margin-top: 12px;
+}
+.cw-d-desc a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--fg-4);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
+}
+.cw-d-desc a:hover {
+  text-decoration-color: currentColor;
 }
 
 /* Facts: one small label/value grid; instrumentation gets a full-width line. */
@@ -1258,6 +1286,9 @@ html:has(.cw-root) {
     transition:
       transform 0.42s var(--ease),
       visibility 0s 0.42s;
+  }
+  .cw-root .cw-detail:focus {
+    outline: none; /* focused on open so Tab starts inside; the sheet itself needs no ring */
   }
   .cw-root .cw-detail[data-open] {
     transform: translateY(var(--drag, 0px));

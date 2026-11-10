@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
 import { ME, categoryLabel, creditsOf, genreOf, type Collection, type Piece } from '@/app/music/data'
 import Cover from './Cover'
 import { ArrowUpRightIcon, LinkIcon, PauseIcon, PlayIcon, ScoreIcon } from './Icons'
@@ -19,12 +19,32 @@ export function fmt(s: number) {
   return `${m}:${String(Math.floor(s % 60)).padStart(2, '0')}`
 }
 
+/** A time in a YouTube link, in seconds: `t=`/`start=` (where it starts) or `end=`. */
+function youtubeTime(url: string, ...keys: string[]) {
+  const m = url.match(new RegExp(`[?&#](?:${keys.join('|')})=(\\d+)s?(?:&|$)`))
+  return m ? Number(m[1]) : 0
+}
+
 function youtubeId(url: string) {
   const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/)
   return m ? m[1] : /^[\w-]{11}$/.test(url) ? url : null
 }
 
 const pad = (n: number) => String(n).padStart(2, '0')
+
+/** A description paragraph, with `[text](url)` turned into a link. */
+function prose(text: string) {
+  return text.split(/(\[[^\]]+\]\([^)\s]+\))/).map((part, i) => {
+    const m = part.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/)
+    return m ? (
+      <a key={i} href={m[2]} target="_blank" rel="noreferrer">
+        {m[1]}
+      </a>
+    ) : (
+      part
+    )
+  })
+}
 
 interface Props {
   piece: Piece
@@ -45,8 +65,22 @@ interface Props {
  */
 export default function DetailPanel({ piece, collection, dir, player, onToggle, onSeek, onVideoStart }: Props) {
   const perf = piece.categories.includes('performance')
+  // One line per role, e.g. two composers share "Composers".
   const credits = creditsOf(piece)
+  const roles = [...new Set(credits.map((c) => c.role))].map((role) => ({
+    role,
+    names: credits.filter((c) => c.role === role).map((c) => c.name),
+  }))
   const hasMedia = piece.video || piece.score || piece.links?.length
+
+  // The video opens in place of its tile; the player row can open it too.
+  const [watching, setWatching] = useState(false)
+  const mediaRef = useRef<HTMLElement>(null)
+  const watch = () => {
+    onVideoStart()
+    setWatching(true)
+    requestAnimationFrame(() => mediaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }))
+  }
 
   const facts: [string, React.ReactNode][] = [
     ['Year', piece.year],
@@ -76,19 +110,36 @@ export default function DetailPanel({ piece, collection, dir, player, onToggle, 
               <dt>Album</dt>
               <dd>{collection.title}</dd>
             </div>
-            {credits.map((c) => (
-              <div key={c.role} className={c.role === 'Composer' && c.name === ME ? 'is-mine' : undefined}>
-                <dt>{c.role}</dt>
-                <dd>{c.name}</dd>
+            {roles.map(({ role, names }) => (
+              <div key={role}>
+                <dt>{names.length > 1 ? `${role}s` : role}</dt>
+                <dd>
+                  {names.map((n, i) => (
+                    <Fragment key={n}>
+                      {i > 0 && ', '}
+                      {n === ME ? <span className="cw-me">{n}</span> : n}
+                    </Fragment>
+                  ))}
+                </dd>
               </div>
             ))}
           </dl>
         </div>
       </header>
 
-      <Player piece={piece} player={player} onToggle={onToggle} onSeek={onSeek} />
+      <Player
+        piece={piece}
+        player={player}
+        onToggle={onToggle}
+        onSeek={onSeek}
+        onWatch={piece.video ? watch : undefined}
+      />
 
-      <p className="cw-d-desc">{piece.description}</p>
+      {piece.description.split('\n\n').map((para, i) => (
+        <p key={i} className="cw-d-desc">
+          {prose(para)}
+        </p>
+      ))}
 
       <dl className="cw-facts">
         {facts.map(([k, v]) => (
@@ -120,9 +171,15 @@ export default function DetailPanel({ piece, collection, dir, player, onToggle, 
       )}
 
       {hasMedia && (
-        <section className="cw-d-sec">
+        <section ref={mediaRef} className="cw-d-sec">
           <h3 className="cw-label">Watch &amp; read</h3>
-          <Media piece={piece} palette={collection.palette} onVideoStart={onVideoStart} />
+          <Media
+            piece={piece}
+            palette={collection.palette}
+            watching={watching}
+            onWatch={watch}
+            onVideoStart={onVideoStart}
+          />
         </section>
       )}
     </article>
@@ -134,12 +191,25 @@ function Player({
   player,
   onToggle,
   onSeek,
+  onWatch,
 }: {
   piece: Piece
   player: PlayerState
   onToggle: () => void
   onSeek: (t: number) => void
+  /** No recording, but a video: the row opens it instead. */
+  onWatch?: () => void
 }) {
+  if (!piece.audio && onWatch) {
+    return (
+      <button className="cw-player is-video" onClick={onWatch}>
+        <span className="cw-play">
+          <PlayIcon />
+        </span>
+        <span className="cw-player-note">Watch video</span>
+      </button>
+    )
+  }
   if (!piece.audio) {
     return (
       <div className="cw-player is-off">
@@ -188,15 +258,21 @@ function Player({
 function Media({
   piece,
   palette,
+  watching,
+  onWatch,
   onVideoStart,
 }: {
   piece: Piece
   palette: [string, string]
+  watching: boolean
+  onWatch: () => void
+  /** A self-hosted video started playing (pauses the music). */
   onVideoStart: () => void
 }) {
-  const [watching, setWatching] = useState(false)
   const src = piece.video
   const yt = src && !/\.(mp4|webm|mov)$/i.test(src) ? youtubeId(src) : null
+  const start = yt && src ? youtubeTime(src, 't', 'start') : 0
+  const end = yt && src ? youtubeTime(src, 'end') : 0
 
   return (
     <div className="cw-media">
@@ -205,7 +281,7 @@ function Media({
           <div className="cw-video">
             {yt ? (
               <iframe
-                src={`https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&rel=0`}
+                src={`https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&rel=0${start ? `&start=${start}` : ''}${end ? `&end=${end}` : ''}`}
                 title={`${piece.title} — performance`}
                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen
@@ -215,13 +291,7 @@ function Media({
             )}
           </div>
         ) : (
-          <button
-            className="cw-tile"
-            onClick={() => {
-              onVideoStart()
-              setWatching(true)
-            }}
-          >
+          <button className="cw-tile" onClick={onWatch}>
             <span className="cw-tile-thumb" style={{ '--v1': palette[0], '--v2': palette[1] } as React.CSSProperties}>
               <PlayIcon />
             </span>
@@ -250,7 +320,7 @@ function Media({
           </span>
           <span className="cw-tile-text">
             {l.label}
-            <small>{new URL(l.href).hostname}</small>
+            <small>{new URL(l.href).hostname.replace(/^www\./, '')}</small>
           </span>
           <ArrowUpRightIcon className="cw-tile-arrow" />
         </a>

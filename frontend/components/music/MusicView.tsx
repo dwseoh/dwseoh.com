@@ -47,9 +47,13 @@ function sectionList(pieces: Piece[], key: SectionKey) {
 function subtitle(p: Piece, section: SectionKey) {
   if (section === 'performance') return [p.role, p.performers ?? p.ensemble].filter(Boolean).join(' · ')
   if (isMine(p)) {
+    const others = creditsOf(p)
+      .filter((c) => c.role === 'Composer' && c.name !== ME)
+      .map((c) => c.name)
     return (
       <>
         {p.ensemble} · <span className="cw-me">{ME}</span>
+        {others.length > 0 && `, ${others.join(', ')}`}
       </>
     )
   }
@@ -139,8 +143,9 @@ export default function MusicView({
 }) {
   const byCollection = useMemo(() => new Map(collections.map((c) => [c.id, c])), [collections])
   const bySlug = useMemo(() => new Map(pieces.map((p) => [p.slug, p])), [pieces])
-  // One catalogue number per work, the same in every section.
-  const numbers = useMemo(() => new Map(pieces.map((p, i) => [p.slug, i + 1])), [pieces])
+  // One number per work, the same in every section. Pinned pieces show a pin
+  // instead, so only the rest are numbered: 01, 02, …
+  const numbers = useMemo(() => new Map(pieces.filter((p) => !p.featured).map((p, i) => [p.slug, i + 1])), [pieces])
   const counts = useMemo(
     () => Object.fromEntries(sections.map((s) => [s.key, pieces.filter((p) => inSection(p, s.key)).length])),
     [pieces],
@@ -177,7 +182,6 @@ export default function MusicView({
   const asSheet = useSyncExternalStore(onPhoneChange, isPhone, () => false)
   const [sheetOpen, setSheetOpen] = useState(false)
   const opener = useRef<HTMLElement | null>(null)
-  const closeRef = useRef<HTMLButtonElement>(null)
 
   const closeSheet = useCallback(() => {
     setSheetOpen(false)
@@ -190,7 +194,7 @@ export default function MusicView({
     const html = document.documentElement
     const was = html.style.overflow
     html.style.overflow = 'hidden'
-    closeRef.current?.focus({ preventScroll: true })
+    detailRef.current?.focus({ preventScroll: true })
     return () => {
       html.style.overflow = was
     }
@@ -513,7 +517,7 @@ export default function MusicView({
                   <Row
                     p={p}
                     collection={byCollection.get(p.collection)!}
-                    number={numbers.get(p.slug)!}
+                    number={numbers.get(p.slug) ?? 0}
                     isNow={isNow}
                     eq={isNow && playing}
                     section={section}
@@ -555,7 +559,7 @@ export default function MusicView({
                     <Row
                       p={p}
                       collection={byCollection.get(p.collection)!}
-                      number={numbers.get(p.slug)!}
+                      number={numbers.get(p.slug) ?? 0}
                       isNow={isNow}
                       eq={isNow && playing}
                       section={section}
@@ -590,12 +594,12 @@ export default function MusicView({
           className="cw-detail"
           aria-label={asSheet ? shown.title : 'Selected piece'}
           data-open={sheetOpen ? '' : undefined}
-          {...(asSheet && { role: 'dialog', 'aria-modal': true, inert: !sheetOpen })}
+          {...(asSheet && { role: 'dialog', 'aria-modal': true, inert: !sheetOpen, tabIndex: -1 })}
         >
           {/* Phones: the sheet's handle and close button. */}
           <div className="cw-sheet-bar">
             <span className="cw-sheet-grip" aria-hidden="true" />
-            <button ref={closeRef} className="cw-sheet-close" onClick={closeSheet} aria-label="Close">
+            <button className="cw-sheet-close" onClick={closeSheet} aria-label="Close">
               <CloseIcon />
             </button>
           </div>

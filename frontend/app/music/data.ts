@@ -1,17 +1,19 @@
 /**
  * Everything on the Music Work page (/music) comes from this file.
  *
- * PLACEHOLDER DATA: the arrangement titles come from the /music prototype;
- * the extra compositions, all performances, and every year, running time,
- * line-up, description and media link are placeholders. Replace them piece
- * by piece.
+ * The compositions are real. Performances and arrangements are still
+ * placeholders (arrangement titles from the old /music prototype; every year,
+ * running time, line-up, description and media link made up) and hidden for
+ * now: see `pieces` at the bottom.
  *
  * - `categories`: which sections list it. A piece can be in several — e.g. a
  *   composition I also performed is ['composition', 'performance'].
- * - `featured`: pins the piece to the top of its section with a star.
+ * - `featured`: pins the piece to the top of its section.
+ * - `description`: a blank line starts a new paragraph; [text](url) is a link.
  * - `audio`: an MP3 in public/audio/ (e.g. '/audio/ponyo.mp3'). Without it the
  *   play button shows "Recording coming soon".
- * - `video`: a YouTube URL/id, or a self-hosted '/videos/x.mp4'.
+ * - `video`: a YouTube URL/id (`t=` and `end=` times, in seconds, are kept), or a self-hosted
+ *   '/videos/x.mp4'. Anything else (e.g. an Instagram reel) goes in `links`.
  * - `score`: a MuseScore (or any) URL for the full score.
  * - `cover`: an image path. Without one, the cover is generated from the title.
  */
@@ -39,8 +41,8 @@ export interface Piece {
   categories: Category[]
   collection: string
   year: number
-  /** Running time, "m:ss". */
-  duration: string
+  /** Running time, "m:ss". Shown until the recording loads. */
+  duration?: string
   /** Ensemble type ("Wind Quintet"). Shown as the instrumentation if none is given. */
   ensemble: string
   /** Overrides the collection's genre. */
@@ -59,7 +61,7 @@ export interface Piece {
   key?: string
   /** Plain text, e.g. 'Flute, Clarinet in B♭, Piano'. Falls back to `ensemble`. */
   instrumentation?: string
-  /** Overrides the credits worked out from composer/arranger. */
+  /** Overrides the credits worked out from `composer`; `arranger` is still added. */
   credits?: Credit[]
   description: string
   /** For medleys: the pieces inside, in order. */
@@ -106,8 +108,9 @@ const DEMO_VIDEO = '/videos/orchestra-conducting.mp4'
 const DEMO_SCORE = 'https://musescore.com/'
 
 export const collections: Collection[] = [
-  { id: 'chamber-works', title: 'Chamber Works', palette: ['#2b1c1d', '#c99a8f'], genre: 'Chamber' },
-  { id: 'sketchbook', title: 'Sketchbook', palette: ['#25211c', '#c4b49c'], genre: 'Contemporary' },
+  { id: 'sketches-1-0', title: 'Sketches 1.0', palette: ['#24211e', '#c4b8a6'], genre: 'Chamber' },
+  { id: 'hot-summer-night', title: 'Hot Summer Night', palette: ['#321a13', '#d6a07c'], genre: 'Piano' },
+  { id: 'hack-the-north', title: 'Hack the North', palette: ['#1b1f29', '#a3b1c6'], genre: 'Jazz' },
   { id: 'season-23-24', title: '2023–24 Season', palette: ['#1a2030', '#94a4c0'], genre: 'Classical' },
   { id: 'season-24-25', title: '2024–25 Season', palette: ['#2a1c22', '#bf9ca6'], genre: 'Classical' },
   { id: 'screen-and-game', title: 'Screen & Game', palette: ['#1e2229', '#a9b2bf'], genre: 'Film & game' },
@@ -125,79 +128,181 @@ export const collections: Collection[] = [
 export const catalogue: Piece[] = [
   // ── Compositions ─────────────────────────────────────────────────────────────
   {
-    slug: 'lifelight',
-    genre: 'Chamber',
-    title: 'Lifelight',
-    categories: ['composition', 'performance'],
-    collection: 'chamber-works',
-    year: 2023,
-    duration: '3:12',
-    ensemble: 'Trio',
-    key: 'D♭ major',
-    instrumentation: 'Flute, Clarinet in B♭, Piano',
-    description:
-      'A small piece about the first warm morning after a long winter. The piano keeps time like a clock in another room while the flute and clarinet trade one melody back and forth until neither remembers who started it.',
-    premiere: 'Spring recital, 2023',
-    role: 'Clarinet',
-    performers: 'Lifelight Trio',
+    slug: 'the-first-train-ride',
+    title: 'The First Train Ride',
+    categories: ['composition'],
+    collection: 'hot-summer-night',
+    year: 2026,
+    duration: '1:31',
+    ensemble: 'Piano Duet',
+    genre: 'Piano Duet',
+    key: 'A major',
+    instrumentation: 'Grand Piano, Upright Piano',
+    description: [
+      'The First Train Ride captures the excitement, curiosity, and youthful wonder of experiencing a train ride for the first time. The piece opens with the sound of a railway crossing bell, transcribed from an actual crossing in Kamakura, Japan. This familiar sound evokes a nostalgic childhood memory, transporting the listener to a train journey through a snowy landscape.',
+      'The music unfolds with a cheerful, playful energy, imagining a child sitting beside their mother, gazing out the window as the scenery rushes past. The recurring rhythmic patterns reflect the steady motion of the train, while lively melodies and syncopated rhythms convey the child’s curiosity and excitement.',
+      'The piece explores harmony primarily through quintal chords and their inversions, which form the foundation of both the accompaniment and harmonic movement. A recurring pattern (which is also built with intervals of fifths) establishes a sense of continuity, while gradually introduced melodic and textural layers bring variation and growing energy to the music. The interplay between the two pianos creates contrasting textures and syncopated rhythmic movement, before the piece settles into a light, consonant ending, bringing the journey to a gentle close.',
+    ].join('\n\n'),
     featured: true,
-    audio: DEMO_AUDIO,
-    score: DEMO_SCORE,
+    audio: '/audio/the-first-train-ride.mp3',
+    score: 'https://musescore.com/user/41985992/scores/39928604',
   },
   {
-    slug: 'daisy-circuit',
-    genre: 'Electronic',
-    title: 'Daisy Circuit',
+    slug: 'black-keys',
+    title: 'Black Keys',
     categories: ['composition'],
-    collection: 'sketchbook',
-    year: 2024,
-    duration: '2:48',
-    ensemble: 'Duo',
-    key: 'A minor',
-    instrumentation: 'Clarinet in B♭, Synthesizer',
-    description:
-      'Written late at night between assignments. A looping synth figure, a clarinet that keeps trying to break out of it, and a last chord that finally lets it.',
-    audio: DEMO_AUDIO,
-    video: DEMO_VIDEO,
-  },
-  {
-    slug: 'paper-lanterns',
-    title: 'Paper Lanterns',
-    categories: ['composition'],
-    collection: 'chamber-works',
-    year: 2024,
-    duration: '4:05',
-    ensemble: 'Woodwind Quintet',
-    key: 'F major',
-    description:
-      'Placeholder. A slow procession that lifts off halfway through: five players lighting one lantern each until the whole river is lit.',
-    audio: DEMO_AUDIO,
-    score: DEMO_SCORE,
-  },
-  {
-    slug: 'northbound',
-    title: 'Northbound',
-    categories: ['composition'],
-    collection: 'chamber-works',
-    year: 2025,
-    duration: '3:36',
-    ensemble: 'Clarinet Quartet',
-    key: 'C minor',
-    description:
-      'Placeholder. Written on a long train ride. The bass clarinet is the engine; the other three watch the scenery change.',
-  },
-  {
-    slug: 'small-hours',
-    genre: 'Solo piano',
-    title: 'Small Hours',
-    categories: ['composition'],
-    collection: 'sketchbook',
-    year: 2025,
-    duration: '2:14',
+    collection: 'sketches-1-0',
+    year: 2026,
+    duration: '1:37',
     ensemble: 'Piano Solo',
+    genre: 'Piano',
+    key: 'G♭ major',
+    instrumentation: 'Piano',
+    description:
+      'Black Keys was inspired by the G♭ pentatonic scale being composed of the black keys on a piano (G♭, A♭, B♭, D♭, E♭). From that foundation, I built out the piece’s melody only using those notes. I intended the piece to be a moderately paced, playful piano piece with a steady alternating bass-and-chord accompaniment. Throughout the piece, the music shifts between G♭ major pentatonic and F major pentatonic (F, G, A, C, D), which uses only white keys. These contrasting passages suggest a friendly rivalry between the black and white keys, each bringing the other’s distinctive character into sharper focus. At the end, a playful passage in 6/4 followed by 3/4 introduces an unexpected interruption of G♭ major pentatonic by C major pentatonic, adding a final touch of rhythmic and tonal surprise.',
+    audio: '/audio/black-keys.mp3',
+    score: 'https://musescore.com/user/41985992/scores/39264824',
+  },
+  {
+    slug: 'museum-theme',
+    title: 'Museum Theme',
+    categories: ['composition'],
+    collection: 'hack-the-north',
+    year: 2026,
+    duration: '1:28',
+    ensemble: 'Trio',
+    genre: 'Jazz',
+    key: 'B♭ major',
+    instrumentation: 'Upright Piano, Upright Piano, Contrabass',
+    description:
+      'Written for [Hack the North’s Museum](https://museum.hackthenorth.com/) website, which showcases past hackathon finalists. The piece gave me an opportunity to experiment with instrumentation and mastering, shaping a sound that would accompany visitors as they explore the projects and stories on display.',
+    audio: '/audio/museum-theme.mp3',
+    score: 'https://musescore.com/user/41985992/scores/35035736',
+    links: [
+      { label: 'Video', href: 'https://www.instagram.com/reel/DZygKFutnWG/' },
+      { label: 'Hack the North Museum', href: 'https://museum.hackthenorth.com/' },
+    ],
+  },
+  {
+    slug: 'beyond-the-memories',
+    title: 'Beyond the Memories (추억 너머)',
+    categories: ['composition'],
+    collection: 'hot-summer-night',
+    year: 2026,
+    duration: '3:07',
+    ensemble: 'Piano Solo',
+    genre: 'Piano',
+    key: 'E♭ major',
+    instrumentation: 'Piano',
+    description:
+      'My second piece composed directly at the piano, inspired by a personal story. Beyond the Memories reflects on people, moments, and experiences that were once part of everyday life but now live in memory; the things that were but that can no longer be. It explores the bittersweet feeling of looking back, and the changes that come with moving forward.',
+    audio: '/audio/beyond-the-memories.mp3',
+    links: [{ label: 'Performance', href: 'https://www.instagram.com/reel/DXiDt7hjVR8/' }],
+  },
+  {
+    slug: 'on-a-clear-day-chamber',
+    title: 'On a Clear Day',
+    categories: ['composition'],
+    collection: 'hot-summer-night',
+    year: 2026,
+    duration: '2:17',
+    ensemble: 'Chamber Ensemble',
+    genre: 'Chamber',
+    key: 'D major',
+    instrumentation: 'Flute, Oboe, Clarinet in B♭, Violoncello, Piano',
+    description:
+      'A shortened chamber arrangement of On a Clear Day, bringing new instrumental colours to the original piano piece. Flute, oboe, and clarinet share the melodies, supported by cello and piano, offering a different perspective on its gentle, hopeful character.',
+    featured: true,
+    audio: '/audio/on-a-clear-day-chamber.mp3',
+    score: 'https://musescore.com/user/41985992/scores/38912399',
+  },
+  {
+    slug: 'on-a-clear-day-piano',
+    title: 'On a Clear Day',
+    categories: ['composition'],
+    collection: 'hot-summer-night',
+    year: 2026,
+    duration: '3:34',
+    ensemble: 'Piano Solo',
+    genre: 'Piano',
+    key: 'D major',
+    instrumentation: 'Piano',
+    description:
+      'The first composition I wrote directly on piano (imprinted onto my muscle memory!) after starting piano in 2025. The chord progressions were inspired by Summer, composed by Joe Hisaishi, who is one of my most prominent role models. Some peers who listened to the track described it as sounding Ghibli and anime-like, which tends to be a consequence of this. Overall, the piece is a very tonal and diatonic one, and it invites you to imagine a slow walk on a clear day: birds chirping, an unhurried pace, and a moment to appreciate the small things, whatever else life may bring.',
+    audio: '/audio/on-a-clear-day-piano.mp3',
+    links: [{ label: 'Performance', href: 'https://www.instagram.com/reel/DU_N9KwkdxZ/' }],
+  },
+  {
+    slug: 'into-the-wild-piano',
+    title: 'Into the Wild',
+    categories: ['composition'],
+    collection: 'sketches-1-0',
+    year: 2026,
+    duration: '3:01',
+    ensemble: 'Piano Solo',
+    genre: 'Piano',
+    key: 'E♭ major',
+    instrumentation: 'Piano',
+    credits: [
+      { role: 'Composer', name: ME },
+      { role: 'Composer', name: 'Michael Li' },
+    ],
+    arranger: ME,
+    description:
+      'A solo piano arrangement of Into the Wild, originally co-composed with Michael Li for our Grade 12 instrumental music class. This version reimagines the orchestral piece through the expressive possibilities of a single piano.',
+    audio: '/audio/into-the-wild-piano.mp3',
+    score: 'https://musescore.com/user/41985992/scores/34190972',
+  },
+  {
+    slug: 'into-the-wild',
+    title: 'Into the Wild',
+    categories: ['composition'],
+    collection: 'sketches-1-0',
+    year: 2024,
+    duration: '4:23',
+    ensemble: 'Chamber Orchestra',
+    genre: 'Orchestral',
+    key: 'E♭ major',
+    instrumentation: 'Flute, Oboe, Clarinet in B♭, Bass Clarinet, Alto Saxophone, Bassoon, Strings',
+    credits: [
+      { role: 'Composer', name: ME },
+      { role: 'Composer', name: 'Michael Li' },
+    ],
+    arranger: ME,
+    description:
+      'Co-composed with my classmate Michael Li for our Grade 12 instrumental music class, Into the Wild was written as a closing number for a school musical. Through varied orchestral textures, the piece aims to leave the audience with a sense of wonder as the curtain falls.',
+    audio: '/audio/into-the-wild.mp3',
+    score: 'https://musescore.com/user/41985992/scores/23163892',
+  },
+  {
+    slug: 'video-game-composition',
+    title: 'Video Game Composition',
+    categories: ['composition'],
+    collection: 'sketches-1-0',
+    year: 2024,
+    ensemble: 'Orchestra',
+    genre: 'Video Game',
+    source: 'The Legend of Zelda: Link’s Awakening',
+    instrumentation: 'Orchestra',
+    description:
+      'A collaborative composition created to accompany gameplay from The Legend of Zelda: Link’s Awakening. We explored different instrumental colours and melodic ideas to reflect the game’s environments and bring its world to life through music.',
+    video: 'https://youtu.be/ABjysVTke9Y?t=494&end=618', // 8:14–10:18
+  },
+  {
+    slug: 'optimism-of-tomorrow',
+    title: 'Optimism of Tomorrow',
+    categories: ['composition'],
+    collection: 'sketches-1-0',
+    year: 2023,
+    duration: '1:09',
+    ensemble: 'Quartet',
+    genre: 'Chamber',
     key: 'E major',
-    description: 'Placeholder. A piano sketch from 2 a.m. that never quite wanted to become anything bigger.',
-    audio: DEMO_AUDIO,
+    instrumentation: 'Violin, Oboe, Clarinet in B♭, Bassoon',
+    description:
+      'My first semi-proper composition! This piece was written for the final project in my Grade 11 instrumental music class. It captures the hope and excitement of looking toward tomorrow: the future may be uncertain, but there’s something to look forward to in that mystery.',
+    audio: '/audio/optimism-of-tomorrow.mp3',
+    score: 'https://musescore.com/user/41985992/scores/33886829',
   },
 
   // ── Performances ──────────────────────────────────────────────────────────
@@ -713,10 +818,12 @@ export function isMine(piece: Piece) {
 
 /** Who wrote it and who arranged it. (What I did in a performance is a detail, not a credit.) */
 export function creditsOf(piece: Piece): Credit[] {
-  if (piece.credits) return piece.credits
   const has = (c: Category) => piece.categories.includes(c)
-  const out: Credit[] = [{ role: 'Composer', name: has('composition') ? ME : (piece.composer ?? 'Unknown') }]
-  if (has('arrangement') || piece.arranger) out.push({ role: 'Arranger', name: piece.arranger ?? ME })
+  const out: Credit[] = piece.credits
+    ? [...piece.credits]
+    : [{ role: 'Composer', name: has('composition') ? ME : (piece.composer ?? 'Unknown') }]
+  const arranger = piece.arranger ?? (!piece.credits && has('arrangement') ? ME : undefined)
+  if (arranger && !out.some((c) => c.role === 'Arranger')) out.push({ role: 'Arranger', name: arranger })
   return out
 }
 
