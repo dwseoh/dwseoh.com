@@ -76,6 +76,10 @@ const onPhoneChange = (cb: () => void) => {
   return () => m.removeEventListener('change', cb)
 }
 const isPhone = () => window.matchMedia(PHONE_QUERY).matches
+// Phones and tablets suspend Web Audio when the page goes to the background, and
+// music routed through it (for the visualizer) stops with it. There the audio
+// plays on its own so it keeps going with the screen off or in another app.
+const isTouch = () => window.matchMedia('(hover: none) and (pointer: coarse)').matches
 
 /**
  * One row of the list. Memoised: focus is styled by the drum (aria-selected,
@@ -265,7 +269,7 @@ export default function MusicView({
   const audioCtxRef = useRef<AudioContext | null>(null)
   const listen = () => {
     const audio = audioRef.current
-    if (!audio) return
+    if (!audio || isTouch()) return
     if (!audioCtxRef.current) {
       try {
         const ctx = new AudioContext()
@@ -313,6 +317,7 @@ export default function MusicView({
       title: now.title,
       artist: [...new Set(creditsOf(now).map((c) => c.name))].join(', '),
       album: byCollection.get(now.collection)?.title,
+      artwork: now.cover ? [{ src: now.cover }] : undefined,
     })
   }, [now, byCollection])
 
@@ -404,6 +409,8 @@ export default function MusicView({
         closeSheet()
         return
       }
+      // In the open sheet, arrows and paging scroll it, like any page.
+      if (asSheet && sheetOpen && e.key !== 'Enter' && e.key !== ' ') return
       switch (e.key) {
         case 'ArrowDown':
         case 'j':
@@ -442,7 +449,13 @@ export default function MusicView({
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [index, list, move, now, toggle, sheetOpen, closeSheet])
+  }, [index, list, move, now, toggle, asSheet, sheetOpen, closeSheet])
+
+  // Phones: keep the highlighted row in view as the keys move it.
+  useEffect(() => {
+    if (!asSheet || sheetOpen) return
+    document.querySelector('.cw-flat-row[aria-current]')?.scrollIntoView({ block: 'nearest' })
+  }, [slug, asSheet, sheetOpen])
 
   const focused = list[index]
   const palette = byCollection.get(focused.collection)!.palette
@@ -466,6 +479,35 @@ export default function MusicView({
     if (now && (time > 3 || !prevUp)) seek(0)
     else if (prevUp) toggle(prevUp)
   }
+
+  // Lock screen and headphone controls.
+  const remote = useRef({ skipBack, next: () => nextUp && toggle(nextUp) })
+  useEffect(() => {
+    remote.current = { skipBack, next: () => nextUp && toggle(nextUp) }
+  })
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return
+    const ms = navigator.mediaSession
+    const handlers: [MediaSessionAction, MediaSessionActionHandler][] = [
+      ['play', () => audioRef.current?.play().catch(() => {})],
+      ['pause', () => audioRef.current?.pause()],
+      ['previoustrack', () => remote.current.skipBack()],
+      ['nexttrack', () => remote.current.next()],
+      ['seekto', (d) => d.seekTime != null && audioRef.current && (audioRef.current.currentTime = d.seekTime)],
+    ]
+    for (const [a, h] of handlers) {
+      try {
+        ms.setActionHandler(a, h)
+      } catch {} // not every browser knows every action
+    }
+    return () => {
+      for (const [a] of handlers) {
+        try {
+          ms.setActionHandler(a, null)
+        } catch {}
+      }
+    }
+  }, [])
 
   return (
     <div className="cw-root" style={{ '--c1': palette[0], '--c2': palette[1] } as React.CSSProperties}>
