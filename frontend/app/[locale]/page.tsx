@@ -88,6 +88,7 @@ export default async function HomePage() {
 
         <p style={{ lineHeight: 1.9, marginBottom: '1.5rem' }}>
           {t.rich('bio1', {
+            blog: (chunks) => <InlineLink href="/blog">{chunks}</InlineLink>,
             uw: (chunks) => (
               <HoverPreview label="University of Waterloo" href="https://uwaterloo.ca" desc={t('previews.uw')} iconUrl={favicon('https://uwaterloo.ca')}>
                 <InlineLink href="https://uwaterloo.ca">{chunks}</InlineLink>
@@ -104,6 +105,9 @@ export default async function HomePage() {
         <p style={{ lineHeight: 1.9, marginBottom: '1.25rem' }}>
           {t.rich('bioMusic', {
             roles: () => <RotatingText words={roles} />,
+            nl: () => <br />,
+            blog: (chunks) => <InlineLink href="/blog">{chunks}</InlineLink>,
+            music: (chunks) => <InlineLink href="/music">{chunks}</InlineLink>,
           })}
         </p>
 

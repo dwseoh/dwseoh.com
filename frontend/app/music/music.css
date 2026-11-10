@@ -1,0 +1,1355 @@
+/*
+ * /music: a dark listening room. Everything is scoped under .cw-root.
+ * The top bar, heading and tabs are the shared sub-page components
+ * (components/subpage, styled in globals.css), fed the site's dark sub-page
+ * palette below so they match /photos and /blog. One warm neutral ink for the
+ * UI; the only colour is the ambient light, which takes the focused piece's
+ * palette (--c1/--c2) and fades between pieces.
+ */
+
+@property --c1 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #2b1c1d;
+}
+@property --c2 {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #c99a8f;
+}
+
+/* The site's dark sub-page palette (as in globals.css), for the shared bar,
+   heading and tabs. */
+html:has(.cw-root) {
+  --n-bg: #0a0a0b;
+  --n-text: #e9e6e1;
+  --n-secondary: #a5a199;
+  --n-light: #6f6b63;
+  --n-border: rgba(233, 230, 225, 0.08);
+  --n-hover: rgba(255, 255, 255, 0.05);
+  --n-hover-strong: rgba(255, 255, 255, 0.085);
+  background: #0a0a0b;
+  color-scheme: dark;
+}
+
+.cw-root {
+  --bg: #0a0a0b;
+  --fg: #e9e6e1;
+  --fg-2: rgba(233, 230, 225, 0.66);
+  --fg-3: rgba(233, 230, 225, 0.42);
+  --fg-4: rgba(233, 230, 225, 0.22);
+  --line: rgba(233, 230, 225, 0.08);
+  --line-2: rgba(233, 230, 225, 0.15);
+  /* Gold: starred (featured) pieces, and my name where I'm the composer. */
+  --gold: #e6c27c;
+  --gold-wash: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--gold) 24%, transparent),
+    color-mix(in oklab, var(--gold) 12%, transparent) 55%,
+    color-mix(in oklab, var(--gold) 4%, transparent)
+  );
+  --display: var(--font-display), 'Iowan Old Style', Georgia, serif;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --row-h: 64px;
+  --rail-w: 32px;
+  --gutter: 40px;
+  /* Top bar → page heading; the detail panel starts at the same height. */
+  --head-gap: clamp(8px, 3vh, 32px);
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    --c1 1.4s var(--ease),
+    --c2 1.4s var(--ease);
+}
+
+.cw-root ::selection {
+  background: color-mix(in oklab, var(--c2) 45%, transparent);
+}
+
+.cw-root button {
+  font: inherit;
+  color: inherit;
+}
+.cw-root :is(button, a):focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--fg) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.cw-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── Atmosphere ───────────────────────────────────────────────────────── */
+
+/* Optional photo at the very back (the /music prototype's photo). Zoomed in
+   on the warm, lit orchestra rather than the blue projections above it, then
+   blurred, muted and sunk under a dark tint. */
+.cw-photo {
+  position: fixed;
+  inset: -40px; /* room for the blur's soft edge */
+  z-index: -3;
+  pointer-events: none;
+  background: center / cover no-repeat;
+  transform: scale(1.8);
+  transform-origin: 50% 62%;
+  filter: blur(4px) saturate(0.7) brightness(0.6);
+}
+.cw-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(90% 70% at 50% 70%, rgba(10, 10, 11, 0.45), rgba(10, 10, 11, 0.85) 75%),
+    linear-gradient(180deg, rgba(10, 10, 11, 0.55), rgba(10, 10, 11, 0.2) 50%, rgba(10, 10, 11, 0.6));
+}
+
+.cw-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 48% at 82% 22%, color-mix(in oklab, var(--c2) 26%, transparent), transparent 72%),
+    radial-gradient(55% 60% at 74% 100%, color-mix(in oklab, var(--c1) 60%, transparent), transparent 70%),
+    radial-gradient(45% 55% at 0% 0%, color-mix(in oklab, var(--c1) 34%, transparent), transparent 70%);
+}
+
+.cw-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ── Frame: 5/8 catalogue, 3/8 detail ─────────────────────────────────── */
+
+.cw-app {
+  display: grid;
+  grid-template-columns: 5fr 3fr;
+  height: 100dvh;
+}
+
+.cw-browse {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  min-height: 0;
+  padding: 0 var(--gutter);
+  container-type: inline-size;
+}
+
+.cw-detail {
+  position: relative;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-left: 1px solid var(--line);
+  container-type: inline-size;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+  scrollbar-width: thin;
+  scrollbar-color: var(--fg-4) transparent;
+}
+
+/* ── Header: the shared sub-page bar, heading and tabs ───────────────── */
+
+/* The bar sits at the top of the catalogue column only (the detail panel runs
+   the full height beside it), with no rule under it, and see-through so the
+   background runs under it. */
+.cw-root .subbar {
+  position: relative;
+  z-index: auto; /* not sticky here, so no need to sit above the page (or the phone sheet) */
+  background: transparent;
+  border-bottom: 0;
+}
+.cw-root .subbar-inner {
+  max-width: none;
+  padding: 0;
+}
+
+.cw-head {
+  margin: var(--head-gap) 0 24px;
+}
+
+.cw-label {
+  margin: 0;
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* ── Columns (shared by the header row and every drum row) ────────────── */
+
+.cw-grid {
+  display: grid;
+  grid-template-columns: 34px 44px minmax(0, 1fr) minmax(0, 0.5fr) 48px 48px;
+  align-items: center;
+  column-gap: 16px;
+  padding: 0 20px;
+}
+
+.cw-cols {
+  height: 36px;
+  margin-right: var(--rail-w);
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+}
+.cw-cols svg {
+  font-size: 15px;
+  display: block;
+  margin-left: auto;
+}
+.cw-cols > span {
+  font-size: inherit;
+  color: inherit;
+}
+
+.cw-c-album,
+.cw-c-year,
+.cw-c-dur {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--fg-3);
+}
+.cw-c-year,
+.cw-c-dur {
+  font-variant-numeric: tabular-nums;
+}
+/* The selected row's secondary text steps up too. */
+:is(.cw-row[aria-selected='true'], .cw-flat-row[aria-current])
+  :is(.cw-c-num, .cw-s, .cw-c-album, .cw-c-year, .cw-c-dur) {
+  color: var(--fg-2);
+}
+.cw-c-dur {
+  text-align: right;
+}
+
+/* ── The drum ─────────────────────────────────────────────────────────── */
+
+.cw-stage {
+  position: relative;
+  min-height: 0;
+}
+
+.cw-drum {
+  position: absolute;
+  inset: 0 var(--rail-w) 0 0;
+  overflow: hidden;
+  outline: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+  perspective: 800px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
+}
+.cw-drum:active {
+  cursor: grabbing;
+}
+
+/* The lens: the fixed band the focused row turns into. */
+.cw-lens {
+  position: absolute;
+  inset: 50% 0 auto;
+  height: var(--row-h);
+  margin-top: calc(var(--row-h) / -2);
+  border-radius: 12px;
+  backface-visibility: hidden;
+  will-change: transform; /* the drum moves it onto the focused row */
+  background: rgba(255, 255, 255, 0.11);
+  transition: box-shadow 0.3s;
+}
+.cw-lens::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--gold-wash);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cw-stage[data-featured] .cw-lens::before {
+  opacity: 1;
+}
+.cw-drum:focus-visible .cw-lens {
+  /* Keyboard focus only. Drawn inside the edge: the drum clips anything
+     outside it, and the lens spans its full width. */
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--fg) 40%, transparent);
+}
+
+.cw-row {
+  --f: 0;
+  position: absolute;
+  inset: 50% 0 auto;
+  height: var(--row-h);
+  margin-top: calc(var(--row-h) / -2);
+  opacity: 0; /* the drum sets it once laid out */
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.cw-row-inner {
+  height: 100%;
+  /* --f is 1 for the row in the lens, easing to 0 one row away. */
+  opacity: calc(0.5 + var(--f) * 0.5);
+}
+
+.cw-c-num {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--fg-3);
+  font-variant-numeric: tabular-nums;
+}
+.cw-num-play {
+  display: none;
+  font-size: 15px;
+  color: var(--fg);
+}
+.is-now .cw-num {
+  color: var(--fg);
+}
+
+@media (hover: hover) {
+  .cw-row[aria-selected='true'] .has-audio:hover .cw-num {
+    display: none;
+  }
+  .cw-row[aria-selected='true'] .has-audio:hover .cw-num-play {
+    display: block;
+  }
+}
+
+.cw-c-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.cw-t,
+.cw-s {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cw-t {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.is-now .cw-t {
+  color: color-mix(in oklab, var(--fg) 60%, var(--c2));
+}
+.cw-s {
+  font-size: 13px;
+  color: var(--fg-3);
+}
+.cw-num-pin {
+  display: flex;
+  font-size: 15px;
+  color: var(--gold);
+}
+/* The title's own pin only shows when the number column is hidden (narrow). */
+.cw-pin {
+  display: none;
+  margin-right: 7px;
+  font-size: 12px;
+  vertical-align: -1px;
+  color: var(--gold);
+}
+.cw-me {
+  color: var(--gold);
+}
+.cw-eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+.cw-eq i {
+  width: 2.5px;
+  height: 40%;
+  border-radius: 1px;
+  background: var(--fg);
+  animation: cw-eq 0.9s ease-in-out infinite;
+}
+.cw-eq i:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.cw-eq i:nth-child(3) {
+  animation-delay: -0.6s;
+}
+@keyframes cw-eq {
+  0%,
+  100% {
+    height: 30%;
+  }
+  50% {
+    height: 100%;
+  }
+}
+
+/* Index rail: a tick per piece down the right edge. */
+.cw-rail {
+  position: absolute;
+  inset: 14% 0 14% auto;
+  width: var(--rail-w);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.cw-rail button {
+  position: relative;
+  width: 8px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  background: var(--fg-4);
+  cursor: pointer;
+  transition:
+    width 0.35s var(--ease),
+    background 0.35s;
+}
+.cw-rail button::before {
+  content: '';
+  position: absolute;
+  inset: -5px -4px -5px -10px;
+}
+.cw-rail button:hover {
+  width: 14px;
+  background: var(--fg-2);
+}
+.cw-rail button.is-on {
+  width: 22px;
+  height: 2px;
+  background: var(--fg);
+}
+.cw-rail button.is-featured {
+  background: color-mix(in oklab, var(--gold) 75%, transparent);
+}
+.cw-rail button.is-featured.is-on {
+  background: var(--gold);
+}
+.cw-rail button:hover::after {
+  content: attr(data-label);
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 12px);
+  transform: translateY(-50%);
+  padding: 5px 9px;
+  border: 1px solid var(--line-2);
+  border-radius: 7px;
+  background: rgba(18, 18, 20, 0.94);
+  font-size: 12px;
+  white-space: nowrap;
+  color: var(--fg);
+  pointer-events: none;
+}
+
+/* ── Footer: the visualizer strip, with the player card over it ──────── */
+
+.cw-foot {
+  position: relative;
+  isolation: isolate; /* keeps the visualizer's z-index inside the strip */
+  display: flex;
+  /* The bottom padding leaves the visualizer's bottom row clear of the card. */
+  padding: 12px 0 18px;
+  margin-right: var(--rail-w);
+  border-top: 1px solid var(--line);
+}
+
+/* The visualizer (Visualizer.tsx) fills the strip under the divider, behind
+   the player, and never rises past the line. Sideways it runs the full width
+   of the column, edge to edge up to the detail panel. */
+.cw-viz {
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--gutter));
+  z-index: -1;
+  display: block;
+  /* A canvas won't stretch between left/right, so size it outright. */
+  width: calc(100% + var(--rail-w) + 2 * var(--gutter));
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The player: a compact card over the visualizer. */
+.cw-np {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 14px 4px 10px;
+  border-radius: 14px;
+  background: rgba(16, 15, 15, 0.28);
+}
+
+.cw-np-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.cw-np-row > .cw-cover.is-sm {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.cw-np-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
+.cw-np-title,
+.cw-np-artist {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cw-np-title {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+.cw-np-title:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--fg-4);
+}
+.cw-np-artist {
+  font-size: 12px;
+  color: var(--fg-3);
+}
+
+.cw-np-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cw-np-play {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--fg);
+  color: var(--bg) !important;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease);
+}
+.cw-np-play:hover:not(:disabled) {
+  transform: scale(1.06);
+}
+.cw-np-play:disabled {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  color: var(--fg-4) !important;
+  cursor: not-allowed;
+}
+.cw-np-skip {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font-size: 15px;
+  color: var(--fg-2) !important;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+.cw-np-skip:hover:not(:disabled) {
+  color: var(--fg) !important;
+  background: rgba(255, 255, 255, 0.06);
+}
+.cw-np-skip:disabled {
+  color: var(--fg-4) !important;
+  cursor: default;
+}
+
+/* Progress: a thin bar under the cover and title, no timestamps. */
+.cw-np-range {
+  flex: none;
+  width: 100%;
+  height: 12px;
+}
+
+/* ── Covers ───────────────────────────────────────────────────────────── */
+
+.cw-cover {
+  position: relative;
+  overflow: hidden;
+  background: #1a1a1c;
+}
+.cw-cover svg,
+.cw-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cw-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+.cw-cover.is-sm {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+}
+.cw-cover.is-lg {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+}
+.cw-cover.is-featured::after {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 0 1.5px var(--gold);
+}
+.cw-cover-pin {
+  position: absolute;
+  z-index: 1; /* above the cover's gold outline (::after) */
+  right: -8px;
+  bottom: -8px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  background: var(--gold);
+  color: #2a1f08;
+  font-size: 14px;
+}
+/* ── Detail panel ─────────────────────────────────────────────────────── */
+/* Dense by design: an album-style header, then compact blocks, so most of a
+   piece fits without scrolling. Sizes key off the panel width (cqi). */
+
+.cw-d {
+  display: flex;
+  flex-direction: column;
+  /* Lines the cover up with the heading's eyebrow on the left. */
+  padding: calc(var(--subbar-h) + var(--head-gap)) var(--gutter) 48px;
+}
+
+.cw-d-hero {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.cw-d-art {
+  flex-shrink: 0;
+  width: clamp(112px, 34cqi, 220px);
+}
+.cw-d-art .cw-cover {
+  border-radius: 10px;
+  box-shadow:
+    0 36px 70px -34px color-mix(in oklab, var(--c1) 85%, black),
+    0 18px 36px -24px rgba(0, 0, 0, 0.9);
+}
+.cw-d-art .cw-cover.is-lg {
+  overflow: visible; /* lets the seal sit on the corner */
+}
+.cw-d-art .cw-cover.is-lg :is(svg, img) {
+  border-radius: inherit;
+}
+.cw-d-head {
+  min-width: 0;
+}
+
+.cw-d-kicker {
+  margin: 0 0 10px;
+  font-size: var(--eyebrow-size);
+  font-weight: var(--eyebrow-weight);
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* Liner-note credits under the title. */
+.cw-d-credits {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 5px 14px;
+  margin: 16px 0 0;
+}
+.cw-d-credits div {
+  display: contents;
+}
+.cw-d-credits dt {
+  padding-top: 2px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.cw-d-credits dd {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--fg);
+}
+
+.cw-d-title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(28px, 6.4cqi, 46px);
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.cw-d-source {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--fg-3);
+}
+.cw-d-source em {
+  font-family: var(--display);
+  font-size: 1.3em;
+  color: var(--fg-2);
+}
+
+/* Player: one slim row — button, elapsed, bar, total. */
+.cw-player {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 7px 18px 7px 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+}
+.cw-play {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--fg);
+  color: var(--bg) !important;
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    transform 0.25s var(--ease),
+    box-shadow 0.4s;
+}
+.cw-play:hover:not(:disabled) {
+  transform: scale(1.06);
+}
+.is-playing .cw-play {
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--c2) 22%, transparent);
+}
+.cw-play:disabled {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  color: var(--fg-4) !important;
+  cursor: not-allowed;
+}
+.cw-time {
+  flex-shrink: 0;
+  min-width: 30px;
+  font-size: 11.5px;
+  color: var(--fg-3);
+  font-variant-numeric: tabular-nums;
+}
+.cw-time:last-child {
+  text-align: right;
+}
+.cw-player-note {
+  flex: 1;
+  font-size: 13px;
+  color: var(--fg-3);
+}
+/* No recording, but a video: the whole row opens it. */
+.cw-player.is-video {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.cw-player.is-video:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.cw-player.is-video:hover .cw-play {
+  transform: scale(1.06);
+}
+.is-video .cw-player-note {
+  color: var(--fg-2);
+}
+
+.cw-range {
+  --p: 0%;
+  flex: 1;
+  min-width: 0;
+  height: 14px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.cw-range:disabled {
+  cursor: default;
+}
+.cw-range::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--fg) var(--p), rgba(255, 255, 255, 0.14) var(--p));
+}
+.cw-range::-webkit-slider-thumb {
+  width: 12px;
+  height: 12px;
+  margin-top: -4.5px;
+  border-radius: 50%;
+  background: var(--fg);
+  opacity: 0;
+  transition: opacity 0.2s;
+  -webkit-appearance: none;
+}
+.cw-range:hover::-webkit-slider-thumb,
+.cw-range:focus-visible::-webkit-slider-thumb {
+  opacity: 1;
+}
+.cw-range::-moz-range-track {
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.cw-range::-moz-range-progress {
+  height: 3px;
+  border-radius: 3px;
+  background: var(--fg);
+}
+.cw-range::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--fg);
+}
+
+.cw-d-desc {
+  margin: 20px 0 0;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--fg-2);
+  text-wrap: pretty;
+}
+.cw-d-desc + .cw-d-desc {
+  margin-top: 12px;
+}
+.cw-d-desc a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--fg-4);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
+}
+.cw-d-desc a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Facts: one small label/value grid; instrumentation gets a full-width line. */
+.cw-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 20px;
+  margin: 24px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.cw-facts div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.cw-facts dt {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.cw-facts dd {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.cw-facts .is-wide {
+  grid-column: 1 / -1;
+}
+
+.cw-d-sec {
+  margin-top: 26px;
+}
+.cw-d-sec > .cw-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.cw-label-aside {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--fg-4);
+}
+
+.cw-contents {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 28px;
+  margin: 0;
+  padding: 4px 0 0;
+  list-style: none;
+}
+.cw-contents li {
+  display: flex;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.cw-contents span {
+  color: var(--fg-4);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Media tiles */
+.cw-media {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.cw-tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 8px 14px 8px 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--fg);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.cw-tile:hover {
+  border-color: var(--line-2);
+  background: rgba(255, 255, 255, 0.06);
+}
+.cw-tile-thumb,
+.cw-tile-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  height: 40px;
+  border-radius: 8px;
+}
+.cw-tile-thumb {
+  width: 56px;
+  background:
+    radial-gradient(90% 120% at 85% 0%, color-mix(in oklab, var(--v2) 75%, transparent), transparent 70%),
+    linear-gradient(160deg, var(--v1), #050506);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 14px;
+}
+.cw-tile-icon {
+  width: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--fg-2);
+  font-size: 19px;
+}
+.cw-tile-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font-size: 13.5px;
+}
+.cw-tile-text small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--fg-3);
+}
+.cw-tile-arrow {
+  flex-shrink: 0;
+  font-size: 15px;
+  color: var(--fg-3);
+  transition:
+    transform 0.3s var(--ease),
+    color 0.3s;
+}
+.cw-tile:hover .cw-tile-arrow {
+  color: var(--fg);
+  transform: translate(2px, -2px);
+}
+
+.cw-video {
+  grid-column: 1 / -1;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+  animation: cw-rise 0.5s var(--ease) both;
+}
+.cw-video iframe,
+.cw-video video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* A narrow panel (small laptops, phones): fewer columns. */
+@container (max-width: 440px) {
+  .cw-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cw-contents {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Entrance: each new piece arrives from the direction the drum turned. */
+.cw-d > * {
+  animation: cw-rise 0.55s var(--ease) both;
+}
+.cw-d[data-dir='up'] > * {
+  animation-name: cw-fall;
+}
+.cw-d > :nth-child(2) {
+  animation-delay: 0.03s;
+}
+.cw-d > :nth-child(3) {
+  animation-delay: 0.06s;
+}
+.cw-d > :nth-child(4) {
+  animation-delay: 0.09s;
+}
+.cw-d > :nth-child(n + 5) {
+  animation-delay: 0.12s;
+}
+
+.cw-d-art {
+  animation: cw-art-down 0.7s var(--ease) both;
+  transform-origin: 50% 0;
+}
+.cw-d[data-dir='up'] .cw-d-art {
+  animation-name: cw-art-up;
+  transform-origin: 50% 100%;
+}
+
+@keyframes cw-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes cw-fall {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+@keyframes cw-art-down {
+  from {
+    opacity: 0;
+    transform: perspective(800px) rotateX(-18deg) translateY(10px);
+  }
+}
+@keyframes cw-art-up {
+  from {
+    opacity: 0;
+    transform: perspective(800px) rotateX(18deg) translateY(-10px);
+  }
+}
+
+/* ── Narrower catalogue: drop columns as the 5/8 side shrinks ─────────── */
+
+@container (max-width: 680px) {
+  .cw-grid {
+    grid-template-columns: 30px 44px minmax(0, 1fr) 44px 44px;
+    column-gap: 14px;
+  }
+  .cw-c-album {
+    display: none;
+  }
+}
+@container (max-width: 480px) {
+  .cw-grid {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    padding: 0 14px;
+  }
+  .cw-pin {
+    display: inline-block; /* Tailwind's base makes svg block-level */
+  }
+  .cw-c-num,
+  .cw-c-year,
+  .cw-cols > span:first-child {
+    display: none;
+  }
+}
+
+/* ── Phones and small tablets ─────────────────────────────────────────── */
+/* The page scrolls as one column with the player pinned to the bottom of the
+   screen. The drum gives way to a plain list (its swipes would fight the
+   page's), and a piece opens in a sheet that slides up over it. */
+
+/* Phone-only parts, hidden on wider screens. */
+.cw-flat,
+.cw-sheet-bar,
+.cw-scrim {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .cw-root {
+    --gutter: 20px;
+    --rail-w: 0px;
+    /* Room at the bottom of the page for the pinned player. */
+    --player-room: calc(112px + env(safe-area-inset-bottom));
+  }
+  .cw-app {
+    display: block;
+    height: auto;
+  }
+  .cw-head {
+    margin: 12px 0 20px;
+  }
+  .cw-cols,
+  .cw-rail {
+    display: none;
+  }
+
+  /* The player, pinned. The strip fades the list out under it. */
+  .cw-foot {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 20;
+    margin: 0;
+    padding: 20px 12px calc(10px + env(safe-area-inset-bottom));
+    border-top: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in oklab, var(--bg) 80%, transparent) 45%,
+      color-mix(in oklab, var(--bg) 92%, transparent)
+    );
+  }
+  .cw-viz {
+    left: 0;
+    width: 100%;
+  }
+  .cw-np {
+    background: rgba(24, 23, 22, 0.62);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    backdrop-filter: blur(18px) saturate(1.2);
+  }
+
+  /* ── The list ── */
+  .cw-stage {
+    display: none;
+  }
+  .cw-browse {
+    display: block;
+    padding-bottom: var(--player-room);
+  }
+  .cw-flat {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cw-flat-row {
+    display: block;
+    width: 100%;
+    height: var(--row-h);
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s;
+  }
+  /* The last piece opened keeps a quiet version of the selector. */
+  .cw-flat-row[aria-current] {
+    background: rgba(255, 255, 255, 0.07);
+  }
+  .cw-flat-row[aria-current][data-featured] {
+    background: var(--gold-wash), rgba(255, 255, 255, 0.07);
+  }
+  .cw-flat-row:active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  .cw-flat-row:focus-visible {
+    outline: 0;
+    box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--fg) 40%, transparent);
+  }
+  .cw-flat .cw-row-inner {
+    opacity: 1;
+  }
+
+  /* ── The details, as a sheet ── */
+  .cw-root .cw-detail {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 30;
+    max-height: calc(100svh - 40px);
+    border: 0;
+    border-radius: 18px 18px 0 0;
+    background: color-mix(in oklab, var(--c1) 28%, #0e0d0d);
+    box-shadow: 0 -24px 60px rgba(0, 0, 0, 0.55);
+    transform: translateY(100%);
+    visibility: hidden;
+    transition:
+      transform 0.42s var(--ease),
+      visibility 0s 0.42s;
+  }
+  .cw-root .cw-detail:focus {
+    outline: none; /* focused on open so Tab starts inside; the sheet itself needs no ring */
+  }
+  .cw-root .cw-detail[data-open] {
+    transform: translateY(var(--drag, 0px));
+    visibility: visible;
+    transition: transform 0.42s var(--ease);
+  }
+  .cw-root .cw-detail.is-dragging {
+    transition: none;
+  }
+  .cw-root .cw-d {
+    padding: 4px var(--gutter) calc(36px + env(safe-area-inset-bottom));
+  }
+  .cw-sheet-bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    background: inherit;
+  }
+  .cw-sheet-grip {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--fg-4);
+  }
+  .cw-sheet-close {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--fg-2);
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .cw-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    display: block;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.42s var(--ease);
+  }
+  .cw-scrim[data-open] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cw-root,
+  .cw-lens::before,
+  .cw-root .cw-detail[data-open],
+  .cw-root .cw-detail,
+  .cw-scrim {
+    transition: none !important;
+  }
+  .cw-d > * {
+    animation: none !important;
+  }
+  .cw-eq i {
+    animation: none;
+    height: 70%;
+  }
+}
