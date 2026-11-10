@@ -8,9 +8,12 @@ const stroke = {
   strokeLinejoin: 'round' as const,
 }
 
+// Optically centred: the triangle's box sits ~1.5 units right of the middle,
+// about halfway to where its centre of mass would be, so it reads as centred
+// inside a round button without any CSS nudge.
 export const PlayIcon = ({ className }: P) => (
   <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true">
-    <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14Z" />
+    <path d="M7 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 7 5.14Z" />
   </svg>
 )
 

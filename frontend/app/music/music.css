@@ -572,12 +572,6 @@ html:has(.cw-root) {
   cursor: pointer;
   transition: transform 0.2s var(--ease);
 }
-.cw-np-play svg {
-  margin-left: 1px; /* optical centre of the triangle */
-}
-.is-playing .cw-np-play svg {
-  margin-left: 0;
-}
 .cw-np-play:hover:not(:disabled) {
   transform: scale(1.06);
 }
@@ -787,12 +781,6 @@ html:has(.cw-root) {
   transition:
     transform 0.25s var(--ease),
     box-shadow 0.4s;
-}
-.cw-play svg {
-  margin-left: 2px; /* optical centre of the triangle */
-}
-.is-playing .cw-play svg {
-  margin-left: 0;
 }
 .cw-play:hover:not(:disabled) {
   transform: scale(1.06);
