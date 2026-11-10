@@ -1259,6 +1259,18 @@ html:has(.cw-root) {
   .cw-flat .cw-row-inner {
     opacity: 1;
   }
+  /* A hairline between pieces, dropped around the highlighted one. */
+  .cw-flat li + li::before {
+    content: '';
+    display: block;
+    height: 1px;
+    margin: 0 12px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .cw-flat li:has(> [aria-current])::before,
+  .cw-flat li:has(> [aria-current]) + li::before {
+    background: transparent;
+  }
 
   /* ── The details, as a sheet ── */
   .cw-root .cw-detail {

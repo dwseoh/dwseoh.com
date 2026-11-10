@@ -8,6 +8,8 @@ export interface CategoryLink {
   featured?: boolean
   /** Not built yet — shown as a non-clickable "coming soon" chip with a lock. */
   locked?: boolean
+  /** Kept in the data but not shown. */
+  hidden?: boolean
 }
 
 export interface CarouselItem {
@@ -117,7 +119,7 @@ export default function HobbyCards({ items }: { items: CarouselItem[] }) {
                 Channels
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {item.links.map((l) =>
+                {item.links.filter((l) => !l.hidden).map((l) =>
                   l.locked ? (
                     <span
                       key={l.label}
