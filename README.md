@@ -33,6 +33,10 @@ request: lint, typecheck, unit tests, `photos check`, and `next build` for the
 frontend; typecheck, unit tests, and a `wrangler deploy --dry-run` bundle for
 the backend.
 
+A pre-commit hook (husky, installed by `npm install` in `frontend/`) runs the
+fast checks on whichever side you touched: ESLint on staged files, typecheck,
+and tests. The build is left to CI. Skip it once with `git commit --no-verify`.
+
 ## Editing content
 
 Copy, links, and media paths live in `frontend/messages/en.json`, with `ko.json`
