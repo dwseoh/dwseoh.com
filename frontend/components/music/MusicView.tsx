@@ -7,6 +7,7 @@ import Tabs from '@/components/subpage/Tabs'
 import { isModifiedClick } from '@/components/subpage/url'
 import {
   ME,
+  PAGE_TITLE,
   creditsOf,
   inSection,
   isMine,
@@ -56,6 +57,8 @@ function subtitle(p: Piece, section: SectionKey) {
 }
 
 const isSection = (k: string | null): k is SectionKey => sections.some((s) => s.key === k)
+/** The tab the page opens on, whose URL is plain /music. */
+const HOME = sections[0].key
 
 /**
  * One row of the list. Memoised: focus is styled by the drum (aria-selected,
@@ -130,9 +133,9 @@ export default function MusicView({
     [pieces],
   ) as Record<SectionKey, number>
 
-  const [section, setSection] = useState<SectionKey>('all')
+  const [section, setSection] = useState<SectionKey>(HOME)
   const list = useMemo(() => sectionList(pieces, section), [pieces, section])
-  const [slug, setSlug] = useState(() => sectionList(pieces, 'all')[0].slug)
+  const [slug, setSlug] = useState(() => sectionList(pieces, HOME)[0].slug)
   const index = Math.max(
     0,
     list.findIndex((p) => p.slug === slug),
@@ -222,12 +225,12 @@ export default function MusicView({
   }, [now, byCollection])
 
   // ── Focus ────────────────────────────────────────────────────────────────
-  /** Focus any piece; if it isn't in the current section, show All. */
+  /** Focus any piece; if it isn't in the current section, go back to the first tab. */
   const focus = useCallback(
     (s: string) => {
       const p = bySlug.get(s)
       if (!p) return
-      setSection((cur) => (inSection(p, cur) ? cur : 'all'))
+      setSection((cur) => (inSection(p, cur) ? cur : HOME))
       setSlug(s)
     },
     [bySlug],
@@ -275,7 +278,7 @@ export default function MusicView({
       return
     }
     const t = window.setTimeout(() => {
-      const q = new URLSearchParams(section === 'all' ? {} : { c: section })
+      const q = new URLSearchParams(section === HOME ? {} : { c: section })
       q.set('piece', slug)
       window.history.replaceState(window.history.state, '', `?${q}`)
     }, 300)
@@ -334,7 +337,7 @@ export default function MusicView({
   const palette = byCollection.get(focused.collection)!.palette
 
   // The player bar shows what's loaded or, before anything is, the focused
-  // piece. Skipping walks the list it's in (this section, else All), passing
+  // piece. Skipping walks the list it's in (this section, else everything), passing
   // over pieces with no recording.
   const barPiece = now ?? focused
   const queue = list.some((p) => p.slug === barPiece.slug) ? list : sectionList(pieces, 'all')
@@ -362,20 +365,23 @@ export default function MusicView({
       <div className="cw-app">
         {/* ── Left: the catalogue ─────────────────────────────────────── */}
         <section className="cw-browse" aria-label="Catalogue">
-          <SubpageBar section={{ label: 'Music Work', href: '/music' }} />
+          <SubpageBar section={{ label: PAGE_TITLE, href: '/music' }} />
           <header className="page-head cw-head">
-            <PageHeading eyebrow="Music by Jamie Seoh" title="Music Work" count={pieces.length} />
-            <Tabs
-              label="Sections"
-              active={section}
-              onSelect={selectSection}
-              items={sections.map((s) => ({
-                key: s.key,
-                label: s.label,
-                count: counts[s.key],
-                href: s.key === 'all' ? '/music' : `/music?c=${s.key}`,
-              }))}
-            />
+            <PageHeading eyebrow="Music by Jamie Seoh" title={PAGE_TITLE} count={pieces.length} />
+            {/* A lone tab has nothing to switch to; the count is already on the title. */}
+            {sections.length > 1 && (
+              <Tabs
+                label="Sections"
+                active={section}
+                onSelect={selectSection}
+                items={sections.map((s) => ({
+                  key: s.key,
+                  label: s.label,
+                  count: counts[s.key],
+                  href: s.key === HOME ? '/music' : `/music?c=${s.key}`,
+                }))}
+              />
+            )}
           </header>
 
           <div className="cw-cols cw-grid" aria-hidden="true">

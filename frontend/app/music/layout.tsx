@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { instrumentSerif } from '@/app/fonts'
+import { PAGE_TITLE } from './data'
 import './music.css'
 
-const title = 'Music Work — Jamie Seoh'
-const description =
-  'Original compositions, performances and arrangements by Jamie Seoh: chamber pieces, concerts, film and game music, holiday charts and covers.'
+const title = `${PAGE_TITLE} — Jamie Seoh`
+const description = 'Original compositions by Jamie Seoh: chamber pieces, sketches and solo works.'
 
 export const metadata: Metadata = {
   title,
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 }
 
 /**
- * The Music Work page. /music is English-only and sits outside `[locale]` (excluded in
+ * The music page. /music is English-only and sits outside `[locale]` (excluded in
  * proxy.ts). All styles are scoped under `.cw-root` in ./music.css.
  */
 export default function MusicLayout({ children }: { children: React.ReactNode }) {

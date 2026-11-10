@@ -77,12 +77,19 @@ export const ME = 'Jamie Seoh'
 
 export type SectionKey = 'all' | Category
 
+/**
+ * The page's tabs; the first is where it opens. For now only compositions are
+ * shown (see `pieces` below). To bring the rest back, restore these lines.
+ */
 export const sections: { key: SectionKey; label: string }[] = [
-  { key: 'all', label: 'All' },
+  // { key: 'all', label: 'All' },
   { key: 'composition', label: 'Compositions' },
-  { key: 'performance', label: 'Performances' },
-  { key: 'arrangement', label: 'Arrangements' },
+  // { key: 'performance', label: 'Performances' },
+  // { key: 'arrangement', label: 'Arrangements' },
 ]
+
+/** The page's name. 'Music Work' once performances and arrangements are back. */
+export const PAGE_TITLE = 'Composition Work'
 
 export const categoryLabel: Record<Category, string> = {
   composition: 'Composition',
@@ -114,7 +121,8 @@ export const collections: Collection[] = [
   { id: 'small-rooms', title: 'Small Rooms', palette: ['#2a2118', '#c2a582'], genre: 'Chamber' },
 ]
 
-export const pieces: Piece[] = [
+/** Every piece, including the ones not shown yet. */
+export const catalogue: Piece[] = [
   // ── Compositions ─────────────────────────────────────────────────────────────
   {
     slug: 'lifelight',
@@ -688,6 +696,13 @@ export const pieces: Piece[] = [
     description: 'A goofy, oompah-flavoured theme that turned out to be a serious workout for the trombone.',
   },
 ]
+
+/**
+ * What the page lists. For now, compositions only; performances and
+ * arrangements stay in `catalogue` until they're ready. To show everything,
+ * make this `catalogue` again and restore the tabs in `sections`.
+ */
+export const pieces = catalogue.filter((p) => p.categories.includes('composition'))
 
 export const inSection = (piece: Piece, key: SectionKey) => key === 'all' || piece.categories.includes(key)
 
