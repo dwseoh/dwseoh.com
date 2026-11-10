@@ -1,5 +1,13 @@
 type P = { className?: string }
 
+const stroke = {
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.6,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+}
+
 export const PlayIcon = ({ className }: P) => (
   <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true">
     <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14Z" />
@@ -15,52 +23,58 @@ export const PauseIcon = ({ className }: P) => (
 
 export const PrevIcon = ({ className }: P) => (
   <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true">
-    <rect x="4.5" y="5" width="2.4" height="14" rx="1" />
-    <path d="M19.5 6.2v11.6a.9.9 0 0 1-1.38.76L9.3 12.76a.9.9 0 0 1 0-1.52l8.82-5.8a.9.9 0 0 1 1.38.76Z" />
+    <rect x="5" y="5" width="2.4" height="14" rx="1.2" />
+    <path d="M19 6.1v11.8a1 1 0 0 1-1.53.85L9.2 13.7a2 2 0 0 1 0-3.4l8.27-5.05A1 1 0 0 1 19 6.1Z" />
   </svg>
 )
 
 export const NextIcon = ({ className }: P) => (
   <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true">
-    <rect x="17.1" y="5" width="2.4" height="14" rx="1" />
-    <path d="M4.5 6.2v11.6a.9.9 0 0 0 1.38.76l8.82-5.8a.9.9 0 0 0 0-1.52L5.88 5.44a.9.9 0 0 0-1.38.76Z" />
-  </svg>
-)
-
-const stroke = {
-  fill: 'none',
-  stroke: 'currentColor',
-  strokeWidth: 1.8,
-  strokeLinecap: 'round' as const,
-  strokeLinejoin: 'round' as const,
-}
-
-export const ShuffleIcon = ({ className }: P) => (
-  <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" {...stroke} aria-hidden="true">
-    <path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+    <rect x="16.6" y="5" width="2.4" height="14" rx="1.2" />
+    <path d="M5 6.1v11.8a1 1 0 0 0 1.53.85l8.27-5.05a2 2 0 0 0 0-3.4L6.53 5.25A1 1 0 0 0 5 6.1Z" />
   </svg>
 )
 
 export const ArrowLeftIcon = ({ className }: P) => (
   <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" {...stroke} aria-hidden="true">
-    <path d="M19 12H5M12 19l-7-7 7-7" />
+    <path d="M19 12H5M11 18l-6-6 6-6" />
   </svg>
 )
 
-export const ExternalIcon = ({ className }: P) => (
+export const ArrowUpRightIcon = ({ className }: P) => (
   <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" {...stroke} aria-hidden="true">
-    <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+    <path d="M7 17 17 7M8 7h9v9" />
   </svg>
 )
 
-export const NoteIcon = ({ className }: P) => (
+export const ClockIcon = ({ className }: P) => (
   <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" {...stroke} aria-hidden="true">
-    <path d="M5 5h14M5 10h14M5 15h9M5 20h6" />
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 7.5V12l3 2" />
   </svg>
 )
 
-export const VolumeIcon = ({ className }: P) => (
+export const ScoreIcon = ({ className }: P) => (
   <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" {...stroke} aria-hidden="true">
-    <path d="M4 9.5v5h3.5L12 19V5L7.5 9.5H4ZM16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" />
+    <path d="M3 7h18M3 10.5h18M3 14h18M3 17.5h18" strokeOpacity="0.45" />
+    <circle cx="9" cy="15.8" r="1.9" fill="currentColor" stroke="none" />
+    <path d="M10.8 15.6V5.5l5 1.6" />
+  </svg>
+)
+
+export const LinkIcon = ({ className }: P) => (
+  <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" {...stroke} aria-hidden="true">
+    <path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1" />
+  </svg>
+)
+
+/** Pinned (featured): a push pin, tilted. */
+export const PinIcon = ({ className }: P) => (
+  <svg className={className} viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" aria-hidden="true">
+    <g transform="rotate(45 12 12)">
+      <rect x="7" y="2" width="10" height="2.4" rx="1.2" />
+      <path d="M9 4.4h6l.8 6.2 2.8 2.8V15H5.4v-1.6l2.8-2.8L9 4.4Z" />
+      <rect x="11.1" y="15" width="1.8" height="7.2" rx="0.9" />
+    </g>
   </svg>
 )

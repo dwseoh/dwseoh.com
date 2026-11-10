@@ -1,210 +1,708 @@
 /**
- * Everything on /music is driven from this file. The page is a list of
- * sections (Compositions, Arrangements, …), each holding album-style
- * collections of tracks. Add a section by appending to `sections`.
+ * Everything on the Music Work page (/music) comes from this file.
  *
- * Audio: drop MP3s into public/audio/ named after each track's slug
- * (e.g. public/audio/ponyo.mp3). A track can point elsewhere with `audio`.
- * Tracks whose file is missing still render — the player just marks them
- * "audio coming soon" when someone tries to play them.
+ * PLACEHOLDER DATA: the arrangement titles come from the /music prototype;
+ * the extra compositions, all performances, and every year, running time,
+ * line-up, description and media link are placeholders. Replace them piece
+ * by piece.
+ *
+ * - `categories`: which sections list it. A piece can be in several — e.g. a
+ *   composition I also performed is ['composition', 'performance'].
+ * - `featured`: pins the piece to the top of its section with a star.
+ * - `audio`: an MP3 in public/audio/ (e.g. '/audio/ponyo.mp3'). Without it the
+ *   play button shows "Recording coming soon".
+ * - `video`: a YouTube URL/id, or a self-hosted '/videos/x.mp4'.
+ * - `score`: a MuseScore (or any) URL for the full score.
+ * - `cover`: an image path. Without one, the cover is generated from the title.
  */
 
-/** Background photo behind the whole page. Swap this path to change it. */
-export const BACKGROUND_IMAGE = '/videos/orchestra-conducting-poster.jpg'
+export type Category = 'composition' | 'performance' | 'arrangement'
 
-export const intro = {
-  eyebrow: 'Compositions & arrangements',
-  title: 'Music',
-  body:
-    'Music I have written and arranged — for school ensembles, friends, holiday concerts, and the occasional late night. Most of it started as “what if this were a clarinet quartet?”',
-}
-
-export interface TrackLink {
-  label: string
-  href: string
-}
-
-export interface Track {
-  slug: string
-  title: string
-  /** Instrumentation, e.g. "Wind Quintet". */
-  ensemble: string
-  year?: number
-  /** Display length, e.g. "3:42". Shown in the track list. */
-  duration?: string
-  /** Overrides the default /audio/<slug>.mp3 */
-  audio?: string
-  /** A few words about the piece — shown when the track is expanded. */
-  note?: string
-  links?: TrackLink[]
+export interface Credit {
+  /** A noun, shown as a small label: "Composer", "Conductor", "Clarinet". */
+  role: string
+  name: string
 }
 
 export interface Collection {
-  slug: string
-  title: string
-  /** Label above the title, like Spotify's "Album" / "EP". */
-  kind: string
-  years: string
-  /** The paragraph that opens the collection. */
-  blurb: string
-  /** Generated cover art: a two-stop gradient, or an image path. */
-  cover: { from: string; to: string; image?: string }
-  tracks: Track[]
-}
-
-export interface Section {
-  /** Also the #anchor the top-bar link jumps to. */
   id: string
   title: string
-  /** A sentence or two introducing the section. */
-  blurb: string
-  collections: Collection[]
+  /** Two colours for the generated covers and the page's ambient light. */
+  palette: [string, string]
+  /** Default genre for its pieces. */
+  genre: string
 }
 
-const originals: Collection[] = [
-  {
-    slug: 'originals',
-    title: 'Originals',
-    kind: 'Collection',
-    years: '2023',
-    blurb:
-      'Music that started from a blank page rather than someone else’s melody. Small, personal pieces — mostly written for friends to play together.',
-    cover: { from: '#1f1c2c', to: '#928dab' },
-    tracks: [
-      { slug: 'lifelight', title: 'Lifelight', ensemble: 'Trio', year: 2023 },
-      {
-        slug: 'well-be-alright',
-        title: "We'll Be Alright",
-        ensemble: 'Quintet',
-        year: 2023,
-        links: [{ label: 'Project page', href: "https://projects.dwseoh.com/we'll-be-alright" }],
-      },
-      { slug: 'daisy-circuit', title: 'Daisy Circuit', ensemble: 'Original' },
-    ],
-  },
+export interface Piece {
+  slug: string
+  title: string
+  categories: Category[]
+  collection: string
+  year: number
+  /** Running time, "m:ss". */
+  duration: string
+  /** Ensemble type ("Wind Quintet"). Shown as the instrumentation if none is given. */
+  ensemble: string
+  /** Overrides the collection's genre. */
+  genre?: string
+  /** Original composer. Compositions are credited to ME automatically. */
+  composer?: string
+  /** Where the music comes from: a film, game, album or show. */
+  source?: string
+  /** Arrangements default to ME. */
+  arranger?: string
+  /** Performances: what I did ("Conductor", "Clarinet"). */
+  role?: string
+  /** Performances: who played ("IRHS Wind Ensemble"). */
+  performers?: string
+  venue?: string
+  key?: string
+  /** Plain text, e.g. 'Flute, Clarinet in B♭, Piano'. Falls back to `ensemble`. */
+  instrumentation?: string
+  /** Overrides the credits worked out from composer/arranger. */
+  credits?: Credit[]
+  description: string
+  /** For medleys: the pieces inside, in order. */
+  contents?: string[]
+  premiere?: string
+  featured?: boolean
+  audio?: string
+  video?: string
+  score?: string
+  cover?: string
+  links?: { label: string; href: string }[]
+}
+
+export const ME = 'Jamie Seoh'
+
+export type SectionKey = 'all' | Category
+
+export const sections: { key: SectionKey; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'composition', label: 'Compositions' },
+  { key: 'performance', label: 'Performances' },
+  { key: 'arrangement', label: 'Arrangements' },
 ]
 
-const arrangements: Collection[] = [
+export const categoryLabel: Record<Category, string> = {
+  composition: 'Composition',
+  performance: 'Performance',
+  arrangement: 'Arrangement',
+}
+
+// Placeholders: a synthesized demo clip and the site's conducting video.
+/** Trial: the /music prototype's photo, blurred and darkened behind the page. Set to undefined to drop it. */
+export const BACKGROUND_IMAGE: string | undefined = '/videos/orchestra-conducting-poster.jpg'
+
+const DEMO_AUDIO = '/audio/placeholder.mp3'
+const DEMO_VIDEO = '/videos/orchestra-conducting.mp4'
+const DEMO_SCORE = 'https://musescore.com/'
+
+export const collections: Collection[] = [
+  { id: 'chamber-works', title: 'Chamber Works', palette: ['#2b1c1d', '#c99a8f'], genre: 'Chamber' },
+  { id: 'sketchbook', title: 'Sketchbook', palette: ['#25211c', '#c4b49c'], genre: 'Contemporary' },
+  { id: 'season-23-24', title: '2023–24 Season', palette: ['#1a2030', '#94a4c0'], genre: 'Classical' },
+  { id: 'season-24-25', title: '2024–25 Season', palette: ['#2a1c22', '#bf9ca6'], genre: 'Classical' },
+  { id: 'screen-and-game', title: 'Screen & Game', palette: ['#1e2229', '#a9b2bf'], genre: 'Film & game' },
+  { id: 'winter-light', title: 'Winter Light', palette: ['#33161a', '#d4a66c'], genre: 'Holiday' },
   {
-    slug: 'screen-and-game',
-    title: 'Screen & Game',
-    kind: 'Collection',
-    years: '2022 – 2024',
-    blurb:
-      'Soundtracks I grew up with, rewritten for the people sitting next to me in band. Studio Ghibli, Nintendo, Disney — music that already tells a story, which makes it a joy to retell with fewer instruments.',
-    cover: { from: '#2b5876', to: '#4e4376' },
-    tracks: [
-      { slug: 'ponyo', title: 'Ponyo on the Cliff by the Sea', ensemble: 'Arrangement' },
-      { slug: 'totoro', title: 'My Neighbor Totoro', ensemble: 'Arrangement' },
-      { slug: 'a-town-with-an-ocean-view', title: 'A Town with an Ocean View', ensemble: 'Arrangement' },
-      {
-        slug: 'how-to-train-your-dragon-duet',
-        title: 'How to Train Your Dragon',
-        ensemble: 'Duet',
-        year: 2023,
-        links: [{ label: 'Project page', href: 'https://projects.dwseoh.com/how-to-train-your-dragon-duet' }],
-      },
-      {
-        slug: 'ocarina-of-time-medley',
-        title: 'The Legend of Zelda: Ocarina of Time Medley',
-        ensemble: 'Ensemble',
-        note: 'A walk through Hyrule in a few minutes — Kakariko, Lost Woods, and the main theme stitched into one piece.',
-      },
-      { slug: 'rainbow-road', title: 'Rainbow Road', ensemble: 'Arrangement' },
-      { slug: 'steam-gardens', title: 'Steam Gardens', ensemble: 'Arrangement' },
-      { slug: 'comet-observatory', title: 'Comet Observatory', ensemble: 'Arrangement' },
-      {
-        slug: 'beauty-and-the-beast',
-        title: 'Beauty and the Beast',
-        ensemble: 'Quartet',
-        year: 2023,
-        links: [{ label: 'Project page', href: 'https://projects.dwseoh.com/beauty-and-the-beast/' }],
-      },
-      {
-        slug: 'pink-panther',
-        title: 'The Pink Panther',
-        ensemble: 'Quartet',
-        year: 2023,
-        links: [{ label: 'Project page', href: 'https://projects.dwseoh.com/pink-panther/' }],
-      },
-      { slug: 'youve-got-a-friend-in-me', title: "You've Got a Friend in Me", ensemble: 'Arrangement' },
-    ],
-  },
-  {
-    slug: 'winter-light',
-    title: 'Winter Light',
-    kind: 'Collection',
-    years: '2023 – 2024',
-    blurb:
-      'Every December the clarinet section needs something new to play. These are the holiday charts — warm, a little silly, and written to be sight-read the week before the concert.',
-    cover: { from: '#c94b4b', to: '#2c1a3a' },
-    tracks: [
-      {
-        slug: 'chrislarinet-medley',
-        title: 'Chrislarinet Medley',
-        ensemble: 'Clarinet Choir',
-        year: 2023,
-        note: 'A medley of carols written for the clarinet section — the pun came first, the music second.',
-        links: [{ label: 'Project page', href: 'https://projects.dwseoh.com/chrislarinet-medley' }],
-      },
-      { slug: 'sleigh-ride', title: 'Sleigh Ride', ensemble: 'Clarinet Choir', year: 2024 },
-      { slug: 'rockin-around-the-christmas-tree', title: "Rockin' Around the Christmas Tree", ensemble: 'Arrangement' },
-      { slug: 'sugar-plum-fairy', title: 'Dance of the Sugar Plum Fairy', ensemble: 'Arrangement' },
-      { slug: 'beginning-to-look-like-christmas', title: "It's Beginning to Look a Lot Like Christmas", ensemble: 'Arrangement' },
-      { slug: 'angels-we-have-heard-on-high', title: 'Angels We Have Heard on High', ensemble: 'Arrangement' },
-      { slug: 'frosty-the-snowman', title: 'Frosty the Snowman', ensemble: 'Wind Quintet' },
-    ],
-  },
-  {
-    slug: 'covers-and-standards',
+    id: 'covers-and-standards',
     title: 'Covers & Standards',
-    kind: 'Collection',
-    years: '2022 – 2024',
-    blurb:
-      'Pop songs and old favourites, reimagined for winds. The challenge here is always the same: keep what makes the song itself, and find what only these instruments can add.',
-    cover: { from: '#f7b733', to: '#fc4a1a' },
-    tracks: [
-      { slug: 'mr-blue-sky', title: 'Mr. Blue Sky', ensemble: 'Ensemble' },
-      { slug: 'dont-stop-believin', title: "Don't Stop Believin'", ensemble: 'Arrangement' },
-      { slug: 'uptown-girl', title: 'Uptown Girl', ensemble: 'Arrangement' },
-      { slug: 'god-only-knows', title: 'God Only Knows', ensemble: 'Arrangement' },
-      { slug: 'eleanor-rigby', title: 'Eleanor Rigby', ensemble: 'Ensemble' },
-      { slug: 'stop', title: 'Stop', ensemble: 'Wind Ensemble' },
-      { slug: 'edelweiss', title: 'Edelweiss', ensemble: 'Recorder' },
-    ],
+    palette: ['#36200f', '#d9a476'],
+    genre: 'Pop & standards',
+  },
+  { id: 'small-rooms', title: 'Small Rooms', palette: ['#2a2118', '#c2a582'], genre: 'Chamber' },
+]
+
+export const pieces: Piece[] = [
+  // ── Compositions ─────────────────────────────────────────────────────────────
+  {
+    slug: 'lifelight',
+    genre: 'Chamber',
+    title: 'Lifelight',
+    categories: ['composition', 'performance'],
+    collection: 'chamber-works',
+    year: 2023,
+    duration: '3:12',
+    ensemble: 'Trio',
+    key: 'D♭ major',
+    instrumentation: 'Flute, Clarinet in B♭, Piano',
+    description:
+      'A small piece about the first warm morning after a long winter. The piano keeps time like a clock in another room while the flute and clarinet trade one melody back and forth until neither remembers who started it.',
+    premiere: 'Spring recital, 2023',
+    role: 'Clarinet',
+    performers: 'Lifelight Trio',
+    featured: true,
+    audio: DEMO_AUDIO,
+    score: DEMO_SCORE,
   },
   {
-    slug: 'small-rooms',
-    title: 'Small Rooms',
-    kind: 'Chamber',
-    years: '2023',
-    blurb:
-      'Pieces for three, four, five players — the kind of music you can rehearse around a kitchen table. Fewer parts means nowhere to hide, which is exactly why I love writing it.',
-    cover: { from: '#134e5e', to: '#71b280' },
-    tracks: [
-      { slug: 'canon-in-c', title: 'Canon in C', ensemble: 'Trio', year: 2023 },
-      { slug: 'sound-of-silence', title: 'The Sound of Silence', ensemble: 'Clarinet Quartet' },
-      { slug: 'sous-le-ciel-de-paris', title: 'Sous le ciel de Paris', ensemble: 'Wind Quintet' },
-      { slug: 'bad-piggies', title: 'Bad Piggies', ensemble: 'Brass Quartet' },
+    slug: 'daisy-circuit',
+    genre: 'Electronic',
+    title: 'Daisy Circuit',
+    categories: ['composition'],
+    collection: 'sketchbook',
+    year: 2024,
+    duration: '2:48',
+    ensemble: 'Duo',
+    key: 'A minor',
+    instrumentation: 'Clarinet in B♭, Synthesizer',
+    description:
+      'Written late at night between assignments. A looping synth figure, a clarinet that keeps trying to break out of it, and a last chord that finally lets it.',
+    audio: DEMO_AUDIO,
+    video: DEMO_VIDEO,
+  },
+  {
+    slug: 'paper-lanterns',
+    title: 'Paper Lanterns',
+    categories: ['composition'],
+    collection: 'chamber-works',
+    year: 2024,
+    duration: '4:05',
+    ensemble: 'Woodwind Quintet',
+    key: 'F major',
+    description:
+      'Placeholder. A slow procession that lifts off halfway through: five players lighting one lantern each until the whole river is lit.',
+    audio: DEMO_AUDIO,
+    score: DEMO_SCORE,
+  },
+  {
+    slug: 'northbound',
+    title: 'Northbound',
+    categories: ['composition'],
+    collection: 'chamber-works',
+    year: 2025,
+    duration: '3:36',
+    ensemble: 'Clarinet Quartet',
+    key: 'C minor',
+    description:
+      'Placeholder. Written on a long train ride. The bass clarinet is the engine; the other three watch the scenery change.',
+  },
+  {
+    slug: 'small-hours',
+    genre: 'Solo piano',
+    title: 'Small Hours',
+    categories: ['composition'],
+    collection: 'sketchbook',
+    year: 2025,
+    duration: '2:14',
+    ensemble: 'Piano Solo',
+    key: 'E major',
+    description: 'Placeholder. A piano sketch from 2 a.m. that never quite wanted to become anything bigger.',
+    audio: DEMO_AUDIO,
+  },
+
+  // ── Performances ──────────────────────────────────────────────────────────
+  {
+    slug: 'spirited-away-highlights',
+    genre: 'Film score',
+    title: 'Highlights from Spirited Away',
+    categories: ['performance'],
+    collection: 'season-24-25',
+    year: 2024,
+    duration: '6:20',
+    ensemble: 'Wind Ensemble',
+    composer: 'Joe Hisaishi',
+    source: 'Spirited Away',
+    role: 'Conductor',
+    performers: 'IRHS Wind Ensemble',
+    venue: 'Winter Concert, Oakville',
+    description:
+      'Placeholder. My first time conducting a full concert piece: three weeks of sectionals, one very nervous downbeat, and a hall that went completely quiet for the reprise.',
+    featured: true,
+    video: DEMO_VIDEO,
+  },
+  {
+    slug: 'mozart-k622-adagio',
+    title: 'Clarinet Concerto in A, K. 622: II. Adagio',
+    categories: ['performance'],
+    collection: 'season-24-25',
+    year: 2025,
+    duration: '7:30',
+    ensemble: 'Clarinet & Piano',
+    composer: 'Wolfgang Amadeus Mozart',
+    role: 'Clarinet',
+    performers: 'with piano accompaniment',
+    venue: 'Solo recital',
+    key: 'D major',
+    instrumentation: 'Clarinet in A, Piano',
+    description: 'Placeholder. The slow movement every clarinetist eventually has to make peace with.',
+    audio: DEMO_AUDIO,
+  },
+  {
+    slug: 'hall-of-the-mountain-king',
+    title: 'In the Hall of the Mountain King',
+    categories: ['performance'],
+    collection: 'season-23-24',
+    year: 2024,
+    duration: '2:48',
+    ensemble: 'Wind Ensemble',
+    composer: 'Edvard Grieg',
+    source: 'Peer Gynt',
+    role: 'Conductor',
+    performers: 'IRHS Symphonic Band',
+    venue: 'Spring Concert',
+    description: 'Placeholder. A slow tiptoe that turns into a stampede. The hard part is not speeding up too early.',
+    video: DEMO_VIDEO,
+  },
+  {
+    slug: 'on-a-clear-day',
+    genre: 'Film score',
+    title: 'On a Clear Day',
+    categories: ['performance'],
+    collection: 'season-24-25',
+    year: 2025,
+    duration: '2:18',
+    ensemble: 'Woodwind Ensemble',
+    composer: 'Joe Hisaishi',
+    source: 'Kiki’s Delivery Service',
+    role: 'Director',
+    performers: 'Community woodwind ensemble',
+    venue: 'Community concert',
+    instrumentation: 'Soprano Recorder, Flute ×2, Oboe, Clarinet in B♭ ×2, Violoncello, Accordion',
+    description: 'Placeholder. Directed from the clarinet chair, with an accordion we borrowed the week before.',
+    audio: DEMO_AUDIO,
+  },
+  {
+    slug: 'carmen-intermezzo',
+    genre: 'Opera',
+    title: 'Carmen Suite No. 1: Intermezzo',
+    categories: ['performance'],
+    collection: 'season-23-24',
+    year: 2024,
+    duration: '2:23',
+    ensemble: 'Woodwind Quartet',
+    composer: 'Georges Bizet',
+    source: 'Carmen',
+    role: 'Clarinet',
+    performers: 'Woodwind quartet',
+    venue: 'Chamber night',
+    description: 'Placeholder. A quiet interlude between the opera’s acts, played as a four-person conversation.',
+  },
+
+  // ── Arrangements ──────────────────────────────────────────────────────────
+  {
+    slug: 'well-be-alright',
+    title: "We'll Be Alright",
+    categories: ['arrangement'],
+    collection: 'screen-and-game',
+    year: 2023,
+    duration: '3:40',
+    ensemble: 'Clarinet Quintet',
+    composer: 'RADWIMPS',
+    source: 'Weathering With You',
+    description:
+      'A song from Weathering With You that really caught my ear. I recorded the quintet myself, one clarinet part at a time, and stitched the takes together. It isn’t perfect, but I enjoyed every hour of it.',
+    audio: DEMO_AUDIO,
+    score: DEMO_SCORE,
+    links: [{ label: 'Original project page', href: "https://projects.dwseoh.com/we'll-be-alright" }],
+  },
+  {
+    slug: 'ponyo',
+    title: 'Ponyo on the Cliff by the Sea',
+    categories: ['arrangement'],
+    collection: 'screen-and-game',
+    year: 2022,
+    duration: '2:05',
+    ensemble: 'Clarinet Quartet',
+    composer: 'Joe Hisaishi',
+    source: 'Ponyo',
+    description:
+      'The cheerful title song, rescored so the melody runs between all four players like a wave moving down a beach.',
+  },
+  {
+    slug: 'totoro',
+    title: 'My Neighbor Totoro',
+    categories: ['arrangement'],
+    collection: 'screen-and-game',
+    year: 2022,
+    duration: '2:58',
+    ensemble: 'Wind Quintet',
+    composer: 'Joe Hisaishi',
+    source: 'My Neighbor Totoro',
+    description:
+      'The main theme, with the horn and bassoon playing the part of the big, sleepy forest spirit underneath a bouncing flute.',
+    audio: DEMO_AUDIO,
+  },
+  {
+    slug: 'a-town-with-an-ocean-view',
+    title: 'A Town with an Ocean View',
+    categories: ['arrangement', 'performance'],
+    role: 'Director',
+    performers: 'Community woodwind ensemble',
+    collection: 'screen-and-game',
+    year: 2024,
+    duration: '3:51',
+    ensemble: 'Woodwind Quintet',
+    composer: 'Joe Hisaishi',
+    source: 'Kiki’s Delivery Service',
+    key: 'G major',
+    description:
+      'Kiki flies into a new city for the first time. The arrangement keeps the waltz light on its feet, with the cello standing in for the accordion of the original.',
+    featured: true,
+    audio: DEMO_AUDIO,
+    video: DEMO_VIDEO,
+    score: DEMO_SCORE,
+  },
+  {
+    slug: 'how-to-train-your-dragon',
+    title: 'How to Train Your Dragon',
+    categories: ['arrangement'],
+    collection: 'screen-and-game',
+    year: 2023,
+    duration: '2:40',
+    ensemble: 'Duet',
+    composer: 'John Powell',
+    source: 'How to Train Your Dragon',
+    instrumentation: 'Flute, Clarinet in B♭',
+    description:
+      'Made with my friend Cathy, who plays the flute. Not the best sound quality, but recording it together was the most fun part.',
+    audio: DEMO_AUDIO,
+    links: [{ label: 'Original project page', href: 'https://projects.dwseoh.com/how-to-train-your-dragon-duet' }],
+  },
+  {
+    slug: 'ocarina-of-time-medley',
+    title: 'Ocarina of Time Medley',
+    categories: ['arrangement'],
+    collection: 'screen-and-game',
+    year: 2023,
+    duration: '3:33',
+    ensemble: 'Woodwind Quartet',
+    composer: 'Koji Kondo',
+    source: 'The Legend of Zelda: Ocarina of Time',
+    description:
+      'A walk through Hyrule in a few minutes: Kakariko, the Lost Woods and the main theme stitched into one piece.',
+    contents: ['Main Theme', 'Kakariko Village', 'Lost Woods', 'Zelda’s Lullaby'],
+    score: DEMO_SCORE,
+  },
+  {
+    slug: 'rainbow-road',
+    title: 'Rainbow Road',
+    categories: ['arrangement'],
+    collection: 'screen-and-game',
+    year: 2024,
+    duration: '2:20',
+    ensemble: 'Clarinet Choir',
+    source: 'Mario Kart',
+    description: 'Fast, bright and a little dangerous, like the track itself. Twelve clarinets trying not to fall off.',
+  },
+  {
+    slug: 'steam-gardens',
+    title: 'Steam Gardens',
+    categories: ['arrangement'],
+    collection: 'screen-and-game',
+    year: 2024,
+    duration: '2:31',
+    ensemble: 'Wind Quintet',
+    source: 'Super Mario Odyssey',
+    description: 'Gentle machinery and overgrown gardens. The bassoon gets the tune for once.',
+  },
+  {
+    slug: 'comet-observatory',
+    title: 'Comet Observatory',
+    categories: ['arrangement'],
+    collection: 'screen-and-game',
+    year: 2024,
+    duration: '1:52',
+    ensemble: 'Clarinet Quintet',
+    composer: 'Mahito Yokota',
+    source: 'Super Mario Galaxy',
+    key: 'E♭ major',
+    description:
+      'A slow waltz among the stars. The upper clarinets stay soft and high so the bass clarinet can carry the sky.',
+    audio: DEMO_AUDIO,
+  },
+  {
+    slug: 'beauty-and-the-beast',
+    title: 'Beauty and the Beast',
+    categories: ['arrangement', 'performance'],
+    role: 'Clarinet',
+    performers: 'Clarinet quartet',
+    collection: 'screen-and-game',
+    year: 2023,
+    duration: '3:05',
+    ensemble: 'Clarinet Quartet',
+    composer: 'Alan Menken',
+    source: 'Beauty and the Beast',
+    description:
+      'Written during the 2022–23 school year when I was bored. My friends and I played it in a small ensemble for fun, and I wanted to hear how it sounds recorded on my own.',
+    premiere: 'Chamber night, 2023',
+    audio: DEMO_AUDIO,
+    links: [{ label: 'Original project page', href: 'https://projects.dwseoh.com/beauty-and-the-beast/' }],
+  },
+  {
+    slug: 'pink-panther',
+    title: 'The Pink Panther',
+    categories: ['arrangement'],
+    collection: 'screen-and-game',
+    year: 2023,
+    duration: '2:36',
+    ensemble: 'Clarinet Quartet',
+    composer: 'Henry Mancini',
+    source: 'The Pink Panther',
+    description:
+      'A friend was a huge Pink Panther fan, so I tried writing this one for them. Sneaky, swung, and very hard to keep in sync.',
+    audio: DEMO_AUDIO,
+    links: [{ label: 'Original project page', href: 'https://projects.dwseoh.com/pink-panther/' }],
+  },
+  {
+    slug: 'youve-got-a-friend-in-me',
+    title: "You've Got a Friend in Me",
+    categories: ['arrangement'],
+    collection: 'screen-and-game',
+    year: 2024,
+    duration: '2:12',
+    ensemble: 'Clarinet Quartet',
+    composer: 'Randy Newman',
+    source: 'Toy Story',
+    description: 'Ragtime piano, rewritten for four clarinets. The bass clarinet does its best stride-piano left hand.',
+  },
+  {
+    slug: 'chrislarinet-medley',
+    title: 'Chrislarinet Medley',
+    categories: ['arrangement', 'performance'],
+    role: 'Conductor',
+    performers: 'IRHS Clarinet Choir',
+    collection: 'winter-light',
+    year: 2023,
+    duration: '7:45',
+    ensemble: 'Clarinet Choir',
+    composer: 'Various',
+    description:
+      'A medley of carols for the clarinet section, built up one song at a time so it could play through December like a soundtrack. The pun came first, the music second.',
+    contents: [
+      'Have Yourself a Merry Little Christmas',
+      'We Wish You a Merry Christmas',
+      'Rudolph the Red-Nosed Reindeer',
+      'Frosty the Snowman',
+      'Joy to the World',
+      'Carol of the Bells',
+      'Silent Night',
+      'It’s Beginning to Look a Lot Like Christmas',
     ],
+    premiere: 'Winter concert, December 2023',
+    featured: true,
+    audio: DEMO_AUDIO,
+    video: DEMO_VIDEO,
+    score: DEMO_SCORE,
+    links: [{ label: 'Original project page', href: 'https://projects.dwseoh.com/chrislarinet-medley' }],
+  },
+  {
+    slug: 'sleigh-ride',
+    title: 'Sleigh Ride',
+    categories: ['arrangement'],
+    collection: 'winter-light',
+    year: 2024,
+    duration: '2:42',
+    ensemble: 'Clarinet Choir',
+    composer: 'Leroy Anderson',
+    description: 'The horse whinny at the end is played on an E♭ clarinet. It took eleven tries.',
+    audio: DEMO_AUDIO,
+  },
+  {
+    slug: 'rockin-around-the-christmas-tree',
+    title: "Rockin' Around the Christmas Tree",
+    categories: ['arrangement'],
+    collection: 'winter-light',
+    year: 2023,
+    duration: '2:05',
+    ensemble: 'Clarinet Quartet',
+    composer: 'Johnny Marks',
+    description: 'Short, swung and written to be sight-read the week before the concert.',
+  },
+  {
+    slug: 'sugar-plum-fairy',
+    title: 'Dance of the Sugar Plum Fairy',
+    categories: ['arrangement'],
+    collection: 'winter-light',
+    year: 2023,
+    duration: '1:58',
+    ensemble: 'Clarinet Quartet',
+    composer: 'Pyotr Ilyich Tchaikovsky',
+    source: 'The Nutcracker',
+    description: 'The celesta line moves to staccato clarinets, and the bass clarinet tiptoes underneath.',
+    score: DEMO_SCORE,
+  },
+  {
+    slug: 'beginning-to-look-like-christmas',
+    title: "It's Beginning to Look a Lot Like Christmas",
+    categories: ['arrangement'],
+    collection: 'winter-light',
+    year: 2023,
+    duration: '2:20',
+    ensemble: 'Woodwind Quintet',
+    composer: 'Meredith Willson',
+    description: 'The last song added to the holiday set that year. Warm, a little jazzy, and over before you notice.',
+    audio: DEMO_AUDIO,
+  },
+  {
+    slug: 'angels-we-have-heard-on-high',
+    title: 'Angels We Have Heard on High',
+    categories: ['arrangement'],
+    collection: 'winter-light',
+    year: 2024,
+    duration: '2:30',
+    ensemble: 'Clarinet Choir',
+    composer: 'Traditional',
+    description:
+      'The long “Gloria” line passed around the whole choir, so everyone has to breathe at a different time.',
+  },
+  {
+    slug: 'frosty-the-snowman',
+    title: 'Frosty the Snowman',
+    categories: ['arrangement'],
+    collection: 'winter-light',
+    year: 2023,
+    duration: '1:47',
+    ensemble: 'Wind Quintet',
+    composer: 'Steve Nelson & Jack Rollins',
+    instrumentation: 'Flute, Oboe, Clarinet in B♭ ×2, Bassoon',
+    description: 'A bouncy, bassoon-led take with a key change in exactly the place you expect.',
+    audio: DEMO_AUDIO,
+  },
+  {
+    slug: 'mr-blue-sky',
+    title: 'Mr. Blue Sky',
+    categories: ['arrangement'],
+    collection: 'covers-and-standards',
+    year: 2023,
+    duration: '3:40',
+    ensemble: 'Woodwind Quartet',
+    composer: 'Jeff Lynne',
+    source: 'Electric Light Orchestra',
+    description: 'All the strings and vocoder of the original, squeezed into four woodwinds and a lot of enthusiasm.',
+    audio: DEMO_AUDIO,
+    video: DEMO_VIDEO,
+  },
+  {
+    slug: 'dont-stop-believin',
+    title: "Don't Stop Believin'",
+    categories: ['arrangement'],
+    collection: 'covers-and-standards',
+    year: 2024,
+    duration: '3:20',
+    ensemble: 'Wind Ensemble',
+    composer: 'Journey',
+    description: 'The piano riff goes to the clarinets; the chorus goes to everyone at once.',
+  },
+  {
+    slug: 'uptown-girl',
+    title: 'Uptown Girl',
+    categories: ['arrangement'],
+    collection: 'covers-and-standards',
+    year: 2024,
+    duration: '2:50',
+    ensemble: 'Clarinet Quartet',
+    composer: 'Billy Joel',
+    description: 'Doo-wop backing vocals turned into four-part clarinet harmony.',
+  },
+  {
+    slug: 'god-only-knows',
+    title: 'God Only Knows',
+    categories: ['arrangement'],
+    collection: 'covers-and-standards',
+    year: 2024,
+    duration: '2:45',
+    ensemble: 'Woodwind Quintet',
+    composer: 'Brian Wilson & Tony Asher',
+    source: 'Pet Sounds',
+    description:
+      'The closing round, where every voice sings a different line at once, was the reason to arrange this at all.',
+    score: DEMO_SCORE,
+  },
+  {
+    slug: 'eleanor-rigby',
+    title: 'Eleanor Rigby',
+    categories: ['arrangement'],
+    collection: 'covers-and-standards',
+    year: 2023,
+    duration: '2:07',
+    ensemble: 'Woodwind Quintet',
+    composer: 'Lennon–McCartney',
+    source: 'Revolver',
+    key: 'E minor',
+    instrumentation: 'Flute ×2, Oboe, Clarinet in B♭, Violoncello',
+    description: 'The original is all string octet. Here the cello keeps its job and the woodwinds take over the rest.',
+    audio: DEMO_AUDIO,
+  },
+  {
+    slug: 'edelweiss',
+    title: 'Edelweiss',
+    categories: ['arrangement'],
+    collection: 'covers-and-standards',
+    year: 2022,
+    duration: '1:40',
+    ensemble: 'Recorder Ensemble',
+    composer: 'Rodgers & Hammerstein',
+    source: 'The Sound of Music',
+    description: 'One of the first things I ever arranged: four recorders, three chords, and a lot of care.',
+  },
+  {
+    slug: 'canon-in-c',
+    title: 'Canon in C',
+    categories: ['arrangement'],
+    collection: 'small-rooms',
+    year: 2023,
+    duration: '3:30',
+    ensemble: 'Trio',
+    composer: 'Johann Pachelbel',
+    instrumentation: 'Flute, Clarinet in B♭, Bassoon',
+    description:
+      'The famous canon moved down a step so a beginner trio could play it, with the bassoon walking the ground bass.',
+  },
+  {
+    slug: 'sound-of-silence',
+    title: 'The Sound of Silence',
+    categories: ['arrangement'],
+    collection: 'small-rooms',
+    year: 2024,
+    duration: '4:03',
+    ensemble: 'Clarinet Quartet',
+    composer: 'Paul Simon',
+    description:
+      'Slow and very quiet. Fewer parts means nowhere to hide, which is exactly why I love writing for four.',
+    audio: DEMO_AUDIO,
+    score: DEMO_SCORE,
+  },
+  {
+    slug: 'sous-le-ciel-de-paris',
+    title: 'Sous le ciel de Paris',
+    categories: ['arrangement'],
+    collection: 'small-rooms',
+    year: 2024,
+    duration: '2:49',
+    ensemble: 'Wind Quintet',
+    composer: 'Hubert Giraud',
+    description: 'A café waltz. The oboe sings the tune and the horn plays the accordion.',
+  },
+  {
+    slug: 'bad-piggies',
+    title: 'Bad Piggies',
+    categories: ['arrangement'],
+    collection: 'small-rooms',
+    year: 2023,
+    duration: '1:35',
+    ensemble: 'Brass Quartet',
+    composer: 'Ilmari Hakkola',
+    source: 'Bad Piggies',
+    description: 'A goofy, oompah-flavoured theme that turned out to be a serious workout for the trombone.',
   },
 ]
 
-export const sections: Section[] = [
-  {
-    id: 'compositions',
-    title: 'Compositions',
-    blurb: 'Original pieces — written from scratch.',
-    collections: originals,
-  },
-  {
-    id: 'arrangements',
-    title: 'Arrangements',
-    blurb: 'Other people’s music, retold for the ensembles around me.',
-    collections: arrangements,
-  },
-]
+export const inSection = (piece: Piece, key: SectionKey) => key === 'all' || piece.categories.includes(key)
 
-export function audioSrc(track: Track) {
-  return track.audio ?? `/audio/${track.slug}.mp3`
+/** Written by me. */
+export function isMine(piece: Piece) {
+  return piece.categories.includes('composition') || piece.composer === ME
 }
+
+/** Who wrote it and who arranged it. (What I did in a performance is a detail, not a credit.) */
+export function creditsOf(piece: Piece): Credit[] {
+  if (piece.credits) return piece.credits
+  const has = (c: Category) => piece.categories.includes(c)
+  const out: Credit[] = [{ role: 'Composer', name: has('composition') ? ME : (piece.composer ?? 'Unknown') }]
+  if (has('arrangement') || piece.arranger) out.push({ role: 'Arranger', name: piece.arranger ?? ME })
+  return out
+}
+
+export const genreOf = (piece: Piece, collection: Collection) => piece.genre ?? collection.genre

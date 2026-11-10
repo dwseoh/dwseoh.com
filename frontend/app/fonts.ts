@@ -1,12 +1,13 @@
-import { Inter, Gowun_Dodum, Newsreader } from 'next/font/google'
+import { Inter, Gowun_Dodum, Instrument_Serif } from 'next/font/google'
 
 export const inter = Inter({ subsets: ['latin'] })
 export const gowunDodum = Gowun_Dodum({ weight: '400', subsets: ['latin'] })
 
-// Serif used by the standalone music page.
-export const newsreader = Newsreader({
-  subsets: ['latin'],
+// Display serif for /music (piece titles).
+export const instrumentSerif = Instrument_Serif({
+  weight: '400',
   style: ['normal', 'italic'],
-  variable: '--font-serif',
+  subsets: ['latin'],
+  variable: '--font-display',
   display: 'swap',
 })

@@ -1,331 +1,485 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import Link from 'next/link'
-import { audioSrc, type Collection, type Section, type Track } from '@/app/music/data'
+import { memo, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
+import PageHeading from '@/components/subpage/PageHeading'
+import SubpageBar from '@/components/subpage/SubpageBar'
+import Tabs from '@/components/subpage/Tabs'
+import { isModifiedClick } from '@/components/subpage/url'
+import {
+  ME,
+  creditsOf,
+  inSection,
+  isMine,
+  sections,
+  type Collection,
+  type Piece,
+  type SectionKey,
+} from '@/app/music/data'
 import Cover from './Cover'
-import PlayerBar from './PlayerBar'
-import { PauseIcon, PlayIcon, ShuffleIcon, ArrowLeftIcon, NoteIcon, ExternalIcon } from './Icons'
+import DetailPanel from './DetailPanel'
+import Drum from './Drum'
+import { ClockIcon, PauseIcon, PinIcon, PlayIcon } from './Icons'
+import NowPlaying from './NowPlaying'
+import Visualizer from './Visualizer'
 
-export interface QueueItem {
-  track: Track
-  collection: Collection
-}
+const pad = (n: number) => String(n).padStart(2, '0')
 
-interface Props {
-  sections: Section[]
-  intro: { eyebrow: string; title: string; body: string }
-  background: string
-}
-
-export default function MusicView({ sections, intro, background }: Props) {
-  const collections = useMemo(() => sections.flatMap((s) => s.collections), [sections])
-  const queue = useMemo<QueueItem[]>(
-    () => collections.flatMap((collection) => collection.tracks.map((track) => ({ track, collection }))),
-    [collections],
+function Eq() {
+  return (
+    <span className="cw-eq" aria-label="Now playing">
+      <i />
+      <i />
+      <i />
+    </span>
   )
+}
 
+/** A section's pieces: featured ones pinned to the top, the rest in catalogue order. */
+function sectionList(pieces: Piece[], key: SectionKey) {
+  return pieces.filter((p) => inSection(p, key)).sort((a, b) => Number(!!b.featured) - Number(!!a.featured))
+}
+
+/**
+ * The row's second line. Under Performances it says what I did; elsewhere,
+ * the ensemble and composer — with my name in gold when I wrote it.
+ */
+function subtitle(p: Piece, section: SectionKey) {
+  if (section === 'performance') return [p.role, p.performers ?? p.ensemble].filter(Boolean).join(' · ')
+  if (isMine(p)) {
+    return (
+      <>
+        {p.ensemble} · <span className="cw-me">{ME}</span>
+      </>
+    )
+  }
+  return p.composer ? `${p.ensemble} · ${p.composer}` : p.ensemble
+}
+
+const isSection = (k: string | null): k is SectionKey => sections.some((s) => s.key === k)
+
+/**
+ * One row of the list. Memoised: focus is styled by the drum (aria-selected,
+ * --f), so moving it doesn't re-render any rows.
+ */
+const Row = memo(function Row({
+  p,
+  collection,
+  number,
+  isNow,
+  eq,
+  section,
+}: {
+  p: Piece
+  collection: Collection
+  number: number
+  isNow: boolean
+  /** Show the playing bars in place of the number. */
+  eq: boolean
+  section: SectionKey
+}) {
+  return (
+    <div className={`cw-grid cw-row-inner${p.audio ? ' has-audio' : ''}${isNow ? ' is-now' : ''}`}>
+      <span className="cw-c-num">
+        {eq ? (
+          <Eq />
+        ) : (
+          <>
+            {/* Pinned (featured) pieces show a pin where the number would be. */}
+            {p.featured ? (
+              <span className="cw-num cw-num-pin" aria-label="Pinned">
+                <PinIcon />
+              </span>
+            ) : (
+              <span className="cw-num">{pad(number)}</span>
+            )}
+            <span className="cw-num-play">{isNow ? <PauseIcon /> : <PlayIcon />}</span>
+          </>
+        )}
+      </span>
+      <Cover piece={p} palette={collection.palette} />
+      <span className="cw-c-title">
+        <span className="cw-t">
+          {p.featured && <PinIcon className="cw-pin" />}
+          {p.title}
+        </span>
+        <span className="cw-s">{subtitle(p, section)}</span>
+      </span>
+      <span className="cw-c-album">{collection.title}</span>
+      <span className="cw-c-year">{p.year}</span>
+      <span className="cw-c-dur">{p.duration}</span>
+    </div>
+  )
+})
+
+export default function MusicView({
+  pieces,
+  collections,
+  background,
+}: {
+  pieces: Piece[]
+  collections: Collection[]
+  /** Optional photo behind everything, blurred and darkened. */
+  background?: string
+}) {
+  const byCollection = useMemo(() => new Map(collections.map((c) => [c.id, c])), [collections])
+  const bySlug = useMemo(() => new Map(pieces.map((p) => [p.slug, p])), [pieces])
+  // One catalogue number per work, the same in every section.
+  const numbers = useMemo(() => new Map(pieces.map((p, i) => [p.slug, i + 1])), [pieces])
+  const counts = useMemo(
+    () => Object.fromEntries(sections.map((s) => [s.key, pieces.filter((p) => inSection(p, s.key)).length])),
+    [pieces],
+  ) as Record<SectionKey, number>
+
+  const [section, setSection] = useState<SectionKey>('all')
+  const list = useMemo(() => sectionList(pieces, section), [pieces, section])
+  const [slug, setSlug] = useState(() => sectionList(pieces, 'all')[0].slug)
+  const index = Math.max(
+    0,
+    list.findIndex((p) => p.slug === slug),
+  )
+  const sectionInfo = sections.find((s) => s.key === section)!
+
+  // The panel renders at lower priority, so a fast spin stays smooth.
+  const shownSlug = useDeferredValue(slug)
+  const shown = bySlug.get(shownSlug)!
+  const shownCollection = byCollection.get(shown.collection)!
+  const prevShown = useRef({ slug: shownSlug, dir: 'down' as 'up' | 'down' })
+  if (prevShown.current.slug !== shownSlug) {
+    const pos = (s: string) => list.findIndex((p) => p.slug === s)
+    prevShown.current = { slug: shownSlug, dir: pos(shownSlug) >= pos(prevShown.current.slug) ? 'down' : 'up' }
+  }
+
+  // A new piece starts at its cover, not wherever the last one was scrolled to.
+  const detailRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const el = detailRef.current
+    if (el && el.scrollHeight > el.clientHeight && el.scrollTop > 0) el.scrollTop = 0
+  }, [shownSlug])
+
+  // ── Audio ────────────────────────────────────────────────────────────────
   const audioRef = useRef<HTMLAudioElement>(null)
-  const [current, setCurrent] = useState<number | null>(null)
+  const [nowSlug, setNowSlug] = useState<string | null>(null)
   const [playing, setPlaying] = useState(false)
   const [time, setTime] = useState(0)
   const [duration, setDuration] = useState(0)
-  const [volume, setVolume] = useState(0.9)
-  const [missing, setMissing] = useState<Set<string>>(() => new Set())
-  const [openNotes, setOpenNotes] = useState<Set<string>>(() => new Set())
+  const now = nowSlug ? bySlug.get(nowSlug)! : null
 
-  const playIndex = useCallback(
-    (i: number) => {
+  // The background visualizer listens to the audio through an analyser. It can
+  // only be created after a user gesture, so it's set up on the first play.
+  const analyserRef = useRef<AnalyserNode | null>(null)
+  const audioCtxRef = useRef<AudioContext | null>(null)
+  const listen = () => {
+    const audio = audioRef.current
+    if (!audio) return
+    if (!audioCtxRef.current) {
+      try {
+        const ctx = new AudioContext()
+        const analyser = ctx.createAnalyser()
+        analyser.fftSize = 2048 // fine enough to split the bass into separate bars
+        analyser.smoothingTimeConstant = 0.72
+        analyser.minDecibels = -88
+        analyser.maxDecibels = -22
+        ctx.createMediaElementSource(audio).connect(analyser)
+        analyser.connect(ctx.destination)
+        audioCtxRef.current = ctx
+        analyserRef.current = analyser
+      } catch {
+        return // no Web Audio: the music still plays, the visualizer just rests
+      }
+    }
+    if (audioCtxRef.current.state === 'suspended') audioCtxRef.current.resume().catch(() => {})
+  }
+
+  const toggle = useCallback(
+    (piece: Piece) => {
       const audio = audioRef.current
-      if (!audio) return
-      if (i === current) {
+      if (!audio || !piece.audio) return
+      listen()
+      if (nowSlug === piece.slug) {
         if (audio.paused) audio.play().catch(() => {})
         else audio.pause()
         return
       }
-      const { track } = queue[i]
-      setCurrent(i)
+      setNowSlug(piece.slug)
       setTime(0)
       setDuration(0)
-      audio.src = audioSrc(track)
+      audio.src = piece.audio
+      audio.currentTime = 0
       audio.play().catch(() => {})
     },
-    [current, queue],
+    [nowSlug],
   )
 
-  const step = useCallback(
-    (dir: 1 | -1) => {
-      if (current === null) return
-      const audio = audioRef.current
-      if (dir === -1 && audio && audio.currentTime > 3) {
-        audio.currentTime = 0
-        return
-      }
-      for (let i = current + dir; i >= 0 && i < queue.length; i += dir) {
-        if (!missing.has(queue[i].track.slug)) return playIndex(i)
-      }
-    },
-    [current, missing, playIndex, queue],
-  )
-
-  const shuffle = () => {
-    const pool = queue.map((_, i) => i).filter((i) => i !== current && !missing.has(queue[i].track.slug))
-    if (pool.length) playIndex(pool[Math.floor(Math.random() * pool.length)])
-  }
-
-  const seek = (t: number) => {
-    if (audioRef.current) audioRef.current.currentTime = t
-  }
+  const pause = () => audioRef.current?.pause()
 
   useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = volume
-  }, [volume])
+    if (!now || !('mediaSession' in navigator)) return
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: now.title,
+      artist: [...new Set(creditsOf(now).map((c) => c.name))].join(', '),
+      album: byCollection.get(now.collection)?.title,
+    })
+  }, [now, byCollection])
 
-  // Space toggles playback when focus isn't on something that wants it.
+  // ── Focus ────────────────────────────────────────────────────────────────
+  /** Focus any piece; if it isn't in the current section, show All. */
+  const focus = useCallback(
+    (s: string) => {
+      const p = bySlug.get(s)
+      if (!p) return
+      setSection((cur) => (inSection(p, cur) ? cur : 'all'))
+      setSlug(s)
+    },
+    [bySlug],
+  )
+
+  const move = useCallback(
+    (delta: number) => setSlug(list[Math.max(0, Math.min(list.length - 1, index + delta))].slug),
+    [index, list],
+  )
+
+  // Switching sections keeps the focused piece if the new section has it.
+  const changeSection = (k: SectionKey) => {
+    if (k === section) return
+    const next = sectionList(pieces, k)
+    setSection(k)
+    if (!next.some((p) => p.slug === slug)) setSlug(next[0].slug)
+  }
+
+  const selectSection = (e: React.MouseEvent, k: SectionKey) => {
+    // Let modified clicks open a new tab like any link would.
+    if (isModifiedClick(e)) return
+    e.preventDefault()
+    changeSection(k)
+  }
+
+  // Deep link: /music?c=<section>&piece=<slug>, kept in sync as you browse.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search)
+    const c = q.get('c')
+    if (isSection(c)) {
+      setSection(c)
+      setSlug((cur) => {
+        const next = sectionList(pieces, c)
+        return next.some((p) => p.slug === cur) ? cur : next[0].slug
+      })
+    }
+    const want = q.get('piece')
+    if (want) focus(want)
+  }, [focus, pieces])
+
+  const mounted = useRef(false)
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true
+      return
+    }
+    const t = window.setTimeout(() => {
+      const q = new URLSearchParams(section === 'all' ? {} : { c: section })
+      q.set('piece', slug)
+      window.history.replaceState(window.history.state, '', `?${q}`)
+    }, 300)
+    return () => window.clearTimeout(t)
+  }, [slug, section])
+
+  // Keys work anywhere on the page, except inside form controls and media.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code !== 'Space' || current === null) return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
       const el = e.target as HTMLElement
-      if (el.closest('input, textarea, button, a, [contenteditable]')) return
+      if (el.closest('input, textarea, select, video, iframe, [contenteditable]')) return
+      const onControl = !!el.closest('button, a')
+      const piece = list[index]
+      switch (e.key) {
+        case 'ArrowDown':
+        case 'j':
+          move(1)
+          break
+        case 'ArrowUp':
+        case 'k':
+          move(-1)
+          break
+        case 'PageDown':
+          move(5)
+          break
+        case 'PageUp':
+          move(-5)
+          break
+        case 'Home':
+          move(-list.length)
+          break
+        case 'End':
+          move(list.length)
+          break
+        case 'Enter':
+          if (onControl) return
+          toggle(piece)
+          break
+        case ' ':
+          if (onControl) return
+          // Space is play/pause for whatever is loaded, like any player.
+          if (now) toggle(now)
+          else toggle(piece)
+          break
+        default:
+          return
+      }
       e.preventDefault()
-      playIndex(current)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [current, playIndex])
+  }, [index, list, move, now, toggle])
 
-  // Lock-screen / media-key controls.
-  useEffect(() => {
-    if (current === null || !('mediaSession' in navigator)) return
-    const { track, collection } = queue[current]
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: track.title,
-      artist: 'Jamie Seoh',
-      album: collection.title,
-    })
-    navigator.mediaSession.setActionHandler('nexttrack', () => step(1))
-    navigator.mediaSession.setActionHandler('previoustrack', () => step(-1))
-  }, [current, queue, step])
+  const focused = list[index]
+  const palette = byCollection.get(focused.collection)!.palette
 
-  const toggleNote = (slug: string) =>
-    setOpenNotes((prev) => {
-      const next = new Set(prev)
-      if (next.has(slug)) next.delete(slug)
-      else next.add(slug)
-      return next
-    })
-
-  const currentItem = current === null ? null : queue[current]
-  const totalPieces = queue.length
-  // Where each collection's first track sits in the flat queue, and its
-  // position overall (for the "Vol. 0n" on its cover).
-  const starts = new Map<string, { start: number; vol: number }>()
-  collections.reduce((start, c, vol) => {
-    starts.set(c.slug, { start, vol })
-    return start + c.tracks.length
-  }, 0)
+  // The player bar shows what's loaded or, before anything is, the focused
+  // piece. Skipping walks the list it's in (this section, else All), passing
+  // over pieces with no recording.
+  const barPiece = now ?? focused
+  const queue = list.some((p) => p.slug === barPiece.slug) ? list : sectionList(pieces, 'all')
+  const qi = queue.findIndex((p) => p.slug === barPiece.slug)
+  const nextUp = queue.slice(qi + 1).find((p) => p.audio)
+  const prevUp = queue
+    .slice(0, qi)
+    .reverse()
+    .find((p) => p.audio)
+  const seek = (t: number) => {
+    if (audioRef.current) audioRef.current.currentTime = t
+  }
+  // Like any player: back restarts the track unless it's just begun.
+  const skipBack = () => {
+    if (now && (time > 3 || !prevUp)) seek(0)
+    else if (prevUp) toggle(prevUp)
+  }
 
   return (
-    <div className="mus-root" style={{ '--mus-bg-url': `url("${background}")` } as React.CSSProperties}>
-      <div className="mus-bg" aria-hidden="true">
-        <div className="mus-bg-image" />
-        <div className="mus-bg-tint" />
-        <div className="mus-bg-grain" />
-      </div>
+    <div className="cw-root" style={{ '--c1': palette[0], '--c2': palette[1] } as React.CSSProperties}>
+      {background && <div className="cw-photo" style={{ backgroundImage: `url(${background})` }} aria-hidden="true" />}
+      <div className="cw-ambient" aria-hidden="true" />
+      <div className="cw-grain" aria-hidden="true" />
 
-      <header className="mus-topbar">
-        <Link href="/" className="mus-back">
-          <ArrowLeftIcon /> dwseoh.com
-        </Link>
-        <nav className="mus-sections" aria-label="Sections">
-          {sections.map((s) => (
-            <a key={s.id} href={`#${s.id}`}>
-              {s.title}
-            </a>
-          ))}
-        </nav>
-      </header>
+      <div className="cw-app">
+        {/* ── Left: the catalogue ─────────────────────────────────────── */}
+        <section className="cw-browse" aria-label="Catalogue">
+          <SubpageBar section={{ label: 'Music Work', href: '/music' }} />
+          <header className="page-head cw-head">
+            <PageHeading eyebrow="Music by Jamie Seoh" title="Music Work" count={pieces.length} />
+            <Tabs
+              label="Sections"
+              active={section}
+              onSelect={selectSection}
+              items={sections.map((s) => ({
+                key: s.key,
+                label: s.label,
+                count: counts[s.key],
+                href: s.key === 'all' ? '/music' : `/music?c=${s.key}`,
+              }))}
+            />
+          </header>
 
-      <main className="mus-main">
-        <section className="mus-hero">
-          <p className="mus-eyebrow">{intro.eyebrow}</p>
-          <h1 className="mus-title">{intro.title}</h1>
-          <p className="mus-intro">{intro.body}</p>
-          <div className="mus-hero-actions">
-            <button className="mus-play-big" onClick={() => playIndex(0)} aria-label="Play all">
-              {playing && current !== null ? <PauseIcon /> : <PlayIcon />}
-            </button>
-            <button className="mus-ghost" onClick={shuffle}>
-              <ShuffleIcon /> Shuffle
-            </button>
-            <span className="mus-stats">
-              {totalPieces} pieces · {collections.length} collections
+          <div className="cw-cols cw-grid" aria-hidden="true">
+            <span>#</span>
+            <span />
+            <span>Title</span>
+            <span className="cw-c-album">Album</span>
+            <span className="cw-c-year">Year</span>
+            <span className="cw-c-dur">
+              <ClockIcon />
             </span>
           </div>
+
+          <div className="cw-stage" data-featured={focused.featured ? '' : undefined}>
+            <Drum
+              count={list.length}
+              index={index}
+              listKey={section}
+              label={sectionInfo.label}
+              rowKey={(i) => list[i].slug}
+              rowId={(i) => `cw-row-${list[i].slug}`}
+              onIndexChange={(i) => setSlug(list[i].slug)}
+              onActivate={(i) => toggle(list[i])}
+              renderRow={(i) => {
+                const p = list[i]
+                const isNow = nowSlug === p.slug
+                return (
+                  <Row
+                    p={p}
+                    collection={byCollection.get(p.collection)!}
+                    number={numbers.get(p.slug)!}
+                    isNow={isNow}
+                    eq={isNow && playing}
+                    section={section}
+                  />
+                )
+              }}
+            />
+
+            {/* Index rail: one tick per piece, for jumping and for knowing where you are. */}
+            {list.length >= 8 && (
+              <nav className="cw-rail" aria-label="Jump to piece">
+                {list.map((p, i) => (
+                  <button
+                    key={p.slug}
+                    className={`${i === index ? 'is-on' : ''}${p.featured ? ' is-featured' : ''}` || undefined}
+                    onClick={() => setSlug(p.slug)}
+                    aria-label={p.title}
+                    aria-current={i === index ? 'true' : undefined}
+                    data-label={p.title}
+                    tabIndex={-1}
+                  />
+                ))}
+              </nav>
+            )}
+          </div>
+
+          <footer className="cw-foot">
+            <Visualizer className="cw-viz" analyser={analyserRef} playing={playing} tint={focused.collection} />
+            <NowPlaying
+              piece={barPiece}
+              collection={byCollection.get(barPiece.collection)!}
+              loaded={!!now}
+              playing={!!now && playing}
+              time={time}
+              duration={duration}
+              onToggle={() => toggle(barPiece)}
+              onPrev={now || prevUp ? skipBack : undefined}
+              onNext={nextUp ? () => toggle(nextUp) : undefined}
+              onSeek={seek}
+              onShow={() => focus(barPiece.slug)}
+            />
+          </footer>
         </section>
 
-        {sections.map((section, si) => (
-          <section key={section.id} id={section.id} className="mus-section">
-            <header className="mus-section-head">
-              <span className="mus-section-num">{String(si + 1).padStart(2, '0')}</span>
-              <div>
-                <h2 className="mus-section-title">{section.title}</h2>
-                <p className="mus-section-blurb">{section.blurb}</p>
-              </div>
-            </header>
-
-            {section.collections.length > 1 && (
-              <div className="mus-shelf">
-                {section.collections.map((c) => (
-                  <a key={c.slug} href={`#${c.slug}`} className="mus-shelf-card">
-                    <Cover collection={c} index={starts.get(c.slug)!.vol} />
-                    <span className="mus-shelf-title">{c.title}</span>
-                    <span className="mus-shelf-meta">
-                      {c.kind} · {c.tracks.length} pieces
-                    </span>
-                  </a>
-                ))}
-              </div>
-            )}
-
-            {section.collections.map((c) => {
-              const { start, vol: ci } = starts.get(c.slug)!
-              const collectionPlaying =
-                playing && current !== null && current >= start && current < start + c.tracks.length
-
-              return (
-                <article key={c.slug} id={c.slug} className="mus-album">
-                  <div className="mus-album-head">
-                    <Cover collection={c} index={ci} large />
-                    <div className="mus-album-text">
-                      <p className="mus-eyebrow">{c.kind}</p>
-                      <h3 className="mus-album-title">{c.title}</h3>
-                      <p className="mus-blurb">{c.blurb}</p>
-                      <p className="mus-album-meta">
-                        <strong>Jamie Seoh</strong> · {c.years} · {c.tracks.length} pieces
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mus-album-actions">
-                    <button
-                      className="mus-play-big"
-                      onClick={() => (collectionPlaying ? playIndex(current!) : playIndex(start))}
-                      aria-label={collectionPlaying ? `Pause ${c.title}` : `Play ${c.title}`}
-                    >
-                      {collectionPlaying ? <PauseIcon /> : <PlayIcon />}
-                    </button>
-                  </div>
-
-                  <ol className="mus-tracks">
-                    {c.tracks.map((t, ti) => {
-                      const qi = start + ti
-                      const isCurrent = qi === current
-                      const isMissing = missing.has(t.slug)
-                      const noteOpen = openNotes.has(t.slug)
-                      return (
-                        <li
-                          key={t.slug}
-                          className={`mus-track${isCurrent ? ' is-current' : ''}${isMissing ? ' is-missing' : ''}`}
-                        >
-                          <div className="mus-track-row">
-                            <button className="mus-track-main" onClick={() => playIndex(qi)}>
-                              <span className="mus-track-num">
-                                {isCurrent && playing ? (
-                                  <span className="mus-eq" aria-label="Now playing">
-                                    <i />
-                                    <i />
-                                    <i />
-                                  </span>
-                                ) : (
-                                  <>
-                                    <span className="mus-num-text">{ti + 1}</span>
-                                    <span className="mus-num-play">
-                                      {isCurrent ? <PauseIcon /> : <PlayIcon />}
-                                    </span>
-                                  </>
-                                )}
-                              </span>
-                              <span className="mus-track-text">
-                                <span className="mus-track-title">{t.title}</span>
-                                <span className="mus-track-sub">
-                                  {isMissing ? 'Audio coming soon' : t.ensemble}
-                                </span>
-                              </span>
-                            </button>
-                            <span className="mus-track-year">{t.year ?? ''}</span>
-                            <span className="mus-track-actions">
-                              {t.links?.map((l) => (
-                                <a
-                                  key={l.href}
-                                  href={l.href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="mus-icon-btn"
-                                  title={l.label}
-                                  aria-label={`${l.label} — ${t.title}`}
-                                >
-                                  <ExternalIcon />
-                                </a>
-                              ))}
-                              {t.note && (
-                                <button
-                                  className={`mus-icon-btn${noteOpen ? ' is-on' : ''}`}
-                                  onClick={() => toggleNote(t.slug)}
-                                  aria-expanded={noteOpen}
-                                  aria-label={`Notes on ${t.title}`}
-                                  title="Notes"
-                                >
-                                  <NoteIcon />
-                                </button>
-                              )}
-                            </span>
-                            <span className="mus-track-dur">{t.duration ?? '—'}</span>
-                          </div>
-                          {t.note && noteOpen && <p className="mus-track-note">{t.note}</p>}
-                        </li>
-                      )
-                    })}
-                  </ol>
-                </article>
-              )
-            })}
-          </section>
-        ))}
-
-        <footer className="mus-footer">
-          <p>Scores and parts available on request — say hi.</p>
-          <Link href="/">← Back to dwseoh.com</Link>
-        </footer>
-      </main>
-
-      <PlayerBar
-        item={currentItem}
-        index={current}
-        playing={playing}
-        missing={currentItem ? missing.has(currentItem.track.slug) : false}
-        time={time}
-        duration={duration}
-        volume={volume}
-        onToggle={() => (current === null ? playIndex(0) : playIndex(current))}
-        onPrev={() => step(-1)}
-        onNext={() => step(1)}
-        onSeek={seek}
-        onVolume={setVolume}
-      />
+        {/* ── Right: the focused piece ────────────────────────────────── */}
+        <aside ref={detailRef} className="cw-detail" aria-label="Selected piece">
+          <p className="cw-sr" aria-live="polite">
+            {focused.title}, {focused.categories.join(' and ')}, {focused.year}
+          </p>
+          <DetailPanel
+            key={shown.slug}
+            piece={shown}
+            collection={shownCollection}
+            dir={prevShown.current.dir}
+            player={{ isCurrent: nowSlug === shown.slug, playing, time, duration }}
+            onToggle={() => toggle(shown)}
+            onSeek={seek}
+            onVideoStart={pause}
+          />
+        </aside>
+      </div>
 
       <audio
         ref={audioRef}
-        preload="metadata"
+        preload="none"
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
+        onEnded={() => {
+          setPlaying(false)
+          if (now && nextUp) toggle(nextUp) // carry on down the list, like any player
+        }}
         onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
         onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-        onEnded={() => step(1)}
-        onError={() => {
-          setPlaying(false)
-          if (currentItem) setMissing((prev) => new Set(prev).add(currentItem.track.slug))
-        }}
       />
     </div>
   )
