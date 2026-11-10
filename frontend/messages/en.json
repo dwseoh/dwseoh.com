@@ -310,9 +310,9 @@
       "thumb": "/images/thumbnails/music.png",
       "desc": "Explore my music performances, compositions, and more!",
       "links": [
-        { "label": "Compositions", "href": "/music", "icon": "music" },
+        { "label": "Compositions", "href": "/music", "icon": "file" },
         { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
-        { "label": "[Retired] Music Projects", "href": "https://projects.dwseoh.com", "icon": "music" }
+        { "label": "[Retired] Music Projects", "href": "https://projects.dwseoh.com", "icon": "file", "hidden": true }
       ]
     },
     {

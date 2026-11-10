@@ -310,9 +310,9 @@
       "thumb": "/images/thumbnails/music.png",
       "desc": "다양한 악기 연주, 작곡 작품 등을 만나보세요!",
       "links": [
-        { "label": "작곡 모음", "href": "/music", "icon": "music" },
+        { "label": "작곡 모음", "href": "/music", "icon": "file" },
         { "label": "@dwclarinet", "href": "https://instagram.com/dwclarinet", "icon": "instagram" },
-        { "label": "[구버전] 음악 프로젝트", "href": "https://projects.dwseoh.com", "icon": "music" }
+        { "label": "[구버전] 음악 프로젝트", "href": "https://projects.dwseoh.com", "icon": "file", "hidden": true }
       ]
     },
     {
