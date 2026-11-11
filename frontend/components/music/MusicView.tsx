@@ -201,6 +201,8 @@ export default function MusicView({
     const html = document.documentElement
     const was = html.style.overflow
     html.style.overflow = 'hidden'
+    // Always open at the top: cover and title first, not where it was left.
+    if (detailRef.current) detailRef.current.scrollTop = 0
     detailRef.current?.focus({ preventScroll: true })
     return () => {
       html.style.overflow = was
