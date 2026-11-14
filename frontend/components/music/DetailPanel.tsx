@@ -268,6 +268,11 @@ export default function DetailPanel({
           </div>
           <header className="cw-pv-head">
             <h2 className="cw-d-title">{piece.title}</h2>
+            {piece.source && (
+              <p className="cw-d-source">
+                from <em>{piece.source}</em>
+              </p>
+            )}
             <p className="cw-pv-sub">{names(artists)}</p>
           </header>
 

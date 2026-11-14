@@ -192,6 +192,7 @@ export const catalogue: Piece[] = [
     year: 2026,
     duration: '1:28',
     ensemble: 'Quartet',
+    source: 'Hack the North',
     genre: 'Jazz',
     key: 'B♭ major',
     instrumentation: 'Upright Piano, Upright Piano, Contrabass, Drum Set',
@@ -276,7 +277,7 @@ export const catalogue: Piece[] = [
   },
   {
     slug: 'into-the-wild',
-    title: 'Into the Wild',
+    title: 'Into the Wild - Orchestral Version',
     categories: ['composition'],
     collection: 'sketches-1-0',
     year: 2024,
