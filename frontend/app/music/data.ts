@@ -191,10 +191,10 @@ export const catalogue: Piece[] = [
     collection: 'hack-the-north',
     year: 2026,
     duration: '1:28',
-    ensemble: 'Trio',
+    ensemble: 'Quartet',
     genre: 'Jazz',
     key: 'B♭ major',
-    instrumentation: 'Upright Piano, Upright Piano, Contrabass',
+    instrumentation: 'Upright Piano, Upright Piano, Contrabass, Drum Set',
     description:
       'Written for [Hack the North’s Museum](https://museum.hackthenorth.com/) website, which showcases past hackathon finalists. The piece gave me an opportunity to experiment with instrumentation and mastering, shaping a sound that would accompany visitors as they explore the projects and stories on display.',
     audio: '/audio/museum-theme.mp3',
