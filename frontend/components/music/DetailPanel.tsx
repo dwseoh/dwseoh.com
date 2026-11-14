@@ -261,32 +261,35 @@ export default function DetailPanel({
     const artists = [...new Set(credits.map((c) => c.name))]
     return (
       <article className="cw-d is-pv" data-dir={dir} aria-label={piece.title}>
-        <div className="cw-pv-art">
-          <Cover piece={piece} palette={collection.palette} size="lg" featured={piece.featured} />
-        </div>
-        <header className="cw-pv-head">
-          <h2 className="cw-d-title">{piece.title}</h2>
-          <p className="cw-pv-sub">{names(artists)}</p>
-        </header>
+        {/* Cover, title and controls share one centred column, edges lined up. */}
+        <div className="cw-pv-top">
+          <div className="cw-pv-art">
+            <Cover piece={piece} palette={collection.palette} size="lg" featured={piece.featured} />
+          </div>
+          <header className="cw-pv-head">
+            <h2 className="cw-d-title">{piece.title}</h2>
+            <p className="cw-pv-sub">{names(artists)}</p>
+          </header>
 
-        {piece.audio ? (
-          <Transport
-            player={player}
-            piece={piece}
-            onToggle={onToggle}
-            onSeek={onSeek}
-            onPrev={onPrev}
-            onNext={onNext}
-          />
-        ) : (
-          <Player
-            piece={piece}
-            player={player}
-            onToggle={onToggle}
-            onSeek={onSeek}
-            onWatch={piece.video ? watch : undefined}
-          />
-        )}
+          {piece.audio ? (
+            <Transport
+              player={player}
+              piece={piece}
+              onToggle={onToggle}
+              onSeek={onSeek}
+              onPrev={onPrev}
+              onNext={onNext}
+            />
+          ) : (
+            <Player
+              piece={piece}
+              player={player}
+              onToggle={onToggle}
+              onSeek={onSeek}
+              onWatch={piece.video ? watch : undefined}
+            />
+          )}
+        </div>
 
         <h3 className="cw-label cw-pv-about">About</h3>
         <About text={piece.description} />

@@ -156,6 +156,9 @@ html:has(.cw-root) {
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+  /* Room for the scrollbar is kept even when there's nothing to scroll, so
+     text doesn't reflow narrower when it grows (e.g. "… more"). */
+  scrollbar-gutter: stable;
   border-left: 1px solid var(--line);
   container-type: inline-size;
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
@@ -659,7 +662,6 @@ html:has(.cw-root) {
   place-items: center;
   width: 26px;
   height: 26px;
-  border: 2px solid var(--bg);
   border-radius: 50%;
   background: var(--gold);
   color: #2a1f08;
@@ -1333,7 +1335,8 @@ html:has(.cw-root) {
     transition: none;
   }
   .cw-root .cw-d {
-    padding: 4px var(--gutter) calc(36px + env(safe-area-inset-bottom));
+    /* A little narrower than the list: the sheet reads as one centred column. */
+    padding: 4px calc(var(--gutter) + 10px) calc(36px + env(safe-area-inset-bottom));
   }
 
   .cw-np.is-expandable {
@@ -1342,10 +1345,13 @@ html:has(.cw-root) {
   }
 
   /* ── Now playing (the sheet on phones) ── */
-  .cw-pv-art {
+  .cw-pv-top {
     align-self: center;
-    width: min(100%, 44svh, 360px);
-    margin-top: 8px;
+    /* Full width, unless the screen is too short to keep the controls in view. */
+    width: min(100%, 52svh, 440px);
+  }
+  .cw-pv-art {
+    margin-top: 4px;
   }
   .cw-pv-art .cw-cover.is-lg {
     overflow: visible; /* lets the pin sit on the corner */
@@ -1358,19 +1364,19 @@ html:has(.cw-root) {
     border-radius: inherit;
   }
   .cw-pv-head {
-    margin-top: 28px;
+    margin-top: 18px;
   }
   .cw-pv-head .cw-d-title {
-    font-size: 30px;
-    line-height: 1.05;
+    font-size: 25px;
+    line-height: 1.08;
   }
   .cw-pv-sub {
-    margin: 6px 0 0;
-    font-size: 15px;
+    margin: 4px 0 0;
+    font-size: 14px;
     color: var(--fg-2);
   }
   .cw-pv-transport {
-    margin-top: 22px;
+    margin-top: 14px;
   }
   .cw-pv-transport .cw-range {
     display: block;
@@ -1379,8 +1385,8 @@ html:has(.cw-root) {
   .cw-pv-times {
     display: flex;
     justify-content: space-between;
-    margin-top: 8px;
-    font-size: 12px;
+    margin-top: 6px;
+    font-size: 11.5px;
     font-variant-numeric: tabular-nums;
     color: var(--fg-3);
   }
@@ -1388,14 +1394,14 @@ html:has(.cw-root) {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 40px;
-    margin-top: 8px;
+    gap: 24px;
+    margin-top: 0;
   }
   .cw-pv-skip {
     display: grid;
     place-items: center;
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     padding: 0;
     border: 0;
     border-radius: 50%;
@@ -1405,8 +1411,8 @@ html:has(.cw-root) {
     -webkit-tap-highlight-color: transparent;
   }
   .cw-pv-skip svg {
-    width: 34px;
-    height: 34px;
+    width: 22px;
+    height: 22px;
   }
   .cw-pv-skip:active:not(:disabled) {
     background: rgba(255, 255, 255, 0.08);
@@ -1418,8 +1424,8 @@ html:has(.cw-root) {
   .cw-pv-play {
     display: grid;
     place-items: center;
-    width: 68px;
-    height: 68px;
+    width: 48px;
+    height: 48px;
     padding: 0;
     border: 0;
     border-radius: 50%;
@@ -1430,17 +1436,17 @@ html:has(.cw-root) {
     transition: transform 0.15s var(--ease);
   }
   .cw-pv-play svg {
-    width: 34px;
-    height: 34px;
+    width: 24px;
+    height: 24px;
   }
   .cw-pv-play:active {
     transform: scale(0.94);
   }
-  .is-pv > .cw-player {
-    margin-top: 22px;
+  .cw-pv-top > .cw-player {
+    margin-top: 14px;
   }
   .cw-pv-about {
-    margin: 36px 0 0;
+    margin: 28px 0 0;
   }
   .is-pv .cw-pv-about + .cw-d-about > .cw-d-desc:first-child {
     margin-top: 10px;
@@ -1472,10 +1478,11 @@ html:has(.cw-root) {
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
+    background: none;
     color: var(--fg-2);
-    font-size: 16px;
+    font-size: 20px;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
   .cw-scrim {
     position: fixed;
