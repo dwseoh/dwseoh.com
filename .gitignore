@@ -29,3 +29,6 @@ docs/
 
 # wrangler dry-run bundle
 backend/dist/
+
+# Claude Code worktrees (local only)
+.claude/worktrees/
