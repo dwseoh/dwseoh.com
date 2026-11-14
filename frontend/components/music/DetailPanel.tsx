@@ -140,14 +140,16 @@ function About({ text }: { text: string }) {
       {open ? 'less' : 'more'}
     </button>
   )
-  let left = cutting ? cut : Infinity
+  // Where each paragraph starts, counted in words.
+  const starts = paras.map((_, i) => paras.slice(0, i).reduce((n, p) => n + p.length, 0))
   return (
     <div ref={boxRef} className="cw-d-about">
       {paras.map((ws, i) => {
-        if (left <= 0) return null
-        const shown = ws.slice(0, left)
-        left -= ws.length
-        const last = cutting ? left <= 0 : i === paras.length - 1
+        // Words of this paragraph that are shown.
+        const room = (cutting ? cut : Infinity) - starts[i]
+        if (room <= 0) return null
+        const shown = ws.slice(0, room)
+        const last = cutting ? room <= ws.length : i === paras.length - 1
         const body = shown.join(' ')
         const ends = /[.!?…]$/.test(plain(shown[shown.length - 1] ?? ''))
         // Where it's cut, the last few characters fade out into the "…".
