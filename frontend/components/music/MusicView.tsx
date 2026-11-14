@@ -164,8 +164,12 @@ export default function MusicView({
   )
   const sectionInfo = sections.find((s) => s.key === section)!
 
-  // The panel renders at lower priority, so a fast spin stays smooth.
-  const shownSlug = useDeferredValue(slug)
+  /** Phones: the detail panel is a sheet that opens over the list. */
+  const asSheet = useSyncExternalStore(onPhoneChange, isPhone, () => false)
+  // The panel renders at lower priority, so a fast spin stays smooth. Not on
+  // phones: the sheet opens straight onto the tapped piece, never the last one.
+  const deferredSlug = useDeferredValue(slug)
+  const shownSlug = asSheet ? slug : deferredSlug
   const shown = bySlug.get(shownSlug)!
   const shownCollection = byCollection.get(shown.collection)!
   // Which way the panel slides: down when moving later in the list, up when
@@ -185,8 +189,6 @@ export default function MusicView({
   }, [shownSlug])
 
   // ── Phones ───────────────────────────────────────────────────────────────
-  /** The detail panel is a sheet that opens over the list. */
-  const asSheet = useSyncExternalStore(onPhoneChange, isPhone, () => false)
   const [sheetOpen, setSheetOpen] = useState(false)
   const opener = useRef<HTMLElement | null>(null)
 
@@ -302,6 +304,12 @@ export default function MusicView({
         return
       }
       setNowSlug(piece.slug)
+      // Phones: the sheet and the list follow what's playing, so skipping or
+      // running on to the next piece moves the now-playing view with it.
+      if (isPhone()) {
+        setSection((cur) => (inSection(piece, cur) ? cur : HOME))
+        setSlug(piece.slug)
+      }
       setTime(0)
       setDuration(0)
       audio.src = piece.audio
@@ -323,6 +331,19 @@ export default function MusicView({
     })
   }, [now, byCollection])
 
+  // Album covers are few: fetch them once the page is idle, so switching to a
+  // piece from another album never waits on its image.
+  useEffect(() => {
+    const covers = [...new Set(pieces.map((p) => p.cover).filter(Boolean))] as string[]
+    const load = () => covers.forEach((src) => (new Image().src = src))
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(load)
+      return () => cancelIdleCallback(id)
+    }
+    const t = setTimeout(load, 1500)
+    return () => clearTimeout(t)
+  }, [pieces])
+
   // ── Focus ────────────────────────────────────────────────────────────────
   /** Focus any piece; if it isn't in the current section, go back to the first tab. */
   const focus = useCallback(
@@ -335,9 +356,12 @@ export default function MusicView({
     [bySlug],
   )
 
-  /** Phones: show a piece in the sheet. */
-  const openPiece = (s: string, from?: HTMLElement | null) => {
+  /** Phones: show a piece in the sheet. With `play`, it starts too (or carries on if it already is). */
+  const openPiece = (s: string, from?: HTMLElement | null, play = false) => {
     opener.current = from ?? (document.activeElement as HTMLElement | null)
+    const p = bySlug.get(s)
+    const audio = audioRef.current
+    if (play && p?.audio && audio && (nowSlug !== s || audio.paused)) toggle(p)
     focus(s)
     setSheetOpen(true)
   }
@@ -604,7 +628,7 @@ export default function MusicView({
                     className="cw-flat-row"
                     aria-current={i === index ? 'true' : undefined}
                     data-featured={p.featured ? '' : undefined}
-                    onClick={(e) => openPiece(p.slug, e.currentTarget)}
+                    onClick={(e) => openPiece(p.slug, e.currentTarget, true)}
                   >
                     <Row
                       p={p}
@@ -634,6 +658,7 @@ export default function MusicView({
               onNext={nextUp ? () => toggle(nextUp) : undefined}
               onSeek={seek}
               onShow={() => (asSheet ? openPiece(barPiece.slug) : focus(barPiece.slug))}
+              onExpand={asSheet ? () => openPiece(barPiece.slug) : undefined}
             />
           </footer>
         </section>
@@ -665,6 +690,9 @@ export default function MusicView({
             onToggle={() => toggle(shown)}
             onSeek={seek}
             onVideoStart={pause}
+            playingView={asSheet}
+            onPrev={nowSlug === shown.slug && (now || prevUp) ? skipBack : undefined}
+            onNext={nowSlug === shown.slug && nextUp ? () => toggle(nextUp) : undefined}
           />
         </aside>
       </div>

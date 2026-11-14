@@ -19,6 +19,8 @@ interface Props {
   onSeek: (t: number) => void
   /** Bring the piece up in the list. */
   onShow: () => void
+  /** Phones: a tap anywhere on the card (outside its controls) opens the now-playing view. */
+  onExpand?: () => void
 }
 
 /**
@@ -33,7 +35,14 @@ export default function NowPlaying(p: Props) {
   const artists = [...new Set(creditsOf(piece).map((c) => c.name))].join(', ')
 
   return (
-    <div className={`cw-np${playing ? ' is-playing' : ''}`} role="region" aria-label="Player">
+    <div
+      className={`cw-np${playing ? ' is-playing' : ''}${p.onExpand ? ' is-expandable' : ''}`}
+      role="region"
+      aria-label="Player"
+      onClick={(e) => {
+        if (p.onExpand && !(e.target as HTMLElement).closest('button, input')) p.onExpand()
+      }}
+    >
       <div className="cw-np-row">
         <Cover piece={piece} palette={p.collection.palette} />
         <span className="cw-np-text">

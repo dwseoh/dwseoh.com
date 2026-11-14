@@ -1,9 +1,9 @@
 'use client'
 
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useLayoutEffect, useRef, useState } from 'react'
 import { ME, categoryLabel, creditsOf, genreOf, type Collection, type Piece } from '@/app/music/data'
 import Cover from './Cover'
-import { ArrowUpRightIcon, LinkIcon, PauseIcon, PlayIcon, ScoreIcon } from './Icons'
+import { ArrowUpRightIcon, LinkIcon, NextIcon, PauseIcon, PlayIcon, PrevIcon, ScoreIcon } from './Icons'
 
 export interface PlayerState {
   /** This piece is the one loaded in the audio element. */
@@ -46,6 +46,146 @@ function prose(text: string) {
   })
 }
 
+// About this many lines show before "… more".
+const ABOUT_LINES = 6
+// How many characters fade out before the cut.
+const FADE_CHARS = 10
+
+/** Words of a paragraph, keeping each [text](url) link whole. */
+const words = (para: string) => para.match(/\[[^\]]+\]\([^)\s]+\)|\S+/g) ?? []
+/** Plain text of a word, for measuring. */
+const plain = (w: string) => w.replace(/^\[([^\]]+)\]\([^)\s]+\)/, '$1')
+
+/**
+ * The description, cut after a few lines with a quiet "… more" at the end of
+ * the last one. Where to cut is measured: the most words that still fit.
+ */
+function About({ text }: { text: string }) {
+  const paras = text.split('\n\n').map(words)
+  const total = paras.reduce((n, p) => n + p.length, 0)
+  const boxRef = useRef<HTMLDivElement>(null)
+  const measureRef = useRef<HTMLDivElement>(null)
+  // How many words show while it's cut; null when it all fits.
+  const [cut, setCut] = useState<number | null>(null)
+  const [open, setOpen] = useState(false)
+
+  useLayoutEffect(() => {
+    const box = boxRef.current
+    const m = measureRef.current
+    if (!box || !m) return
+    let width = -1
+    const fit = () => {
+      if (box.clientWidth === width) return
+      width = box.clientWidth
+      // Lay out the first `k` words, plus the "… more", in the hidden copy.
+      const addMore = (p: HTMLElement) => {
+        p.append('… ')
+        const b = document.createElement('span')
+        b.className = 'cw-d-more'
+        b.textContent = 'more'
+        p.append(b)
+      }
+      const render = (k: number, more: boolean) => {
+        m.textContent = ''
+        let left = k
+        for (const ws of paras) {
+          if (left <= 0) break
+          const p = document.createElement('p')
+          p.className = 'cw-d-desc'
+          p.textContent = ws.slice(0, left).map(plain).join(' ')
+          if (more && left < ws.length) addMore(p)
+          left -= ws.length
+          m.appendChild(p)
+        }
+        if (more && left >= 0) addMore(m.lastChild as HTMLElement)
+        return m.scrollHeight
+      }
+      const p0 = document.createElement('p')
+      p0.className = 'cw-d-desc'
+      m.textContent = ''
+      m.appendChild(p0)
+      p0.textContent = 'x'
+      const line = parseFloat(getComputedStyle(p0).lineHeight) || 24
+      const gap = m.scrollHeight - line // the first paragraph's top margin
+      // Room for ABOUT_LINES lines, plus the breaks between the paragraphs shown.
+      const room = () => gap + line * ABOUT_LINES + 12 * (m.children.length - 1) + 1
+      // Only cut when it hides more than a line.
+      if (render(total, false) <= room() + line * 1.2) {
+        m.textContent = ''
+        setCut(null)
+        return
+      }
+      let lo = 1
+      let hi = total - 1
+      while (lo < hi) {
+        const mid = Math.ceil((lo + hi) / 2)
+        const h = render(mid, true)
+        if (h <= room()) lo = mid
+        else hi = mid - 1
+      }
+      m.textContent = ''
+      setCut(lo)
+    }
+    fit()
+    const ro = new ResizeObserver(fit)
+    ro.observe(box)
+    return () => ro.disconnect()
+    // The text is fixed for a mounted panel (it's keyed by piece).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const cutting = cut !== null && !open
+  const more = (
+    <button className="cw-d-more" onClick={() => setOpen(!open)} aria-expanded={open}>
+      {open ? 'less' : 'more'}
+    </button>
+  )
+  let left = cutting ? cut : Infinity
+  return (
+    <div ref={boxRef} className="cw-d-about">
+      {paras.map((ws, i) => {
+        if (left <= 0) return null
+        const shown = ws.slice(0, left)
+        left -= ws.length
+        const last = cutting ? left <= 0 : i === paras.length - 1
+        const body = shown.join(' ')
+        const ends = /[.!?…]$/.test(plain(shown[shown.length - 1] ?? ''))
+        // Where it's cut, the last few characters fade out into the "…".
+        const fade =
+          cutting &&
+          last &&
+          !/\]\([^)]*$|\[[^\]]*$/.test(body.slice(0, -FADE_CHARS)) &&
+          !body.slice(-FADE_CHARS).includes('](')
+        return (
+          <p key={i} className="cw-d-desc">
+            {fade ? (
+              <>
+                {prose(body.slice(0, -FADE_CHARS))}
+                <span className="cw-d-fade">
+                  {body.slice(-FADE_CHARS)}
+                  {ends ? '' : '…'}
+                </span>{' '}
+                {more}
+              </>
+            ) : (
+              <>
+                {prose(body)}
+                {cut !== null && last && (
+                  <>
+                    {cutting && !ends ? '… ' : ' '}
+                    {more}
+                  </>
+                )}
+              </>
+            )}
+          </p>
+        )
+      })}
+      <div ref={measureRef} className="cw-d-measure" aria-hidden="true" />
+    </div>
+  )
+}
+
 interface Props {
   piece: Piece
   collection: Collection
@@ -55,6 +195,11 @@ interface Props {
   onToggle: () => void
   onSeek: (t: number) => void
   onVideoStart: () => void
+  /** Phones: a full "now playing" view, with the details underneath. */
+  playingView?: boolean
+  /** Absent when there's nothing to skip to. */
+  onPrev?: () => void
+  onNext?: () => void
 }
 
 /**
@@ -63,7 +208,18 @@ interface Props {
  * one small facts grid, and media tiles. Featured shows on the cover itself;
  * my name is gold wherever I'm the composer.
  */
-export default function DetailPanel({ piece, collection, dir, player, onToggle, onSeek, onVideoStart }: Props) {
+export default function DetailPanel({
+  piece,
+  collection,
+  dir,
+  player,
+  onToggle,
+  onSeek,
+  onVideoStart,
+  playingView = false,
+  onPrev,
+  onNext,
+}: Props) {
   const perf = piece.categories.includes('performance')
   // One line per role, e.g. two composers share "Composers".
   const credits = creditsOf(piece)
@@ -91,6 +247,87 @@ export default function DetailPanel({ piece, collection, dir, player, onToggle, 
     ...(perf && piece.venue ? [['Venue', piece.venue] as [string, string]] : []),
   ]
 
+  const names = (list: string[]) =>
+    list.map((n, i) => (
+      <Fragment key={n}>
+        {i > 0 && ', '}
+        {n === ME ? <span className="cw-me">{n}</span> : n}
+      </Fragment>
+    ))
+
+  if (playingView) {
+    const artists = [...new Set(credits.map((c) => c.name))]
+    return (
+      <article className="cw-d is-pv" data-dir={dir} aria-label={piece.title}>
+        <div className="cw-pv-art">
+          <Cover piece={piece} palette={collection.palette} size="lg" featured={piece.featured} />
+        </div>
+        <header className="cw-pv-head">
+          <h2 className="cw-d-title">{piece.title}</h2>
+          <p className="cw-pv-sub">{names(artists)}</p>
+        </header>
+
+        {piece.audio ? (
+          <Transport
+            player={player}
+            piece={piece}
+            onToggle={onToggle}
+            onSeek={onSeek}
+            onPrev={onPrev}
+            onNext={onNext}
+          />
+        ) : (
+          <Player
+            piece={piece}
+            player={player}
+            onToggle={onToggle}
+            onSeek={onSeek}
+            onWatch={piece.video ? watch : undefined}
+          />
+        )}
+
+        <h3 className="cw-label cw-pv-about">About</h3>
+        <About text={piece.description} />
+
+        <dl className="cw-facts">
+          <div className="is-wide">
+            <dt>Album</dt>
+            <dd>{collection.title}</dd>
+          </div>
+          {roles.map(({ role, names: who }) => (
+            <div key={role} className={who.length > 1 ? 'is-wide' : undefined}>
+              <dt>{who.length > 1 ? `${role}s` : role}</dt>
+              <dd>{names(who)}</dd>
+            </div>
+          ))}
+          {facts.map(([k, v]) => (
+            <div key={k}>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+          <div className="is-wide">
+            <dt>Instrumentation</dt>
+            <dd>{piece.instrumentation ?? piece.ensemble}</dd>
+          </div>
+        </dl>
+
+        {hasMedia && (
+          <section ref={mediaRef} className="cw-d-sec">
+            <h3 className="cw-label">Watch &amp; read</h3>
+            <Media
+              piece={piece}
+              palette={collection.palette}
+              watching={watching}
+              onWatch={watch}
+              onVideoStart={onVideoStart}
+            />
+          </section>
+        )}
+      </article>
+    )
+  }
+
   return (
     <article className="cw-d" data-dir={dir} aria-label={piece.title}>
       <header className="cw-d-hero">
@@ -110,17 +347,10 @@ export default function DetailPanel({ piece, collection, dir, player, onToggle, 
               <dt>Album</dt>
               <dd>{collection.title}</dd>
             </div>
-            {roles.map(({ role, names }) => (
+            {roles.map(({ role, names: who }) => (
               <div key={role}>
-                <dt>{names.length > 1 ? `${role}s` : role}</dt>
-                <dd>
-                  {names.map((n, i) => (
-                    <Fragment key={n}>
-                      {i > 0 && ', '}
-                      {n === ME ? <span className="cw-me">{n}</span> : n}
-                    </Fragment>
-                  ))}
-                </dd>
+                <dt>{who.length > 1 ? `${role}s` : role}</dt>
+                <dd>{names(who)}</dd>
               </div>
             ))}
           </dl>
@@ -135,11 +365,7 @@ export default function DetailPanel({ piece, collection, dir, player, onToggle, 
         onWatch={piece.video ? watch : undefined}
       />
 
-      {piece.description.split('\n\n').map((para, i) => (
-        <p key={i} className="cw-d-desc">
-          {prose(para)}
-        </p>
-      ))}
+      <About text={piece.description} />
 
       <dl className="cw-facts">
         {facts.map(([k, v]) => (
@@ -183,6 +409,58 @@ export default function DetailPanel({ piece, collection, dir, player, onToggle, 
         </section>
       )}
     </article>
+  )
+}
+
+/** Phones' now-playing controls: a full-width seek bar, then back / play / next. */
+function Transport({
+  piece,
+  player,
+  onToggle,
+  onSeek,
+  onPrev,
+  onNext,
+}: {
+  piece: Piece
+  player: PlayerState
+  onToggle: () => void
+  onSeek: (t: number) => void
+  onPrev?: () => void
+  onNext?: () => void
+}) {
+  const { isCurrent, playing, time, duration } = player
+  const live = isCurrent && duration > 0
+  const on = isCurrent && playing
+  return (
+    <div className={`cw-pv-transport${on ? ' is-playing' : ''}`}>
+      <input
+        type="range"
+        className="cw-range"
+        min={0}
+        max={live ? duration : 1}
+        step={0.1}
+        value={live ? Math.min(time, duration) : 0}
+        onChange={(e) => onSeek(Number(e.target.value))}
+        disabled={!live}
+        aria-label="Seek"
+        style={{ '--p': `${live ? (time / duration) * 100 : 0}%` } as React.CSSProperties}
+      />
+      <div className="cw-pv-times">
+        <span>{fmt(live ? time : 0)}</span>
+        <span>{live ? fmt(duration) : piece.duration}</span>
+      </div>
+      <div className="cw-pv-controls">
+        <button className="cw-pv-skip" onClick={onPrev} disabled={!onPrev} aria-label="Previous">
+          <PrevIcon />
+        </button>
+        <button className="cw-pv-play" onClick={onToggle} aria-label={on ? 'Pause' : `Play ${piece.title}`}>
+          {on ? <PauseIcon /> : <PlayIcon />}
+        </button>
+        <button className="cw-pv-skip" onClick={onNext} disabled={!onNext} aria-label="Next">
+          <NextIcon />
+        </button>
+      </div>
+    </div>
   )
 }
 

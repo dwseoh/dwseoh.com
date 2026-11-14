@@ -889,6 +889,38 @@ html:has(.cw-root) {
 .cw-d-desc + .cw-d-desc {
   margin-top: 12px;
 }
+/* Long notes stop after a few lines with a quiet "… more" at the end. */
+.cw-d-about {
+  position: relative;
+}
+.cw-d-measure {
+  position: absolute;
+  inset: 0 0 auto;
+  visibility: hidden;
+  pointer-events: none;
+}
+.cw-d-more {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fg) !important; /* over .cw-root button */
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--fg) 45%, transparent);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.cw-d-more:hover {
+  text-decoration-color: currentColor;
+}
+/* The last characters before the cut, fading into the "…". */
+.cw-d-fade {
+  background: linear-gradient(90deg, var(--fg-2), rgba(233, 230, 225, 0.1));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .cw-d-desc a {
   color: var(--fg);
   text-decoration: underline;
@@ -1277,7 +1309,8 @@ html:has(.cw-root) {
     position: fixed;
     inset: auto 0 0;
     z-index: 30;
-    max-height: calc(100svh - 40px);
+    /* Full height: a now-playing screen, the same size for every piece. */
+    height: calc(100svh - 40px);
     border: 0;
     border-radius: 18px 18px 0 0;
     background: color-mix(in oklab, var(--c1) 28%, #0e0d0d);
@@ -1301,6 +1334,116 @@ html:has(.cw-root) {
   }
   .cw-root .cw-d {
     padding: 4px var(--gutter) calc(36px + env(safe-area-inset-bottom));
+  }
+
+  .cw-np.is-expandable {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── Now playing (the sheet on phones) ── */
+  .cw-pv-art {
+    align-self: center;
+    width: min(100%, 44svh, 360px);
+    margin-top: 8px;
+  }
+  .cw-pv-art .cw-cover.is-lg {
+    overflow: visible; /* lets the pin sit on the corner */
+    border-radius: 12px;
+    box-shadow:
+      0 36px 70px -34px color-mix(in oklab, var(--c1) 85%, black),
+      0 18px 36px -24px rgba(0, 0, 0, 0.9);
+  }
+  .cw-pv-art .cw-cover.is-lg :is(svg, img) {
+    border-radius: inherit;
+  }
+  .cw-pv-head {
+    margin-top: 28px;
+  }
+  .cw-pv-head .cw-d-title {
+    font-size: 30px;
+    line-height: 1.05;
+  }
+  .cw-pv-sub {
+    margin: 6px 0 0;
+    font-size: 15px;
+    color: var(--fg-2);
+  }
+  .cw-pv-transport {
+    margin-top: 22px;
+  }
+  .cw-pv-transport .cw-range {
+    display: block;
+    width: 100%;
+  }
+  .cw-pv-times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg-3);
+  }
+  .cw-pv-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 8px;
+  }
+  .cw-pv-skip {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--fg);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cw-pv-skip svg {
+    width: 34px;
+    height: 34px;
+  }
+  .cw-pv-skip:active:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .cw-pv-skip:disabled {
+    color: var(--fg-4) !important;
+    cursor: default;
+  }
+  .cw-pv-play {
+    display: grid;
+    place-items: center;
+    width: 68px;
+    height: 68px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--fg);
+    color: var(--bg) !important;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s var(--ease);
+  }
+  .cw-pv-play svg {
+    width: 34px;
+    height: 34px;
+  }
+  .cw-pv-play:active {
+    transform: scale(0.94);
+  }
+  .is-pv > .cw-player {
+    margin-top: 22px;
+  }
+  .cw-pv-about {
+    margin: 36px 0 0;
+  }
+  .is-pv .cw-pv-about + .cw-d-about > .cw-d-desc:first-child {
+    margin-top: 10px;
   }
   .cw-sheet-bar {
     position: sticky;
