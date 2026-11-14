@@ -197,6 +197,8 @@ interface Props {
   onToggle: () => void
   onSeek: (t: number) => void
   onVideoStart: () => void
+  /** False while the panel is out of sight (the phone sheet closed): any video stops. */
+  visible?: boolean
   /** Phones: a full "now playing" view, with the details underneath. */
   playingView?: boolean
   /** Absent when there's nothing to skip to. */
@@ -221,6 +223,7 @@ export default function DetailPanel({
   playingView = false,
   onPrev,
   onNext,
+  visible = true,
 }: Props) {
   const perf = piece.categories.includes('performance')
   // One line per role, e.g. two composers share "Composers".
@@ -234,6 +237,14 @@ export default function DetailPanel({
   // The video opens in place of its tile; the player row can open it too.
   const [watching, setWatching] = useState(false)
   const mediaRef = useRef<HTMLElement>(null)
+  // The video closes when the panel is put away or a recording starts, so the
+  // two never play over each other (or the video carries on unseen).
+  const stopVideo = !visible || player.playing
+  const [stopped, setStopped] = useState(stopVideo)
+  if (stopVideo !== stopped) {
+    setStopped(stopVideo)
+    if (stopVideo && watching) setWatching(false)
+  }
   const watch = () => {
     onVideoStart()
     setWatching(true)

@@ -691,6 +691,7 @@ export default function MusicView({
             onSeek={seek}
             onVideoStart={pause}
             playingView={asSheet}
+            visible={!asSheet || sheetOpen}
             onPrev={nowSlug === shown.slug && (now || prevUp) ? skipBack : undefined}
             onNext={nowSlug === shown.slug && nextUp ? () => toggle(nextUp) : undefined}
           />
