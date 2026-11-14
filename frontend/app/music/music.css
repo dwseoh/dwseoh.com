@@ -1364,11 +1364,14 @@ html:has(.cw-root) {
     border-radius: inherit;
   }
   .cw-pv-head {
-    margin-top: 18px;
+    margin-top: 26px;
   }
   .cw-pv-head .cw-d-title {
-    font-size: 25px;
+    font-size: 28px;
     line-height: 1.08;
+  }
+  .cw-pv-head .cw-d-source {
+    margin-top: 2px;
   }
   .cw-pv-sub {
     margin: 4px 0 0;
