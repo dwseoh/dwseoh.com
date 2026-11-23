@@ -79,6 +79,20 @@
   ],
   "experiences": [
     {
+      "id": "attention",
+      "role": "Software Engineer Intern",
+      "org": "Attention Engineering",
+      "logo": "/images/logos/attention.svg",
+      "period": "Nov 2026 — Present",
+      "duration": "1 mo",
+      "location": "Palo Alto, CA",
+      "type": "Internship",
+      "blurb": "Bigger things coming soon.",
+      "skills": [],
+      "href": "https://attention.inc/",
+      "present": true
+    },
+    {
       "id": "uw-seahorn",
       "role": "Undergraduate Researcher",
       "org": "University of Waterloo",

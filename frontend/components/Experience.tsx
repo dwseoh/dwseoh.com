@@ -112,14 +112,20 @@ function Row({ e, labels, open, onToggle, last }: {
       <div className="xp-body" data-open={open}>
         <div className="xp-body-inner">
           <p className="xp-blurb">{e.blurb}</p>
-          <div className="xp-skills">
-            {e.skills.map((s) => (
-              <span key={s} className="xp-skill">{s}</span>
-            ))}
-          </div>
+          {e.skills.length > 0 && (
+            <div className="xp-skills">
+              {e.skills.map((s) => (
+                <span key={s} className="xp-skill">{s}</span>
+              ))}
+            </div>
+          )}
           <div className="xp-meta">
-            <span>{e.location}</span>
-            <span className="xp-meta-dot">·</span>
+            {e.location && (
+              <>
+                <span>{e.location}</span>
+                <span className="xp-meta-dot">·</span>
+              </>
+            )}
             <span>{e.type}</span>
             {e.href && (
               <a

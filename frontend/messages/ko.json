@@ -79,6 +79,20 @@
   ],
   "experiences": [
     {
+      "id": "attention",
+      "role": "소프트웨어 엔지니어 인턴",
+      "org": "Attention Engineering",
+      "logo": "/images/logos/attention.svg",
+      "period": "2026년 11월 — 현재",
+      "duration": "1개월",
+      "location": "팔로알토, CA",
+      "type": "인턴십",
+      "blurb": "더 큰 소식이 곧 찾아옵니다.",
+      "skills": [],
+      "href": "https://attention.inc/",
+      "present": true
+    },
+    {
       "id": "uw-seahorn",
       "role": "학부 연구원",
       "org": "워털루 대학교",
